@@ -80,7 +80,7 @@ export default function Project() {
               </div>
               <div className="mb-4">
                 <div className="font-semibold text-lg mb-2">GitHub</div>
-                <a href={project.github} target="_blank" className="text-blue-500 hover:underline">
+                <a href={project.github} target="_blank" className="text-blue-500 hover:underline break-words">
                   {project.github}
                 </a>
               </div>
