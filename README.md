@@ -1,36 +1,25 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌐 포트폴리오 사이트
 
-## Getting Started
+## 📖 프로젝트 소개 (Project Overview)
 
-First, run the development server:
+[기존 포트폴리오](https://github.com/backbone94/portfolio) 프로젝트를 리뉴얼하였습니다.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+기존 포트폴리오 사이트는 HTML, CSS, JavaScript로 개발되어 반응형 디자인이 구현되지 않아 모바일에서 디자인이 깨지는 문제가 있었습니다.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+이번 리뉴얼을 통해 Next.js와 Tailwind CSS를 사용하여 반응형 디자인을 완벽하게 구현하였으며, 모바일에서도 깨지지 않는 UI를 제공합니다.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+또한 추후 사이트의 확장 가능성을 고려하여, 최적화 및 성능 부분에서 비교적 우위를 가지고 있는 Next.js 프레임워크를 활용하여 진행하였습니다.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🌍 웹사이트
 
-## Learn More
+포트폴리오 사이트는 Vercel를 통해 배포되었으며, 다음 URL에서 확인할 수 있습니다:
 
-To learn more about Next.js, take a look at the following resources:
+**[https://next-portfolio-orcin-nu.vercel.app/](https://next-portfolio-orcin-nu.vercel.app/)**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📚 기술 스택
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+![Next.js](https://img.shields.io/badge/Next.js-FFFFFF?style=for-the-badge&logo=next.js&logoColor=000000)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
