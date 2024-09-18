@@ -30,6 +30,8 @@ export default function Project() {
     });
   }, []);
 
+  const displayedProjects = isExpanded ? projects : projects.slice(0, 2);
+
   return (
     <div className="relative">
       <section
@@ -38,7 +40,7 @@ export default function Project() {
         ${isExpanded ? 'h-auto' : 'h-[1000px] overflow-hidden'}`}
       >
         <div className="text-center text-4xl font-extrabold mb-8 text-gray-800">PROJECTS</div>
-        {projects.map((project, index) => (
+        {displayedProjects.map((project, index) => (
           <div key={index} className="my-8 p-6 bg-white rounded-lg shadow-md">
             <div className="text-2xl font-bold mb-4 text-center">{project.title}</div>
             <div className="border-b border-dashed border-gray-400 mb-8" />
@@ -97,9 +99,7 @@ export default function Project() {
       </section>
 
       {!isExpanded && (
-        <div
-          className="z-50 absolute bottom-0 left-0 right-0 h-60 bg-gradient-to-t from-white to-transparent pointer-events-none"
-        ></div>
+        <div className="z-50 absolute bottom-0 left-0 right-0 h-60 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
       )}
 
       <button
