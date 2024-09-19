@@ -47,7 +47,7 @@ export const projects = [
     stack: 'Figma Plugin API, TypeScript, React, Webpack, MUI, OpenLayers',
     github: '',
     description: `<strong>개요</strong><br>
-    인턴으로서 참여한 첫 프로젝트입니다. 프로젝트의 목표는 디자이너와 개발자 간의 협업을 지원하는 Figma에서, 특정 컴포넌트를 지도상의 특정 위치에 배치하고, 해당 위치의 위경도 좌표를 기억할 수 있는 프로그램을 개발하는 것이었습니다.<br><br>
+    인턴으로서 참여한 첫 프로젝트입니다. 프로젝트의 목표는 디자이너와 개발자 간의 협업을 지원하는 Figma에서, 특정 컴포넌트를 지도상의 특정 위치에 배치하고, 해당 위치의 위경도 좌표를 기억할 수 있는 Figma 플러그인을 개발하는 것이었습니다.<br><br>
     <strong>배경</strong><br>
     Figma 플러그인의 기본 뼈대는 Figma Plugin API의 <a href="https://www.figma.com/plugin-docs/" target="_blank" class="text-blue-500">공식 문서</a>를 참고하여 구성하였으며, 코드 유지보수성을 향상시키고, 바닐라 JavaScript보다 훨씬 더 빨리 작업 속도를 낼 수 있는 React를, 그리고 타입 체크를 통해 더욱 안정적인 개발 진행을 위한 TypeScript를 선택하였습니다.<br>
     하지만 React를 TypeScript와 사용하기 위해서는 Webpack과 같은 번들러의 복잡한 설정이 필요하였습니다. 이런 상황에서 좀 더 효율적인 Figma 플러그인 개발을 위한 방법을 검색해보다가, Figma와 (Webpack + TypeScript + React) 간의 원활한 조화를 위해 이미 개발되어 있던 <a href="https://github.com/hseoy/figma-plugin-react-boilerplate" target="_blank" class="text-blue-500">보일러플레이트</a>를 발견하게 되었습니다. 이 보일러플레이트를 사용하여, 따로 번거로운 설정 없이 React와 TypeScript 스펙을 Figma 플러그인 개발에 사용할 수 있어서 편리한 작업을 할 수 있었습니다.<br>
