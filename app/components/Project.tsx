@@ -37,7 +37,7 @@ export default function Project() {
       <section
         id="project"
         className={`select-none container mx-auto p-8 my-12 max-w-8xl bg-gradient-to-r from-white via-gray-100 to-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300
-        ${isExpanded ? 'h-auto' : 'h-[1800px] overflow-hidden'}`}
+        ${isExpanded ? 'h-auto' : 'h-[1200px] overflow-hidden'}`}
       >
         <div className="text-center text-4xl font-extrabold mb-8 text-gray-800">PROJECTS</div>
         {displayedProjects.map((project, index) => (
