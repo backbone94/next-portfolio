@@ -1,7 +1,30 @@
 export default function Experience() {
   const experiences = [
-    { company: '(주) 이파피루스', duration: '2022.04 ~ 2023.12', role: '정규직' },
-    { company: '(주) 베스텔라랩', duration: '2024.07 ~ 2024.08', role: '인턴' }
+    {
+      company: '(주) 이파피루스',
+      duration: '2022.04 ~ 2023.12',
+      role: '정규직',
+      tasks: [
+        '우클릭 커스텀 컨텍스트 메뉴 개발',
+        '비가시 추적 코드 삽입 기능 구현',
+        '다크모드 전환 기능 추가',
+        '버그 수정 및 유지보수'
+      ]
+    },
+    {
+      company: '(주) 베스텔라랩',
+      duration: '2024.07 ~ 2024.08',
+      role: '인턴',
+      tasks: [
+        'Figma 레이어의 위경도 좌표 변환 Plugin 개발'
+      ]
+    }
+  ];
+  const certifications = [
+    {
+      title: '정보처리기사',
+      issueDate: '2021.11'
+    }
   ];
 
   return (
@@ -22,17 +45,25 @@ export default function Experience() {
                 )}
               </div>
               <div className="text-gray-500">{experience.duration}</div>
+              <ul className="list-disc list-inside text-gray-600 mt-2">
+                {experience.tasks.map((task, taskIndex) => (
+                  <li key={taskIndex}>{task}</li>
+                ))}
+              </ul>
             </div>
           </div>
         ))}
-        <div className="flex items-start bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 w-full">
-          <span className="h-6 w-6 text-blue-400 mr-4">🎓</span>
-          <div>
-            <div className="text-lg font-bold text-gray-800">
-              정보처리기사
+        {certifications.map((certification, index) => (
+          <div key={index} className="flex items-start bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 w-full">
+            <span className="h-6 w-6 text-blue-400 mr-4">🎓</span>
+            <div>
+              <div className="text-lg font-bold text-gray-800">
+                {certification.title}
+              </div>
+              <div className="text-gray-500">{certification.issueDate}</div>
             </div>
           </div>
-        </div>
+        ))}
       </div>
     </section>
   );

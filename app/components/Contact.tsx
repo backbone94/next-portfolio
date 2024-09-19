@@ -12,7 +12,11 @@ export default function Contact() {
       <div className="flex justify-center">
         <div className="w-full md:w-2/3">
           <div className="flex items-center mb-8">
-            <Image width={24} height={24} src="/images/mail.png" alt="Mail" />
+            <span className="text-2xl">📞</span>
+            <span className="select-text ml-4 text-lg text-gray-700">010-9287-1684</span>
+          </div>
+          <div className="flex items-center mb-8">
+            <span className="text-2xl">✉️</span>
             <span className="select-text ml-4 text-lg text-gray-700">backbone94@naver.com</span>
           </div>
           <div className="flex items-center mb-8">

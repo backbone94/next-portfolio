@@ -1,12 +1,6 @@
 import Image from 'next/image';
 
 export default function About() {
-  const aboutItems = [
-    { icon: '🛠️', text: '백엔드를 충분히 잘 다룰 수 있는 프론트엔드 개발자가 되는 것이 목표입니다.' },
-    { icon: '🤝', text: '팀원들과의 원활한 소통과 배려를 통해 강력한 협동심을 발휘합니다.' },
-    { icon: '📚', text: '지속적으로 배우고 발전하는 개발자가 되겠습니다.' }
-  ];
-
   return (
     <section
       id="about"
@@ -29,33 +23,40 @@ export default function About() {
             height={150}
           />
         </a>
-        <div className="text-center text-lg font-semibold mb-8 text-gray-600 leading-relaxed">
+        <div className="text-center text-lg font-semibold mb-16 text-gray-600 leading-relaxed">
           도전과 성취를 향해 끊임없이 전진하는 개발자,<br />이정준입니다.
         </div>
 
-        <div className="border border-gray-200 rounded-3xl p-6 mb-8">
-          <div className="grid grid-cols-[100px_1fr] gap-x-2 text-gray-700">
-            <p><strong>이름:</strong></p>
-            <p>이정준</p>
-            <p><strong>학력:</strong></p>
-            <p>아주대학교 소프트웨어학과</p>
-            <p><strong>생년월일:</strong></p>
-            <p>1994.11.11</p>
-            <p><strong>주소지:</strong></p>
-            <p>경기도 수원시</p>
-            <p><strong>연락처:</strong></p>
-            <p>010-9287-1684</p>
+        {/* Flex container to align icon and text in a row */}
+        <div className="space-y-4 w-full">
+          <div className="flex items-start">
+            <span className="mr-4 text-xl">🌱</span>
+            <p className="text-base text-gray-800 leading-normal">
+              도전하며 성장하는 프론트엔드 개발자입니다. 사용자 경험을 중요시하며, 신속하고 효율적인 개발을 목표로 하고 있습니다.
+            </p>
+          </div>
+
+          <div className="flex items-start">
+            <span className="mr-4 text-xl">💡</span>
+            <p className="text-base text-gray-800 leading-normal">
+              새로운 기술을 배우고 적용해보는 것을 즐기며, 더 나은 결과물을 만들어내는 것에 큰 보람을 느낍니다.
+            </p>
+          </div>
+
+          <div className="flex items-start">
+            <span className="mr-4 text-xl">🔧</span>
+            <p className="text-base text-gray-800 leading-normal">
+              웹 개발을 중심으로 풀스택 개발 경험을 쌓아가고 있으며, 프론트엔드부터 백엔드까지 모든 과정을 이해하며 더 나은 소프트웨어를 만들기 위해 노력합니다.
+            </p>
+          </div>
+
+          <div className="flex items-start">
+            <span className="mr-4 text-xl">⚡</span>
+            <p className="text-base text-gray-800 leading-normal">
+              다양한 프로젝트를 통해 쌓아온 경험을 공유하고 발전시켜 나가고자 합니다.
+            </p>
           </div>
         </div>
-
-        <ul className="text-left text-base font-normal space-y-4 list-none">
-          {aboutItems.map((item, index) => (
-            <li key={index} className="flex items-center group">
-              <span className="mr-3 text-2xl transition-transform duration-300 group-hover:scale-110">{item.icon}</span>
-              <span className="text-gray-700 group-hover:text-gray-900 transition-colors duration-300">{item.text}</span>
-            </li>
-          ))}
-        </ul>
       </div>
     </section>
   );
