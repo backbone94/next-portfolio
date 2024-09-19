@@ -10,7 +10,10 @@ import { projects } from '../content/projects';
 import { Navigation, Pagination } from 'swiper/modules';
 
 export default function Project() {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isSectionExpanded, setIsSectionExpanded] = useState(false);
+  const [expandedProjects, setExpandedProjects] = useState(
+    Array(projects.length).fill(false)
+  );
 
   useEffect(() => {
     Swiper.use([Navigation, Pagination]);
@@ -28,16 +31,22 @@ export default function Project() {
       preventClicks: false,
       preventClicksPropagation: false,
     });
-  }, [isExpanded]);
+  }, [isSectionExpanded]);
 
-  const displayedProjects = isExpanded ? projects : projects.slice(0, 3);
+  const toggleDescription = (index: number) => {
+    setExpandedProjects((prevState) =>
+      prevState.map((isExpanded, i) => (i === index ? !isExpanded : isExpanded))
+    );
+  };
+
+  const displayedProjects = isSectionExpanded ? projects : projects.slice(0, 3);
 
   return (
     <div id="project" className="relative">
       <section
         id="project"
         className={`select-none container mx-auto p-8 my-12 max-w-8xl bg-gradient-to-r from-white via-gray-100 to-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300
-        ${isExpanded ? 'h-auto' : 'h-[1500px] overflow-hidden'}`}
+        ${isSectionExpanded ? 'h-auto' : 'h-[1500px] overflow-hidden'}`}
       >
         <div className="text-center text-4xl font-extrabold mb-8 text-gray-800">PROJECTS</div>
         {displayedProjects.map((project, index) => (
@@ -114,22 +123,31 @@ export default function Project() {
                   )
                 )}
                 <hr className="mb-4" />
-                <div dangerouslySetInnerHTML={{ __html: project.description }} />
+                <div
+                  className={`${expandedProjects[index] ? '' : 'line-clamp-[10]'}`}
+                  dangerouslySetInnerHTML={{ __html: project.description }}
+                />
+                <button
+                  className="mt-2 text-blue-500 hover:underline"
+                  onClick={() => toggleDescription(index)}
+                >
+                  {expandedProjects[index] ? '간략히 보기' : '더보기'}
+                </button>
               </div>
             </div>
           </div>
         ))}
       </section>
 
-      {!isExpanded && (
+      {!isSectionExpanded && (
         <div className="z-50 absolute bottom-0 left-0 right-0 h-60 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
       )}
 
       <button
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={() => setIsSectionExpanded(!isSectionExpanded)}
         className="absolute left-1/2 bottom-[-15px] transform -translate-x-1/2 px-4 py-2 bg-sky-400 text-white font-semibold rounded-lg hover:bg-sky-500 transition duration-300 z-50"
       >
-        {isExpanded ? '프로젝트 접기' : '프로젝트 더보기'}
+        {isSectionExpanded ? '프로젝트 접기' : '프로젝트 더보기'}
       </button>
     </div>
   );
