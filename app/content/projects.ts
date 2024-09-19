@@ -43,7 +43,7 @@ export const projects = [
     features: '영화 검색, 최신 인기작 & 현재 상영작 & 개봉 예정작 조회, 특정 영화의 상세 정보 조회, 한 줄 리뷰 달기(+좋아요 기능), 개봉 예정작 알림 설정, 네이버 블로그 글 Fetch, 유튜브 영상 Fetch, 이메일 인증, 무한스크롤 등',
     stack: 'React, Redux Toolkit, TypeScript(+ Next.Js), Express, MongoDB, AWS S3',
     github: 'https://github.com/backbone94/nextProject',
-    description: `Blog 만든 경험을 바탕으로, 제가 좋아하는 영화에 대한 프로젝트를 만들어 보았습니다. 좋아하는 분야에 대한 프로젝트를 진행해서인지 Blog 프로젝트를 진행했을 때보다 훨씬 더 흥미롭게 진행했습니다.<br><br>리액트를 바탕으로 개발하였으며, JavaScript의 타입에 대한 단점을 보완해줄 TypeScript를 활용하였습니다. Redux Toolkit을 통해 서버와의 비동기 통신을 수행하였고 프로필 이미지는 AWS의 S3에 업로드할 수 있게 개발하였습니다. 또한 Next.js의 Pages 폴더 구조를 통해 편리한 페이지 라우팅 기능을 경험할 수 있었습니다. Blog 프로젝트에서 Redux Saga의 난잡함을 느끼고 난 후에 Redux Toolkit의 존재를 알게되었는데, Redux Saga의 코드 양과 복잡성이 Redux Toolkit에서 두배는 더 줄었다고 체감할 수 있었습니다.<br><br>P.S. 현재 해당 프로젝트의 Repository가 제거된 상태인데, 어떤 시기인지는 특정할 수가 없지만 Repository의 이름을 보고 연습용 Repository라고 착각하고 지웠던 것 같습니다... 이를 계기로 이름 짓기의 중요성을 다시 한 번 느끼게 되었습니다.`,
+    description: `Blog 만든 경험을 바탕으로, 제가 좋아하는 영화에 대한 프로젝트를 만들어 보았습니다. 좋아하는 분야에 대한 프로젝트를 진행해서인지 Blog 프로젝트를 진행했을 때보다 훨씬 더 흥미롭게 진행했습니다.<br><br>리액트를 바탕으로 개발하였으며, JavaScript의 타입에 대한 단점을 보완해줄 TypeScript를 활용하였습니다. Redux Toolkit을 통해 서버와의 비동기 통신을 수행하였고 프로필 이미지는 AWS의 S3에 업로드할 수 있게 개발하였습니다. 또한 Next.js의 Pages 폴더 구조를 통해 편리한 페이지 라우팅 기능을 경험할 수 있었습니다. Blog 프로젝트에서 Redux Saga의 난잡함을 느끼고 난 후에 Redux Toolkit의 존재를 알게되었는데, Redux Saga의 코드 양과 복잡성이 Redux Toolkit에서 두배는 더 줄었다고 체감할 수 있었습니다.<br><br>P.S. 현재 해당 프로젝트의 Repository가 제거된 상태인데, 어떤 시기인지는 특정할 수가 없지만 Repository의 이름을 보고 연습용 Repository라고 착각하고 지웠던 것 같습니다. 이를 계기로 이름 짓기의 중요성을 다시 한 번 느끼게 되었습니다.`,
   },
   {
     title: 'RC Car',
