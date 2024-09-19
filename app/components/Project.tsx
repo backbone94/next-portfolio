@@ -30,14 +30,14 @@ export default function Project() {
     });
   }, [isExpanded]);
 
-  const displayedProjects = isExpanded ? projects : projects.slice(0, 2);
+  const displayedProjects = isExpanded ? projects : projects.slice(0, 3);
 
   return (
     <div id="project" className="relative">
       <section
         id="project"
         className={`select-none container mx-auto p-8 my-12 max-w-8xl bg-gradient-to-r from-white via-gray-100 to-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300
-        ${isExpanded ? 'h-auto' : 'h-[1000px] overflow-hidden'}`}
+        ${isExpanded ? 'h-auto' : 'h-[1800px] overflow-hidden'}`}
       >
         <div className="text-center text-4xl font-extrabold mb-8 text-gray-800">PROJECTS</div>
         {displayedProjects.map((project, index) => (
