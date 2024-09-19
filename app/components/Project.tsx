@@ -28,7 +28,7 @@ export default function Project() {
       preventClicks: false,
       preventClicksPropagation: false,
     });
-  }, []);
+  }, [isExpanded]);
 
   const displayedProjects = isExpanded ? projects : projects.slice(0, 2);
 
