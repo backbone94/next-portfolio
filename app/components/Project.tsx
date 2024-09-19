@@ -37,7 +37,7 @@ export default function Project() {
       <section
         id="project"
         className={`select-none container mx-auto p-8 my-12 max-w-8xl bg-gradient-to-r from-white via-gray-100 to-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300
-        ${isExpanded ? 'h-auto' : 'h-[1200px] overflow-hidden'}`}
+        ${isExpanded ? 'h-auto' : 'h-[1500px] overflow-hidden'}`}
       >
         <div className="text-center text-4xl font-extrabold mb-8 text-gray-800">PROJECTS</div>
         {displayedProjects.map((project, index) => (
@@ -83,6 +83,18 @@ export default function Project() {
                 <div className="mb-4">
                   <div className="font-semibold text-lg mb-2">기술 스택</div>
                   <div>{project.stack}</div>
+                </div>
+                <div className="mb-4">
+                  <div className="font-semibold text-lg mb-2">진행 기간</div>
+                  <div>{project.duration}</div>
+                </div>
+                <div className="mb-4">
+                  <div className="font-semibold text-lg mb-2">기여도</div>
+                  <div>{project.contribution}</div>
+                </div>
+                <div className="mb-4">
+                  <div className="font-semibold text-lg mb-2">개발 인원</div>
+                  <div>{project.teamSize}</div>
                 </div>
                 {project.github ? (
                   <div className="mb-4">
