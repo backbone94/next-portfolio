@@ -8,7 +8,7 @@ export default function Experience() {
         '비가시 추적 코드 삽입 기능 구현',
         '우클릭 커스텀 컨텍스트 메뉴 개발',
         '다크모드 전환 기능 추가',
-        '버그 수정 및 유지보수'
+        '모바일 스크린 리더(TalkBack, VoiceOver)를 활용한 문서 내용 TTS 기능 추가'
       ]
     },
     {
