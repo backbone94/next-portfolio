@@ -27,7 +27,6 @@ export default function About() {
           도전과 성취를 향해 끊임없이 전진하는 개발자,<br />이정준입니다.
         </div>
 
-        {/* Flex container to align icon and text in a row */}
         <div className="space-y-4 w-full">
           <div className="flex items-start">
             <span className="mr-4 text-xl">🌱</span>
