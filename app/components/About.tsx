@@ -31,21 +31,14 @@ export default function About() {
           <div className="flex items-start">
             <span className="mr-4 text-xl">🌱</span>
             <p className="text-base text-gray-800 leading-normal">
-              도전하며 성장하는 프론트엔드 개발자입니다. 사용자 경험을 중요시하며, 신속하고 효율적인 개발을 목표로 하고 있습니다.
+              웹 프론트엔드 개발자로서 약 1년 9개월의 경력을 가지고 있으며, 무엇보다 사용자의 경험을 우선시 합니다.
             </p>
           </div>
 
           <div className="flex items-start">
             <span className="mr-4 text-xl">💡</span>
             <p className="text-base text-gray-800 leading-normal">
-              새로운 기술을 배우고 적용해보는 것을 즐기며, 더 나은 결과물을 만들어내는 것에 큰 보람을 느낍니다.
-            </p>
-          </div>
-
-          <div className="flex items-start">
-            <span className="mr-4 text-xl">🔧</span>
-            <p className="text-base text-gray-800 leading-normal">
-              웹 개발을 중심으로 풀스택 개발 경험을 쌓아가고 있으며, 프론트엔드부터 백엔드까지 모든 과정을 이해하며 더 나은 소프트웨어를 만들기 위해 노력합니다.
+              Spring을 활용한 API 서버를 구축한 경험을 시작으로, 풀스택 개발자의 첫 발걸음을 떼고 있는 중입니다.
             </p>
           </div>
 
