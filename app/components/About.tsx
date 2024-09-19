@@ -33,17 +33,19 @@ export default function About() {
           도전과 성취를 향해 끊임없이 전진하는 개발자,<br />이정준입니다.
         </div>
 
-        <div className="grid grid-cols-[100px_1fr] text-gray-700 mb-8">
-          <p><strong>이름:</strong></p>
-          <p>이정준</p>
-          <p><strong>학력:</strong></p>
-          <p>아주대학교 소프트웨어학과</p>
-          <p><strong>생년월일:</strong></p>
-          <p>1994.11.11</p>
-          <p><strong>주소지:</strong></p>
-          <p>경기도 수원시</p>
-          <p><strong>연락처:</strong></p>
-          <p>010-9287-1684</p>
+        <div className="border border-gray-200 rounded-3xl p-6 mb-8">
+          <div className="grid grid-cols-[100px_1fr] gap-x-2 text-gray-700">
+            <p><strong>이름:</strong></p>
+            <p>이정준</p>
+            <p><strong>학력:</strong></p>
+            <p>아주대학교 소프트웨어학과</p>
+            <p><strong>생년월일:</strong></p>
+            <p>1994.11.11</p>
+            <p><strong>주소지:</strong></p>
+            <p>경기도 수원시</p>
+            <p><strong>연락처:</strong></p>
+            <p>010-9287-1684</p>
+          </div>
         </div>
 
         <ul className="text-left text-base font-normal space-y-4 list-none">
