@@ -33,7 +33,7 @@ export default function Project() {
   const displayedProjects = isExpanded ? projects : projects.slice(0, 2);
 
   return (
-    <div className="relative">
+    <div id="project" className="relative">
       <section
         id="project"
         className={`select-none container mx-auto p-8 my-12 max-w-8xl bg-gradient-to-r from-white via-gray-100 to-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300
@@ -84,14 +84,25 @@ export default function Project() {
                   <div className="font-semibold text-lg mb-2">기술 스택</div>
                   <div>{project.stack}</div>
                 </div>
-                <div className="mb-4">
-                  <div className="font-semibold text-lg mb-2">GitHub</div>
-                  <a href={project.github} target="_blank" className="text-blue-500 hover:underline break-words">
-                    {project.github}
-                  </a>
-                </div>
+                {project.github ? (
+                  <div className="mb-4">
+                    <div className="font-semibold text-lg mb-2">GitHub</div>
+                    <a href={project.github} target="_blank" className="text-blue-500 hover:underline break-words">
+                      {project.github}
+                    </a>
+                  </div>
+                ) : (
+                  project.reference && (
+                    <div className="mb-4">
+                      <div className="font-semibold text-lg mb-2">Reference</div>
+                      <a href={project.reference} target="_blank" className="text-blue-500 hover:underline break-words">
+                        {project.reference}
+                      </a>
+                    </div>
+                  )
+                )}
                 <hr className="mb-4" />
-                <div>{project.description}</div>
+                <div dangerouslySetInnerHTML={{ __html: project.description }} />
               </div>
             </div>
           </div>

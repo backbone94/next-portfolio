@@ -43,6 +43,7 @@ export default function Header() {
 
       <nav className="section hidden md:flex items-center space-x-4 font-cursive">
         <a href="#about" onClick={(e) => handleSmoothScroll(e, 'about')} className="cursor-pointer opacity-50 transition-opacity hover:opacity-100">ABOUT</a>
+        <a href="#experience" onClick={(e) => handleSmoothScroll(e, 'experience')} className="cursor-pointer opacity-50 transition-opacity hover:opacity-100">EXPERIENCE</a>
         <a href="#skill" onClick={(e) => handleSmoothScroll(e, 'skill')} className="cursor-pointer opacity-50 transition-opacity hover:opacity-100">SKILL</a>
         <a href="#project" onClick={(e) => handleSmoothScroll(e, 'project')} className="cursor-pointer opacity-50 transition-opacity hover:opacity-100">PROJECT</a>
         <a href="#contact" onClick={(e) => handleSmoothScroll(e, 'contact')} className="cursor-pointer opacity-50 transition-opacity hover:opacity-100">CONTACT</a>
@@ -55,6 +56,7 @@ export default function Header() {
       {isMenuOpen && (
         <nav className="section absolute top-16 left-0 right-0 bg-white shadow-md flex flex-col items-center space-y-4 py-4 md:hidden">
           <a href="#about" onClick={(e) => handleSmoothScroll(e, 'about')} className="cursor-pointer opacity-50 transition-opacity hover:opacity-100">ABOUT</a>
+          <a href="#experience" onClick={(e) => handleSmoothScroll(e, 'experience')} className="cursor-pointer opacity-50 transition-opacity hover:opacity-100">EXPERIENCE</a>
           <a href="#skill" onClick={(e) => handleSmoothScroll(e, 'skill')} className="cursor-pointer opacity-50 transition-opacity hover:opacity-100">SKILL</a>
           <a href="#project" onClick={(e) => handleSmoothScroll(e, 'project')} className="cursor-pointer opacity-50 transition-opacity hover:opacity-100">PROJECT</a>
           <a href="#contact" onClick={(e) => handleSmoothScroll(e, 'contact')} className="cursor-pointer opacity-50 transition-opacity hover:opacity-100">CONTACT</a>
