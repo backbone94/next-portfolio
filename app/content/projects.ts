@@ -42,14 +42,10 @@ export const projects = [
     title: 'Figma to Map Plugin',
     media: [
       { type: 'image', src: '/images/figma-plugin/main.png', alt: 'main' },
-      { type: 'video', src: '/videos/import.mp4', alt: 'import' },
-      { type: 'video', src: '/videos/export.mp4', alt: 'export' },
-      { type: 'image', src: '/images/figma-plugin/json.png', alt: 'json' },
-      { type: 'image', src: '/images/figma-plugin/csv.png', alt: 'csv' },
     ],
     features: '지도상에 Figma 컴포넌트 표시, 컴포넌트 드래그/리사이즈/회전, Figma <-> plugin 사이의 Import/Export, 지도 검색 기능 등',
     stack: 'Figma Plugin API, TypeScript, React, Webpack, MUI, OpenLayers',
-    github: 'https://github.com/backbone94/figma-lonlat-plugin',
+    github: '',
     description: `<strong>개요</strong><br>
     인턴으로서 참여한 첫 프로젝트입니다. 프로젝트의 목표는 디자이너와 개발자 간의 협업을 지원하는 Figma에서, 특정 컴포넌트를 지도상의 특정 위치에 배치하고, 해당 위치의 위경도 좌표를 기억할 수 있는 프로그램을 개발하는 것이었습니다.<br><br>
     <strong>배경</strong><br>
