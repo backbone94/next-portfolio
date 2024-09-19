@@ -117,7 +117,7 @@ export default function Project() {
         onClick={() => setIsExpanded(!isExpanded)}
         className="absolute left-1/2 bottom-[-15px] transform -translate-x-1/2 px-4 py-2 bg-sky-400 text-white font-semibold rounded-lg hover:bg-sky-500 transition duration-300 z-50"
       >
-        {isExpanded ? '프로젝트 접기 ⭡' : '프로젝트 더보기 ⭣'}
+        {isExpanded ? '프로젝트 접기' : '프로젝트 더보기'}
       </button>
     </div>
   );
