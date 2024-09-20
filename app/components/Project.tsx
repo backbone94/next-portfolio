@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Swiper from 'swiper';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -14,6 +14,11 @@ export default function Project() {
   const [expandedProjects, setExpandedProjects] = useState(
     Array(projects.length).fill(false)
   );
+  const [isOverflowing, setIsOverflowing] = useState(
+    Array(projects.length).fill(false)
+  );
+
+  const descriptionRefs = useRef<Array<HTMLDivElement | null>>([]);
 
   useEffect(() => {
     Swiper.use([Navigation, Pagination]);
@@ -32,6 +37,20 @@ export default function Project() {
       preventClicksPropagation: false,
     });
   }, [isSectionExpanded]);
+
+  useEffect(() => {
+    descriptionRefs.current.forEach((ref, index) => {
+      if (ref) {
+        const lineHeight = parseFloat(window.getComputedStyle(ref).lineHeight);
+        const lines = ref.scrollHeight / lineHeight;
+        setIsOverflowing((prev) => {
+          const newOverflow = [...prev];
+          newOverflow[index] = lines > 10;
+          return newOverflow;
+        });
+      }
+    });
+  }, [descriptionRefs, isSectionExpanded]);
 
   const toggleDescription = (index: number) => {
     setExpandedProjects((prevState) =>
@@ -124,15 +143,20 @@ export default function Project() {
                 )}
                 <hr className="mb-4" />
                 <div
+                  ref={(el) => {
+                    descriptionRefs.current[index] = el;
+                  }}
                   className={`${expandedProjects[index] ? '' : 'line-clamp-[10]'}`}
                   dangerouslySetInnerHTML={{ __html: project.description }}
                 />
-                <button
-                  className="mt-2 text-blue-500 hover:underline"
-                  onClick={() => toggleDescription(index)}
-                >
-                  {expandedProjects[index] ? '간략히 보기' : '더보기'}
-                </button>
+                {isOverflowing[index] && (
+                  <button
+                    className="mt-2 text-blue-500 hover:underline"
+                    onClick={() => toggleDescription(index)}
+                  >
+                    {expandedProjects[index] ? '간략히 보기' : '더보기'}
+                  </button>
+                )}
               </div>
             </div>
           </div>
