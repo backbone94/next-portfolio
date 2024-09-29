@@ -8,7 +8,7 @@ export default function Education() {
       <div className="flex flex-col items-center space-y-4">
         <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 w-full">
           <div className="text-lg font-bold text-gray-800">아주대학교 소프트웨어학과</div>
-          <div className="text-gray-500">2018.03 ~ 2025.02 졸업예정</div>
+          <div className="text-gray-500">2020.03 ~ 2025.02 졸업예정</div>
         </div>
       </div>
     </section>
