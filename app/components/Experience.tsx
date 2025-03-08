@@ -20,12 +20,6 @@ export default function Experience() {
       ]
     }
   ];
-  const certifications = [
-    {
-      title: '정보처리기사',
-      issueDate: '2021.11'
-    }
-  ];
 
   return (
     <section
@@ -50,17 +44,6 @@ export default function Experience() {
                   <li key={taskIndex}>{task}</li>
                 ))}
               </ul>
-            </div>
-          </div>
-        ))}
-        {certifications.map((certification, index) => (
-          <div key={index} className="flex items-start bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 w-full">
-            <span className="h-6 w-6 text-blue-400 mr-4">🎓</span>
-            <div>
-              <div className="text-lg font-bold text-gray-800">
-                {certification.title}
-              </div>
-              <div className="text-gray-500">{certification.issueDate}</div>
             </div>
           </div>
         ))}
