@@ -18,6 +18,16 @@ export default function Education() {
       issueDate: '2024.12',
       icon: '🌍',
     },
+    {
+      title: 'AWS SAA',
+      issueDate: '2025.09',
+      icon: '☁️',
+    },
+    {
+      title: 'SQLD',
+      issueDate: '2025.12',
+      icon: '🗄️',
+    },
   ];
 
   return (

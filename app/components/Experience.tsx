@@ -1,7 +1,7 @@
 export default function Experience() {
   const experiences = [
     {
-      company: '(주) 이파피루스',
+      company: '이파피루스',
       duration: '2022.04 ~ 2023.12',
       role: '정규직',
       tasks: [
@@ -13,13 +13,21 @@ export default function Experience() {
       ]
     },
     {
-      company: '(주) 베스텔라랩',
+      company: '베스텔라랩',
       duration: '2024.07 ~ 2024.08',
       role: '인턴',
       tasks: [
         'Figma 레이어의 위경도 좌표 변환 Plugin 개발'
       ]
-    }
+    },
+    {
+      company: '아이티센엔텍',
+      duration: '2025.06 ~',
+      role: '정규직',
+      tasks: [
+        '삼성전자 DS 임직원 사내 업무 시스템 운영',
+      ]
+    },
   ];
 
   return (
