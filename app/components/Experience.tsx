@@ -1,15 +1,11 @@
 export default function Experience() {
   const experiences = [
     {
-      company: '이파피루스',
-      duration: '2022.04 ~ 2023.12',
+      company: '아이티센엔텍',
+      duration: '2025.06 ~',
       role: '정규직',
       tasks: [
-        'i18n 라이브러리를 활용한 다국어(영어, 일본어) 처리',
-        '전자 문서 보안을 위한 비가시 추적 코드 삽입 기능 구현',
-        '우클릭 커스텀 컨텍스트 메뉴 개발',
-        '다크모드 전환 기능 추가',
-        '모바일 스크린 리더(TalkBack, VoiceOver)를 활용한 문서 내용 TTS 기능 추가'
+        '삼성전자 DS 임직원 사내 업무 시스템 운영',
       ]
     },
     {
@@ -21,11 +17,15 @@ export default function Experience() {
       ]
     },
     {
-      company: '아이티센엔텍',
-      duration: '2025.06 ~',
+      company: '이파피루스',
+      duration: '2022.04 ~ 2023.12',
       role: '정규직',
       tasks: [
-        '삼성전자 DS 임직원 사내 업무 시스템 운영',
+        'i18n 라이브러리를 활용한 다국어(영어, 일본어) 처리',
+        '전자 문서 보안을 위한 비가시 추적 코드 삽입 기능 구현',
+        '우클릭 커스텀 컨텍스트 메뉴 개발',
+        '다크모드 전환 기능 추가',
+        '모바일 스크린 리더(TalkBack, VoiceOver)를 활용한 문서 내용 TTS 기능 추가'
       ]
     },
   ];
