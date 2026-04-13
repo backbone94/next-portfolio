@@ -1,21 +1,24 @@
 export const projects = [
   {
-    title: 'RC Car',
+    title: '슬기로운 아이티센 생활 | 셔틀 서비스',
     media: [
-      { type: 'image', src: '/images/car/car_2.jpg', alt: 'car_2' },
-      { type: 'image', src: '/images/car/car_3.jpg', alt: 'car_3' },
-      { type: 'video', src: '/videos/car.mp4', alt: 'car' },
-      { type: 'video', src: '/videos/auto_car.mp4', alt: 'autoCar' },
+      { type: 'video', src: '/videos/shuttle.mp4', alt: 'shuttle' },
     ],
-    features: 'App을 통한 RC 카 조종, 자율 주행 등',
-    stack: '시스템 프로그래밍, Arduino 회로 조립, Android Studio App 개발',
-    github: 'https://github.com/backbone94/arduino',
-    duration: '2022.02 ~ 2022.03',
-    teamSize: '1명',
-    contribution: '100%',
-    description: `본격적으로 웹 개발자가 되기로 결정하기 전에 진행한 프로젝트입니다. 웹 개발과는 무관하지만 복잡했던 회로 조립, 학교에서 배우지 않았던 납땜질과 아두이노 시스템 프로그래밍은 개인적으로 값진 경험이었습니다.<br><br>
-    Android Studio를 통해 RC카와 <strong>블루투스 통신</strong>이 가능한 안드로이드 앱을 개발하였습니다. App을 통해 RC카를 직접 수동 조종할 수도 있고, RC카의 앞 부분에 달린 <strong>초음파 센서</strong>를 통해 RC카 스스로 운전해 나가는 <strong>자율 주행 기능</strong>도 추가하였습니다.<br><br>
-    라즈베리 파이가 RAM, GPU 등을 갖추고 있어서 훨씬 복잡한 기능들을 수행할 수 있었지만, 제가 진행하고자 했던 프로젝트는 그보다는 간단한 작업을 수행하는 프로젝트였기 때문에 아두이노를 선택하여 진행하였습니다. 다음에 기회가 된다면 라즈베리 파이에 소형 카메라를 달고서 훨씬 고도화된 자율 주행 기능을 구현해보고 싶은 욕심이 생겼습니다.`,
+    features: '실시간 셔틀 위치 조회, QR 기반 탑승 인증, 실시간 공지, 셔틀 시간표 관리, 1:1 문의, AI 챗봇 기능',
+    stack: 'React, Spring Boot, PostgreSQL, WebSocket, Perplexity, GitHub Actions, AWS EC2, S3',
+    github: 'https://github.com/1hajo/Seur-A-Saeng',
+    duration: '2025.05 ~ 2025.06',
+    teamSize: '5명 (프론트엔드 1명, 백엔드 4명)',
+    contribution: '40% (프론트엔드 단독 개발, UI/UX 설계 및 구현)',
+    description: `ITCEN의 사내 신입 교육 과정에서 임직원의 출퇴근 불편을 해결하기 위한 <strong>셔틀버스 관리 서비스</strong>를 개발한 프로젝트입니다.<br><br>
+    기존 셔틀 운영에서는 셔틀의 실시간 위치를 확인하기 어려워 불필요한 대기 시간이 발생하고, 외부인의 무단 탑승을 통제하기 어렵다는 문제가 있었습니다. 이를 해결하기 위해 <strong>실시간 위치 조회, QR 기반 인증, 공지 및 문의 기능</strong>을 중심으로 서비스를 설계했습니다.<br><br>
+    저는 팀 내 <strong>유일한 프론트엔드 개발자</strong>로 참여하여 UI/UX 설계와 전체 화면 구현을 담당했습니다. 특히 지도 기반의 실시간 셔틀 위치 표시, 노선 선택 인터페이스, 혼잡도 시각화 등 사용자가 직관적으로 정보를 이해할 수 있도록 인터페이스를 구성했습니다.<br><br>
+    실시간 위치 기능은 WebSocket을 통해 전달되는 데이터를 클라이언트에서 수신하여 지도에 반영하는 방식으로 구현했으며, 지속적으로 갱신되는 데이터를 자연스럽게 표현하기 위해 상태 관리와 렌더링 흐름을 최적화했습니다.<br><br>
+    또한 사용자 편의성을 높이기 위해 <strong>Perplexity API를 활용한 AI 챗봇 기능</strong>을 추가했습니다. 셔틀 시간표 데이터와 연동하여 사용자가 가장 빠르게 탑승할 수 있는 셔틀 정보, 정류장 위치, 소요 시간 등을 자연어 기반으로 조회할 수 있도록 구현했으며, 회사 및 계열사 관련 정보 검색 기능도 함께 제공했습니다.<br><br>
+    백엔드 개발자들과 협업하는 구조 속에서 프론트엔드 개발을 단독으로 담당해야 했기 때문에, <strong>Cursor AI를 적극적으로 활용</strong>하여 반복적인 코드 작성과 구조 설계에 드는 시간을 줄이고 개발 생산성을 높였습니다. 이를 통해 인력 불균형 상황에서도 일정 지연 없이 프로젝트를 안정적으로 완수할 수 있었습니다.<br><br>
+    또한 서비스의 친숙함을 높이기 위해 <strong>Runway AI를 활용하여 본사 마스코트 캐릭터 애니메이션</strong>을 제작하고 어플리케이션에 적용했습니다. 기능 중심의 서비스에 감성적인 요소를 더해 사용자 경험을 확장하고자 했습니다.<br><br>
+    실제 사용 환경이 모바일 중심이라는 점을 고려하여 <strong>PWA 도입을 제안하고 적용</strong>했습니다. 사용자가 별도의 앱 설치 없이 홈 화면에 추가하여 앱처럼 사용할 수 있도록 구현하고, 인앱 설치를 유도하는 UI를 설계하여 사용성을 개선했습니다.<br><br>
+    이 프로젝트는 신입 교육 과정에서 진행된 11개 프로젝트 중 <strong>유일하게 본사 상용화 검토 단계까지 이어졌으며</strong>, 실사용을 고려한 서비스 설계와 완성도를 인정받은 경험이었습니다. 이를 통해 <strong>실시간 데이터 기반 UI 설계, 사용자 경험 중심 개발, AI 도구를 활용한 개발 생산성 향상</strong>에 대한 역량을 강화할 수 있었습니다.`
   },
   {
     title: 'Music Diary',
@@ -67,6 +70,52 @@ export const projects = [
     이전에 프론트엔드(Angular) 개발자로써의 경력을 가진 상태로 프로젝트를 진행했다 보니, 프론트엔드 팀원이 속도가 나지 않는 상황일 때 제가 <strong>프론트엔드, 백엔드 개발을 동시에 진행</strong>하면서 시간적으로 부족한 부분들을 최대한 메꾸려는 시도를 하였고, 그로 인해 프로젝트에 좀더 많은 기여를 하게 되었습니다.`,
   },
   {
+    title: 'Figma to Map Plugin',
+    media: [
+      { type: 'image', src: '/images/figma-plugin/main.png', alt: 'main' },
+    ],
+    features: '지도상에 Figma 컴포넌트 표시, 컴포넌트 드래그/리사이즈/회전, Figma <-> plugin 사이의 Import/Export, 지도 검색 기능 등',
+    stack: 'Figma Plugin API, TypeScript, React, Webpack, MUI, OpenLayers',
+    github: '',
+    duration: '2024.07.09 ~ 2024.08.21',
+    teamSize: '1명',
+    contribution: '100%',
+    description: `<strong>대표 이미지는 보안을 위해 블러처리하였습니다.</strong><br><br>
+    인턴으로서 참여한 첫 프로젝트입니다. 프로젝트의 목표는 Figma의 특정 레이어를 지도상의 특정 위치에 배치하고, 해당 위치의 위경도 좌표를 기억할 수 있는 <strong>Figma 플러그인</strong>을 개발하는 것이었습니다.<br><br>
+    Figma 플러그인의 기본 뼈대는 Figma Plugin API의 <a href="https://www.figma.com/plugin-docs/" target="_blank" class="text-blue-500">공식 문서</a>를 참고하여 구성하였으며, 코드 유지보수성을 향상시키고, 바닐라 JavaScript보다 훨씬 더 빨리 작업 속도를 낼 수 있는 React를, 그리고 타입 체크를 통해 더욱 안정적인 개발 진행을 위한 TypeScript를 선택하였습니다.<br><br>
+    하지만 React를 TypeScript와 사용하기 위해서는 Webpack과 같은 번들러의 복잡한 설정이 필요하였습니다. 이런 상황에서 좀 더 효율적인 Figma 플러그인 개발을 위한 방법을 검색해보다가, <strong>Figma와 (Webpack + TypeScript + React) 간의 원활한 조화</strong>를 위해 이미 개발되어 있던 <a href="https://github.com/hseoy/figma-plugin-react-boilerplate" target="_blank" class="text-blue-500">보일러플레이트</a>를 발견하게 되었습니다. 이 보일러플레이트를 사용하여, 따로 번거로운 설정 없이 React와 TypeScript 스펙을 Figma 플러그인 개발에 사용할 수 있어서 편리한 작업을 할 수 있었습니다.<br>
+    UI 라이브러리는, 구글의 Material Design 가이드라인을 바탕으로 만들어진 <strong>MUI(Material UI)</strong> 라이브러리를 활용하여 React의 컴포넌트와 잘 어우러지도록 UI를 개선하였습니다.<br><br>
+    Figma 플러그인 위에 지도를 표시하기 위해, 초반에는 Leaflet 라이브러리를 사용하여 개발 진행을 하고 있었으나, Leaflet 라이브러리는, 지도 위에 Polygon을 그리는 기능과, Polygon의 모양 변형, 드래그, 리사이즈 등의 기능을 구현하기 위한 커스텀을 제공하지 않는 고도화된 지도 라이브러리가 아니었기에, 사수분과의 상담를 통해 Leaflet 라이브러리보다 더 다양한 커스텀 기능을 제공하는 <strong>OpenLayers 라이브러리</strong>로 대체하는 방식으로 수정하여 지도 구현을 하였습니다.<br>
+    또한 Polygon을 지도의 특정 위치에 배치시켜야 할 때, 지도를 직접 드래그 하면서 그 지역을 찾으려고 하는 게 매우 비효율적이다라는 생각을 하게 되었고, 지도 검색 기능을 <strong>Nominatim 라이브러리</strong>를 사용하여 추가하였습니다.<br><br>
+    이 플러그인의 핵심 기능인, Polygon의 위경도 좌표 변환을 위해서는 좌표계에 대한 개념을 알아야 했는데, OpenLayers 라이브러리가 사용하고 있는 <strong>EPSG:3857 좌표계</strong>와, 위경도 좌표를 나타내는 데에 사용되는 <strong>EPSG:4326 좌표계</strong>와 같은 생소한 개념들을 알지 못한 채로 작업을 진행해서 중간에 좌표 변환이 제대로 이뤄지지 않는 바람에 조금 힘들었던 경험을 하였습니다.<br>
+    지도 라이브러리의 첫 사용과, 좌표계에 대한 새로운 개념을 공부할 수 있었던 뜻깊은 프로젝트였습니다.`,
+  },
+  {
+    title: 'Company Projects',
+    media: [
+      { type: 'video', src: '/videos/company/right_click.mp4', alt: 'right_click_video' },
+      { type: 'image', src: '/images/company/invisible_tracer_desc.png', alt: 'invisible_tracer_desc' },
+      { type: 'video', src: '/videos/company/invisible_tracer.mp4', alt: 'invisible_tracer' },
+      { type: 'image', src: '/images/company/dark_mode.png', alt: 'dark_mode' },
+      { type: 'image', src: '/images/company/light_mode.png', alt: 'light_mode' },
+    ],
+    features: '우클릭(Context menu) 커스텀 기능, 문서 추적코드 추가, 다크모드, 모바일 스크린 리더',
+    stack: 'Angular, SCSS',
+    reference: 'https://demo.epapyrus.com/ko/streamdocs',
+    duration: '2022.04.13 ~ 2023.12.15',
+    teamSize: '2명 (기능 구현 1명, 관리자 페이지 담당 1명)',
+    contribution: '90% (관리자 페이지를 제외한 모든 기능 구현)',
+    description: `
+    데모 버전으로 공개되어 있는, 이전 회사에서 진행했었던 프로젝트들을 모아봤습니다. PDF를 웹 상에서 실시간으로 수정할 수 있는 뷰어 솔루션의 프론트엔드 기능 개발 및 유지보수 업무를 맡았습니다. 버그 수정 또는 이슈 해결과 같이 자잘하게 진행했었던 작업들은 제외하고, 제가 핵심적으로 참여했던 프로젝트로는 <strong>우클릭 커스텀 기능, 비가시 추적코드 추가, 다크모드 기능, 모바일 스크린 리더</strong> 등이 있습니다.<br><br>
+    1. 우클릭 커스텀 기능: 문서에서 마우스 우클릭 시 컨텍스트 메뉴가 나타나며, 관리자 페이지에서 컨텍스트 메뉴에 포함시키고자 하는 기능들을 커스텀하여 <strong>나만의 컨텍스트 메뉴</strong>를 만들 수 있는 기능을 구현했습니다. 문서에서 자주 쓰는 기능들은 컨텍스트 메뉴에 추가시켜 놓음으로써 사용자 경험을 향상시키고, 더 직관적인 인터페이스를 제공할 수 있었습니다.<br><br>
+    
+    2. 비가시 추적코드 추가: 문서의 보안 강화를 위한 기술로, PDF 문서에 <strong>보이지 않는 워터마크를 삽입</strong>하여 문서의 원본 및 열람 정보를 추적할 수 있는 기능을 구현했습니다. 실제 인쇄된 문서에도 적용되는 기술이었으며, 문서를 인쇄한 후 전용 앱을 통해 추적코드의 인식 정확도를 테스트하는 과정을 거치면서 이미지 해상도 및 인쇄와 관련된 DPI 개념을 숙지할 수 있는 계기가 되었습니다.<br><br>
+    
+    3. 다크모드 기능: 사용자 접근성과 편의성을 높이기 위해 다크모드 기능을 구현했습니다. SCSS를 통해 사용자의 선호에 따라 <strong>다크모드와 라이트모드를 전환</strong>할 수 있도록 설계하였습니다.<br><br>
+    
+    4. 모바일 스크린 리더: 안드로이드의 TalkBack, IOS의 VoiceOver 모바일 스크린 리더가 PDF의 내용을 읽을 수 있도록 <strong>웹 접근성(Web Accessibility)</strong>을 향상시켰습니다.`,
+  },
+  {
     title: "Jun's Portfolio (Original)",
     media: [
       { type: 'image', src: '/images/portfolio/portfolio.png', alt: 'portfolio' },
@@ -100,6 +149,29 @@ export const projects = [
     이번 리뉴얼을 통해 반응형 웹 디자인의 중요성을 이해하게 되었고, 사용자 경험을 고려한 웹 개발을 더욱 잘 구현할 수 있게 되었습니다. 이 포트폴리오 페이지는 새로운 정보와 프로젝트들로 계속해서 채워질 예정입니다.`,
   },
   {
+    title: 'Movie Search',
+    media: [
+      { type: 'image', src: '/images/movie-search/home_picture.png', alt: 'home_picture' },
+      { type: 'image', src: '/images/movie-search/home.gif', alt: 'home' },
+      { type: 'image', src: '/images/movie-search/search.gif', alt: 'search' },
+      { type: 'image', src: '/images/movie-search/detail_page.gif', alt: 'detail_page' },
+      { type: 'image', src: '/images/movie-search/alarm.gif', alt: 'alarm' },
+      { type: 'image', src: '/images/movie-search/mail.png', alt: 'mail' },
+      { type: 'image', src: '/images/movie-search/profile.gif', alt: 'profile' },
+    ],
+    features: '영화 검색, 최신 인기작 & 현재 상영작 & 개봉 예정작 조회, 특정 영화의 상세 정보 조회, 한 줄 리뷰 달기(+좋아요 기능), 개봉 예정작 알림 설정, 네이버 블로그 글 Fetch, 유튜브 영상 Fetch, 이메일 인증, 무한스크롤 등',
+    stack: 'React, Redux Toolkit, TypeScript, (Next.js), Express, MongoDB, AWS S3',
+    github: 'https://github.com/backbone94/nextProject',
+    duration: '2022.03.15 ~ 2022.03.31',
+    teamSize: '1명',
+    contribution: '100%',
+    description: `Blog 만든 경험을 바탕으로, 제가 좋아하는 영화에 대한 프로젝트를 만들어 보았습니다. 좋아하는 분야에 대한 프로젝트를 진행해서인지 Blog 프로젝트를 진행했을 때보다 훨씬 더 흥미롭게 진행했습니다.<br><br>
+    컴포넌트의 재사용을 통한 코드 유지보수성을 위해 <strong>React</strong>를 바탕으로 개발하였으며, JavaScript의 타입에 대한 단점을 보완해줄 <strong>TypeScript</strong>를 활용하였습니다. <strong>Redux Toolkit</strong>을 통해 서버와의 비동기 통신을 수행하였고 프로필 이미지는 <strong>AWS의 S3</strong>에 업로드할 수 있게 개발하였습니다.<br><br>
+    이 프로젝트에서는 Next.js의 사용 목적을 알지 못한 채로 무작정 사용해본 프로젝트였으나, Next.js의 폴더 구조를 통한 편리한 <strong>페이지 라우팅 기능</strong>만큼은 눈에 띄는 경험이었습니다.<br>
+    Blog 프로젝트에서 Redux Saga의 난잡함을 느끼고 난 후에 Redux Toolkit의 존재를 알게되었는데, Redux Saga의 장황한 코드와 복잡성이 Redux Toolkit에서 두배는 더 줄었다고 체감할 수 있었습니다.<br><br>
+    P.S. 현재 해당 프로젝트의 Repository가 제거된 상태인데, 어떤 시기인지는 특정할 수 없지만 Repository의 이름을 보고, 연습용 Repository라고 착각하고 지웠던 것 같습니다. 이를 계기로 이름 짓기의 중요성을 다시 한 번 느끼게 되었습니다.`,
+  },
+  {
     title: 'Blog',
     media: [
       { type: 'image', src: '/images/blog/home.png', alt: 'home' },
@@ -124,72 +196,21 @@ export const projects = [
     아직 미흡한 점이 많아, 추후에 실제 저의 블로그로 사용할 수 있도록 코드 리팩토링 및 기능 추가를 할 예정입니다.`,
   },
   {
-    title: 'Movie Search',
+    title: 'RC Car',
     media: [
-      { type: 'image', src: '/images/movie-search/home_picture.png', alt: 'home_picture' },
-      { type: 'image', src: '/images/movie-search/home.gif', alt: 'home' },
-      { type: 'image', src: '/images/movie-search/search.gif', alt: 'search' },
-      { type: 'image', src: '/images/movie-search/detail_page.gif', alt: 'detail_page' },
-      { type: 'image', src: '/images/movie-search/alarm.gif', alt: 'alarm' },
-      { type: 'image', src: '/images/movie-search/mail.png', alt: 'mail' },
-      { type: 'image', src: '/images/movie-search/profile.gif', alt: 'profile' },
+      { type: 'image', src: '/images/car/car_2.jpg', alt: 'car_2' },
+      { type: 'image', src: '/images/car/car_3.jpg', alt: 'car_3' },
+      { type: 'video', src: '/videos/car.mp4', alt: 'car' },
+      { type: 'video', src: '/videos/auto_car.mp4', alt: 'autoCar' },
     ],
-    features: '영화 검색, 최신 인기작 & 현재 상영작 & 개봉 예정작 조회, 특정 영화의 상세 정보 조회, 한 줄 리뷰 달기(+좋아요 기능), 개봉 예정작 알림 설정, 네이버 블로그 글 Fetch, 유튜브 영상 Fetch, 이메일 인증, 무한스크롤 등',
-    stack: 'React, Redux Toolkit, TypeScript, (Next.js), Express, MongoDB, AWS S3',
-    github: 'https://github.com/backbone94/nextProject',
-    duration: '2022.03.15 ~ 2022.03.31',
+    features: 'App을 통한 RC 카 조종, 자율 주행 등',
+    stack: '시스템 프로그래밍, Arduino 회로 조립, Android Studio App 개발',
+    github: 'https://github.com/backbone94/arduino',
+    duration: '2022.02 ~ 2022.03',
     teamSize: '1명',
     contribution: '100%',
-    description: `Blog 만든 경험을 바탕으로, 제가 좋아하는 영화에 대한 프로젝트를 만들어 보았습니다. 좋아하는 분야에 대한 프로젝트를 진행해서인지 Blog 프로젝트를 진행했을 때보다 훨씬 더 흥미롭게 진행했습니다.<br><br>
-    컴포넌트의 재사용을 통한 코드 유지보수성을 위해 <strong>React</strong>를 바탕으로 개발하였으며, JavaScript의 타입에 대한 단점을 보완해줄 <strong>TypeScript</strong>를 활용하였습니다. <strong>Redux Toolkit</strong>을 통해 서버와의 비동기 통신을 수행하였고 프로필 이미지는 <strong>AWS의 S3</strong>에 업로드할 수 있게 개발하였습니다.<br><br>
-    이 프로젝트에서는 Next.js의 사용 목적을 알지 못한 채로 무작정 사용해본 프로젝트였으나, Next.js의 폴더 구조를 통한 편리한 <strong>페이지 라우팅 기능</strong>만큼은 눈에 띄는 경험이었습니다.<br>
-    Blog 프로젝트에서 Redux Saga의 난잡함을 느끼고 난 후에 Redux Toolkit의 존재를 알게되었는데, Redux Saga의 장황한 코드와 복잡성이 Redux Toolkit에서 두배는 더 줄었다고 체감할 수 있었습니다.<br><br>
-    P.S. 현재 해당 프로젝트의 Repository가 제거된 상태인데, 어떤 시기인지는 특정할 수 없지만 Repository의 이름을 보고, 연습용 Repository라고 착각하고 지웠던 것 같습니다. 이를 계기로 이름 짓기의 중요성을 다시 한 번 느끼게 되었습니다.`,
-  },
-  {
-    title: 'Company Projects',
-    media: [
-      { type: 'video', src: '/videos/company/right_click.mp4', alt: 'right_click_video' },
-      { type: 'image', src: '/images/company/invisible_tracer_desc.png', alt: 'invisible_tracer_desc' },
-      { type: 'video', src: '/videos/company/invisible_tracer.mp4', alt: 'invisible_tracer' },
-      { type: 'image', src: '/images/company/dark_mode.png', alt: 'dark_mode' },
-      { type: 'image', src: '/images/company/light_mode.png', alt: 'light_mode' },
-    ],
-    features: '우클릭(Context menu) 커스텀 기능, 문서 추적코드 추가, 다크모드, 모바일 스크린 리더',
-    stack: 'Angular, SCSS',
-    reference: 'https://demo.epapyrus.com/ko/streamdocs',
-    duration: '2022.04.13 ~ 2023.12.15',
-    teamSize: '2명 (기능 구현 1명, 관리자 페이지 담당 1명)',
-    contribution: '90% (관리자 페이지를 제외한 모든 기능 구현)',
-    description: `
-    데모 버전으로 공개되어 있는, 이전 회사에서 진행했었던 프로젝트들을 모아봤습니다. PDF를 웹 상에서 실시간으로 수정할 수 있는 뷰어 솔루션의 프론트엔드 기능 개발 및 유지보수 업무를 맡았습니다. 버그 수정 또는 이슈 해결과 같이 자잘하게 진행했었던 작업들은 제외하고, 제가 핵심적으로 참여했던 프로젝트로는 <strong>우클릭 커스텀 기능, 비가시 추적코드 추가, 다크모드 기능, 모바일 스크린 리더</strong> 등이 있습니다.<br><br>
-    1. 우클릭 커스텀 기능: 문서에서 마우스 우클릭 시 컨텍스트 메뉴가 나타나며, 관리자 페이지에서 컨텍스트 메뉴에 포함시키고자 하는 기능들을 커스텀하여 <strong>나만의 컨텍스트 메뉴</strong>를 만들 수 있는 기능을 구현했습니다. 문서에서 자주 쓰는 기능들은 컨텍스트 메뉴에 추가시켜 놓음으로써 사용자 경험을 향상시키고, 더 직관적인 인터페이스를 제공할 수 있었습니다.<br><br>
-    
-    2. 비가시 추적코드 추가: 문서의 보안 강화를 위한 기술로, PDF 문서에 <strong>보이지 않는 워터마크를 삽입</strong>하여 문서의 원본 및 열람 정보를 추적할 수 있는 기능을 구현했습니다. 실제 인쇄된 문서에도 적용되는 기술이었으며, 문서를 인쇄한 후 전용 앱을 통해 추적코드의 인식 정확도를 테스트하는 과정을 거치면서 이미지 해상도 및 인쇄와 관련된 DPI 개념을 숙지할 수 있는 계기가 되었습니다.<br><br>
-    
-    3. 다크모드 기능: 사용자 접근성과 편의성을 높이기 위해 다크모드 기능을 구현했습니다. SCSS를 통해 사용자의 선호에 따라 <strong>다크모드와 라이트모드를 전환</strong>할 수 있도록 설계하였습니다.<br><br>
-    
-    4. 모바일 스크린 리더: 안드로이드의 TalkBack, IOS의 VoiceOver 모바일 스크린 리더가 PDF의 내용을 읽을 수 있도록 <strong>웹 접근성(Web Accessibility)</strong>을 향상시켰습니다.`,
-  },
-  {
-    title: 'Figma to Map Plugin',
-    media: [
-      { type: 'image', src: '/images/figma-plugin/main.png', alt: 'main' },
-    ],
-    features: '지도상에 Figma 컴포넌트 표시, 컴포넌트 드래그/리사이즈/회전, Figma <-> plugin 사이의 Import/Export, 지도 검색 기능 등',
-    stack: 'Figma Plugin API, TypeScript, React, Webpack, MUI, OpenLayers',
-    github: '',
-    duration: '2024.07.09 ~ 2024.08.21',
-    teamSize: '1명',
-    contribution: '100%',
-    description: `<strong>대표 이미지는 보안을 위해 블러처리하였습니다.</strong><br><br>
-    인턴으로서 참여한 첫 프로젝트입니다. 프로젝트의 목표는 Figma의 특정 레이어를 지도상의 특정 위치에 배치하고, 해당 위치의 위경도 좌표를 기억할 수 있는 <strong>Figma 플러그인</strong>을 개발하는 것이었습니다.<br><br>
-    Figma 플러그인의 기본 뼈대는 Figma Plugin API의 <a href="https://www.figma.com/plugin-docs/" target="_blank" class="text-blue-500">공식 문서</a>를 참고하여 구성하였으며, 코드 유지보수성을 향상시키고, 바닐라 JavaScript보다 훨씬 더 빨리 작업 속도를 낼 수 있는 React를, 그리고 타입 체크를 통해 더욱 안정적인 개발 진행을 위한 TypeScript를 선택하였습니다.<br><br>
-    하지만 React를 TypeScript와 사용하기 위해서는 Webpack과 같은 번들러의 복잡한 설정이 필요하였습니다. 이런 상황에서 좀 더 효율적인 Figma 플러그인 개발을 위한 방법을 검색해보다가, <strong>Figma와 (Webpack + TypeScript + React) 간의 원활한 조화</strong>를 위해 이미 개발되어 있던 <a href="https://github.com/hseoy/figma-plugin-react-boilerplate" target="_blank" class="text-blue-500">보일러플레이트</a>를 발견하게 되었습니다. 이 보일러플레이트를 사용하여, 따로 번거로운 설정 없이 React와 TypeScript 스펙을 Figma 플러그인 개발에 사용할 수 있어서 편리한 작업을 할 수 있었습니다.<br>
-    UI 라이브러리는, 구글의 Material Design 가이드라인을 바탕으로 만들어진 <strong>MUI(Material UI)</strong> 라이브러리를 활용하여 React의 컴포넌트와 잘 어우러지도록 UI를 개선하였습니다.<br><br>
-    Figma 플러그인 위에 지도를 표시하기 위해, 초반에는 Leaflet 라이브러리를 사용하여 개발 진행을 하고 있었으나, Leaflet 라이브러리는, 지도 위에 Polygon을 그리는 기능과, Polygon의 모양 변형, 드래그, 리사이즈 등의 기능을 구현하기 위한 커스텀을 제공하지 않는 고도화된 지도 라이브러리가 아니었기에, 사수분과의 상담를 통해 Leaflet 라이브러리보다 더 다양한 커스텀 기능을 제공하는 <strong>OpenLayers 라이브러리</strong>로 대체하는 방식으로 수정하여 지도 구현을 하였습니다.<br>
-    또한 Polygon을 지도의 특정 위치에 배치시켜야 할 때, 지도를 직접 드래그 하면서 그 지역을 찾으려고 하는 게 매우 비효율적이다라는 생각을 하게 되었고, 지도 검색 기능을 <strong>Nominatim 라이브러리</strong>를 사용하여 추가하였습니다.<br><br>
-    이 플러그인의 핵심 기능인, Polygon의 위경도 좌표 변환을 위해서는 좌표계에 대한 개념을 알아야 했는데, OpenLayers 라이브러리가 사용하고 있는 <strong>EPSG:3857 좌표계</strong>와, 위경도 좌표를 나타내는 데에 사용되는 <strong>EPSG:4326 좌표계</strong>와 같은 생소한 개념들을 알지 못한 채로 작업을 진행해서 중간에 좌표 변환이 제대로 이뤄지지 않는 바람에 조금 힘들었던 경험을 하였습니다.<br>
-    지도 라이브러리의 첫 사용과, 좌표계에 대한 새로운 개념을 공부할 수 있었던 뜻깊은 프로젝트였습니다.`,
+    description: `본격적으로 웹 개발자가 되기로 결정하기 전에 진행한 프로젝트입니다. 웹 개발과는 무관하지만 복잡했던 회로 조립, 학교에서 배우지 않았던 납땜질과 아두이노 시스템 프로그래밍은 개인적으로 값진 경험이었습니다.<br><br>
+    Android Studio를 통해 RC카와 <strong>블루투스 통신</strong>이 가능한 안드로이드 앱을 개발하였습니다. App을 통해 RC카를 직접 수동 조종할 수도 있고, RC카의 앞 부분에 달린 <strong>초음파 센서</strong>를 통해 RC카 스스로 운전해 나가는 <strong>자율 주행 기능</strong>도 추가하였습니다.<br><br>
+    라즈베리 파이가 RAM, GPU 등을 갖추고 있어서 훨씬 복잡한 기능들을 수행할 수 있었지만, 제가 진행하고자 했던 프로젝트는 그보다는 간단한 작업을 수행하는 프로젝트였기 때문에 아두이노를 선택하여 진행하였습니다. 다음에 기회가 된다면 라즈베리 파이에 소형 카메라를 달고서 훨씬 고도화된 자율 주행 기능을 구현해보고 싶은 욕심이 생겼습니다.`,
   },
 ];
