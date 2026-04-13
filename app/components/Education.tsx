@@ -9,14 +9,9 @@ export default function Education() {
 
   const certifications = [
     {
-      title: '정보처리기사',
-      issueDate: '2021.11',
-      icon: '📜',
-    },
-    {
-      title: 'OPIc IM2',
-      issueDate: '2024.12',
-      icon: '🌍',
+      title: 'SQLD',
+      issueDate: '2025.12',
+      icon: '🗄️',
     },
     {
       title: 'AWS SAA',
@@ -24,9 +19,14 @@ export default function Education() {
       icon: '☁️',
     },
     {
-      title: 'SQLD',
-      issueDate: '2025.12',
-      icon: '🗄️',
+      title: 'OPIc IM2',
+      issueDate: '2024.12',
+      icon: '🌍',
+    },
+    {
+      title: '정보처리기사',
+      issueDate: '2021.11',
+      icon: '📜',
     },
   ];
 
