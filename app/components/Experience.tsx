@@ -5,7 +5,13 @@ export default function Experience() {
       duration: '2025.06 ~',
       role: '정규직',
       tasks: [
-        '삼성전자 DS 임직원 사내 업무 시스템 운영',
+        '삼성전자 DS 임직원 대상 OA 장비 관리 시스템 운영 및 기능 개선',
+        '모바일 SSO 인증 실패 이슈 분석 및 AD 로그인 안정성 확보',
+        'synchronized 기반 동시성(날짜 중복 선택) 제어 로직 구현',
+        '약 8,000명 대상 대량 메일 발송 Timeout 이슈 해결',
+        'Vue CLI(Webpack) → Vite 마이그레이션으로 빌드 시간 약 40% 단축',
+        'Knox API 기반 Q&A 등록 시 관리자 자동 메일 발송 기능 개발',
+        '운영 중 장애 대응 및 사용자 문의 처리로 시스템 안정성 지속 개선'
       ]
     },
     {
