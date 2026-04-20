@@ -73,6 +73,10 @@ export const projects = [
     title: 'Figma to Map Plugin',
     media: [
       { type: 'image', src: '/images/figma-plugin/main.png', alt: 'main' },
+      { type: 'video', src: '/videos/figma-plugin/import.mp4', alt: 'import' },
+      { type: 'video', src: '/videos/figma-plugin/export.mp4', alt: 'export' },
+      { type: 'image', src: '/images/figma-plugin/json.png', alt: 'json' },
+      { type: 'image', src: '/images/figma-plugin/csv.png', alt: 'csv' },
     ],
     features: '지도상에 Figma 컴포넌트 표시, 컴포넌트 드래그/리사이즈/회전, Figma <-> plugin 사이의 Import/Export, 지도 검색 기능 등',
     stack: 'Figma Plugin API, TypeScript, React, Webpack, MUI, OpenLayers',
