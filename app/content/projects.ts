@@ -21,6 +21,30 @@ export const projects = [
     이 프로젝트는 신입 교육 과정에서 진행된 11개 프로젝트 중 <strong>유일하게 본사 상용화 검토 단계까지 이어졌으며</strong>, 실사용을 고려한 서비스 설계와 완성도를 인정받은 경험이었습니다. 이를 통해 <strong>실시간 데이터 기반 UI 설계, 사용자 경험 중심 개발, AI 도구를 활용한 개발 생산성 향상</strong>에 대한 역량을 강화할 수 있었습니다.`
   },
   {
+    title: 'Figma to Map Plugin',
+    media: [
+      { type: 'image', src: '/images/figma-plugin/main.png', alt: 'main' },
+      { type: 'video', src: '/videos/figma-plugin/import.mp4', alt: 'import' },
+      { type: 'video', src: '/videos/figma-plugin/export.mp4', alt: 'export' },
+      { type: 'image', src: '/images/figma-plugin/json.png', alt: 'json' },
+      { type: 'image', src: '/images/figma-plugin/csv.png', alt: 'csv' },
+    ],
+    features: '지도상에 Figma 컴포넌트 표시, 컴포넌트 드래그/리사이즈/회전, Figma <-> plugin 사이의 Import/Export, 지도 검색 기능 등',
+    stack: 'Figma Plugin API, TypeScript, React, Webpack, MUI, OpenLayers',
+    github: '',
+    duration: '2024.07.09 ~ 2024.08.21',
+    teamSize: '1명',
+    contribution: '100%',
+    description: `인턴으로서 참여한 첫 프로젝트입니다. 프로젝트의 목표는 Figma의 특정 레이어를 지도상의 특정 위치에 배치하고, 해당 위치의 위경도 좌표를 기억할 수 있는 <strong>Figma 플러그인</strong>을 개발하는 것이었습니다.<br><br>
+    Figma 플러그인의 기본 뼈대는 Figma Plugin API의 <a href="https://www.figma.com/plugin-docs/" target="_blank" class="text-blue-500">공식 문서</a>를 참고하여 구성하였으며, 코드 유지보수성을 향상시키고, 바닐라 JavaScript보다 훨씬 더 빨리 작업 속도를 낼 수 있는 React를, 그리고 타입 체크를 통해 더욱 안정적인 개발 진행을 위한 TypeScript를 선택하였습니다.<br><br>
+    하지만 React를 TypeScript와 사용하기 위해서는 Webpack과 같은 번들러의 복잡한 설정이 필요하였습니다. 이런 상황에서 좀 더 효율적인 Figma 플러그인 개발을 위한 방법을 검색해보다가, <strong>Figma와 (Webpack + TypeScript + React) 간의 원활한 조화</strong>를 위해 이미 개발되어 있던 <a href="https://github.com/hseoy/figma-plugin-react-boilerplate" target="_blank" class="text-blue-500">보일러플레이트</a>를 발견하게 되었습니다. 이 보일러플레이트를 사용하여, 따로 번거로운 설정 없이 React와 TypeScript 스펙을 Figma 플러그인 개발에 사용할 수 있어서 편리한 작업을 할 수 있었습니다.<br>
+    UI 라이브러리는, 구글의 Material Design 가이드라인을 바탕으로 만들어진 <strong>MUI(Material UI)</strong> 라이브러리를 활용하여 React의 컴포넌트와 잘 어우러지도록 UI를 개선하였습니다.<br><br>
+    Figma 플러그인 위에 지도를 표시하기 위해, 초반에는 Leaflet 라이브러리를 사용하여 개발 진행을 하고 있었으나, Leaflet 라이브러리는, 지도 위에 Polygon을 그리는 기능과, Polygon의 모양 변형, 드래그, 리사이즈 등의 기능을 구현하기 위한 커스텀을 제공하지 않는 고도화된 지도 라이브러리가 아니었기에, 사수분과의 상담를 통해 Leaflet 라이브러리보다 더 다양한 커스텀 기능을 제공하는 <strong>OpenLayers 라이브러리</strong>로 대체하는 방식으로 수정하여 지도 구현을 하였습니다.<br>
+    또한 Polygon을 지도의 특정 위치에 배치시켜야 할 때, 지도를 직접 드래그 하면서 그 지역을 찾으려고 하는 게 매우 비효율적이다라는 생각을 하게 되었고, 지도 검색 기능을 <strong>Nominatim 라이브러리</strong>를 사용하여 추가하였습니다.<br><br>
+    이 플러그인의 핵심 기능인, Polygon의 위경도 좌표 변환을 위해서는 좌표계에 대한 개념을 알아야 했는데, OpenLayers 라이브러리가 사용하고 있는 <strong>EPSG:3857 좌표계</strong>와, 위경도 좌표를 나타내는 데에 사용되는 <strong>EPSG:4326 좌표계</strong>와 같은 생소한 개념들을 알지 못한 채로 작업을 진행해서 중간에 좌표 변환이 제대로 이뤄지지 않는 바람에 조금 힘들었던 경험을 하였습니다.<br>
+    지도 라이브러리의 첫 사용과, 좌표계에 대한 새로운 개념을 공부할 수 있었던 뜻깊은 프로젝트였습니다.`,
+  },
+  {
     title: 'Music Diary',
     media: [
       { type: 'image', src: '/images/music-diary/list.png', alt: 'list' },
@@ -68,30 +92,6 @@ export const projects = [
     실시간 채팅 기능 개발은 <strong>WebSocket 프로토콜</strong>을 활용하였는데, 익숙했던 HTTP 통신과 달리 디버깅 과정에서 오류 메시지가 구체적으로 나오지 않는 바람에 디버깅에 생각보다 애를 먹었습니다.<br>
     그리고 기획 단계에서 언급만 됐었던, <strong>Open AI API를 통한 이미지 생성 기능</strong>을, 촉박한 시간으로 인해 생략하려고 했었지만 최신 AI 기술을 꼭 적용해보고 싶었던 개인적인 욕심에, 프로젝트 마지막쯤에 OpenAI Dall-E 3 API를 사용하여, 모임의 성격을 프롬프트로 요청하면 모임과 관련된 증표 이미지를 생성해주는 기능을 추가하였습니다.<br><br>
     이전에 프론트엔드(Angular) 개발자로써의 경력을 가진 상태로 프로젝트를 진행했다 보니, 프론트엔드 팀원이 속도가 나지 않는 상황일 때 제가 <strong>프론트엔드, 백엔드 개발을 동시에 진행</strong>하면서 시간적으로 부족한 부분들을 최대한 메꾸려는 시도를 하였고, 그로 인해 프로젝트에 좀더 많은 기여를 하게 되었습니다.`,
-  },
-  {
-    title: 'Figma to Map Plugin',
-    media: [
-      { type: 'image', src: '/images/figma-plugin/main.png', alt: 'main' },
-      { type: 'video', src: '/videos/figma-plugin/import.mp4', alt: 'import' },
-      { type: 'video', src: '/videos/figma-plugin/export.mp4', alt: 'export' },
-      { type: 'image', src: '/images/figma-plugin/json.png', alt: 'json' },
-      { type: 'image', src: '/images/figma-plugin/csv.png', alt: 'csv' },
-    ],
-    features: '지도상에 Figma 컴포넌트 표시, 컴포넌트 드래그/리사이즈/회전, Figma <-> plugin 사이의 Import/Export, 지도 검색 기능 등',
-    stack: 'Figma Plugin API, TypeScript, React, Webpack, MUI, OpenLayers',
-    github: '',
-    duration: '2024.07.09 ~ 2024.08.21',
-    teamSize: '1명',
-    contribution: '100%',
-    description: `인턴으로서 참여한 첫 프로젝트입니다. 프로젝트의 목표는 Figma의 특정 레이어를 지도상의 특정 위치에 배치하고, 해당 위치의 위경도 좌표를 기억할 수 있는 <strong>Figma 플러그인</strong>을 개발하는 것이었습니다.<br><br>
-    Figma 플러그인의 기본 뼈대는 Figma Plugin API의 <a href="https://www.figma.com/plugin-docs/" target="_blank" class="text-blue-500">공식 문서</a>를 참고하여 구성하였으며, 코드 유지보수성을 향상시키고, 바닐라 JavaScript보다 훨씬 더 빨리 작업 속도를 낼 수 있는 React를, 그리고 타입 체크를 통해 더욱 안정적인 개발 진행을 위한 TypeScript를 선택하였습니다.<br><br>
-    하지만 React를 TypeScript와 사용하기 위해서는 Webpack과 같은 번들러의 복잡한 설정이 필요하였습니다. 이런 상황에서 좀 더 효율적인 Figma 플러그인 개발을 위한 방법을 검색해보다가, <strong>Figma와 (Webpack + TypeScript + React) 간의 원활한 조화</strong>를 위해 이미 개발되어 있던 <a href="https://github.com/hseoy/figma-plugin-react-boilerplate" target="_blank" class="text-blue-500">보일러플레이트</a>를 발견하게 되었습니다. 이 보일러플레이트를 사용하여, 따로 번거로운 설정 없이 React와 TypeScript 스펙을 Figma 플러그인 개발에 사용할 수 있어서 편리한 작업을 할 수 있었습니다.<br>
-    UI 라이브러리는, 구글의 Material Design 가이드라인을 바탕으로 만들어진 <strong>MUI(Material UI)</strong> 라이브러리를 활용하여 React의 컴포넌트와 잘 어우러지도록 UI를 개선하였습니다.<br><br>
-    Figma 플러그인 위에 지도를 표시하기 위해, 초반에는 Leaflet 라이브러리를 사용하여 개발 진행을 하고 있었으나, Leaflet 라이브러리는, 지도 위에 Polygon을 그리는 기능과, Polygon의 모양 변형, 드래그, 리사이즈 등의 기능을 구현하기 위한 커스텀을 제공하지 않는 고도화된 지도 라이브러리가 아니었기에, 사수분과의 상담를 통해 Leaflet 라이브러리보다 더 다양한 커스텀 기능을 제공하는 <strong>OpenLayers 라이브러리</strong>로 대체하는 방식으로 수정하여 지도 구현을 하였습니다.<br>
-    또한 Polygon을 지도의 특정 위치에 배치시켜야 할 때, 지도를 직접 드래그 하면서 그 지역을 찾으려고 하는 게 매우 비효율적이다라는 생각을 하게 되었고, 지도 검색 기능을 <strong>Nominatim 라이브러리</strong>를 사용하여 추가하였습니다.<br><br>
-    이 플러그인의 핵심 기능인, Polygon의 위경도 좌표 변환을 위해서는 좌표계에 대한 개념을 알아야 했는데, OpenLayers 라이브러리가 사용하고 있는 <strong>EPSG:3857 좌표계</strong>와, 위경도 좌표를 나타내는 데에 사용되는 <strong>EPSG:4326 좌표계</strong>와 같은 생소한 개념들을 알지 못한 채로 작업을 진행해서 중간에 좌표 변환이 제대로 이뤄지지 않는 바람에 조금 힘들었던 경험을 하였습니다.<br>
-    지도 라이브러리의 첫 사용과, 좌표계에 대한 새로운 개념을 공부할 수 있었던 뜻깊은 프로젝트였습니다.`,
   },
   {
     title: 'Company Projects',
