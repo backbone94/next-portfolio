@@ -5,7 +5,7 @@ export default function Experience() {
       duration: '2025.06 ~',
       role: '정규직',
       tasks: [
-        'Vue.js & Spring Boot 기반 삼성전자 DS 임직원 대상 OA 장비 관리 시스템 프론트엔드 운영 및 기능 개선',
+        'Vue.js & Spring Boot 기반 삼성전자 DS 임직원 대상 OA 장비 관리 시스템 운영 및 기능 개선',
         '모바일 SSO 인증 실패 이슈 분석 및 AD 연동 로그인 안정성 확보',
         'synchronized 기반 동시성(날짜 중복 선택) 제어 로직 구현으로 데이터 정합성 보장',
         '약 8,000명 대상 대량 메일 발송 Timeout 이슈 원인 분석 및 해결',
@@ -36,8 +36,8 @@ export default function Experience() {
         'i18n 라이브러리를 활용한 다국어(영어, 일본어) 처리',
         'PDF 인쇄 문서 보안 강화를 위한 비가시 워터마크(추적코드) 삽입 기능 구현',
         '우클릭 커스텀 컨텍스트 메뉴 개발',
-        '다크모드/라이트모드 테마 전환 기능 구현',
-        'Android TalkBack/iOS VoiceOver 지원을 통한 PDF 내용 TTS 기능 구현'
+        '다크모드 / 라이트모드 테마 전환 기능 구현',
+        'Android TalkBack / iOS VoiceOver 지원을 통한 PDF 내용 TTS 기능 구현'
       ]
     },
   ];
@@ -60,7 +60,7 @@ export default function Experience() {
                 )}
               </div>
               <div className="text-gray-500">{experience.duration}</div>
-              <ul className="list-disc list-inside text-gray-600 mt-2">
+              <ul className="list-disc list-inside text-gray-600 mt-2 text-sm">
                 {experience.tasks.map((task, taskIndex) => (
                   <li key={taskIndex}>{task}</li>
                 ))}
