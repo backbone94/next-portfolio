@@ -4,34 +4,33 @@ export default function About() {
   return (
     <section
       id="about"
-      className="select-none container mx-auto p-8 my-12 max-w-2xl bg-gradient-to-r from-white via-gray-100 to-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
+      className="select-none container mx-auto p-8 my-12 max-w-2xl bg-gradient-to-r from-sky-50 via-white to-sky-50 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 border-t-4 border-sky-400"
     >
-      <div className="text-center text-4xl font-extrabold mb-8 text-gray-800">ABOUT</div>
-
       <div className="flex flex-col items-center">
         <a
           href="https://github.com/backbone94/portfolio/blob/master/image/aboutImg.jpg?raw=true"
           target="_blank"
           rel="noopener noreferrer"
-          className="relative mb-6 group"
+          className="relative mb-4 group"
         >
           <Image
-            className="rounded-3xl shadow-lg"
+            className="rounded-full shadow-lg"
             src="/images/about-img.jpg"
             alt="About"
-            width={150}
-            height={150}
+            width={180}
+            height={180}
           />
         </a>
-        <div className="text-center text-lg font-semibold mb-16 text-gray-600 leading-relaxed">
-          더 나은 개발을 위해 오늘도 1일 1커밋,<br />풀스택 개발자 이정준입니다.
-        </div>
+        <h1 className="text-3xl font-extrabold text-gray-800 mb-1">이정준</h1>
+        <div className="text-sky-500 font-semibold text-lg mb-2">Frontend Developer</div>
+        <div className="text-gray-500 text-sm mb-4">더 나은 개발을 위해 오늘도 1일 1커밋</div>
+        <div className="w-12 h-1 bg-sky-400 rounded mb-6" />
 
         <div className="space-y-4 w-full">
           <div className="flex items-start">
             <span className="mr-4 text-xl">🌱</span>
             <p className="text-base text-gray-800 leading-normal">
-              1년 9개월 간의 프론트엔드 개발자로서의 경력을 가지고 있으며, 무엇보다 사용자의 경험을 우선시 합니다.
+              이파피루스, 아이티센엔텍에서 <strong>약 2년 이상의 프론트엔드 실무 경력</strong>을 보유하고 있으며, 무엇보다 사용자의 경험을 우선시합니다.
             </p>
           </div>
 

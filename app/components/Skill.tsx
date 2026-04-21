@@ -26,7 +26,7 @@ export default function Skill() {
   ];
 
   return (
-    <section id="skill" className="select-none container mx-auto p-8 my-12 max-w-2xl bg-gradient-to-r from-white via-gray-100 to-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+    <section id="skill" className="select-none container mx-auto p-8 my-12 max-w-2xl bg-gradient-to-r from-violet-50 via-white to-violet-50 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 border-t-4 border-violet-400">
       <div className="text-center text-4xl font-extrabold mb-8 text-gray-800">SKILL</div>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
         {skills.map((skill, index) => (

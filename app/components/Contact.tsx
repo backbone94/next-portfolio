@@ -6,7 +6,7 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      className="select-none container mx-auto p-8 my-12 max-w-2xl bg-gradient-to-r from-white via-gray-100 to-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
+      className="select-none container mx-auto p-8 my-12 max-w-2xl bg-gradient-to-r from-rose-50 via-white to-rose-50 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 border-t-4 border-rose-400"
     >
       <div className="text-center text-4xl font-extrabold mb-8 text-gray-800">Contact</div>
       <div className="flex justify-center">

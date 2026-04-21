@@ -45,7 +45,7 @@ export default function Experience() {
   return (
     <section
       id="experience"
-      className="select-none container mx-auto p-8 my-12 max-w-2xl bg-gradient-to-r from-white via-gray-100 to-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
+      className="select-none container mx-auto p-8 my-12 max-w-2xl bg-gradient-to-r from-emerald-50 via-white to-emerald-50 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 border-t-4 border-emerald-400"
     >
       <div className="text-center text-4xl font-extrabold mb-8 text-gray-800">EXPERIENCE</div>
       <div className="flex flex-col items-center space-y-4">
