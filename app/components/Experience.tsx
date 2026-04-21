@@ -4,8 +4,9 @@ export default function Experience() {
       company: '아이티센엔텍',
       duration: '2025.06 ~',
       role: '정규직',
+      stack: ['Vue.js', 'Spring Boot', 'Oracle', 'MyBatis'],
       tasks: [
-        'Vue.js & Spring Boot 기반 삼성전자 DS 임직원 대상 OA 장비 관리 시스템 운영 및 기능 개선',
+        '삼성전자 DS 임직원 대상 OA 장비 관리 시스템 운영 및 기능 개선',
         '모바일 SSO 인증 실패 이슈 분석 및 AD 연동 로그인 안정성 확보',
         'synchronized 기반 동시성(날짜 중복 선택) 제어 로직 구현으로 데이터 정합성 보장',
         '약 8,000명 대상 대량 메일 발송 Timeout 이슈 원인 분석 및 해결',
@@ -18,8 +19,9 @@ export default function Experience() {
       company: '베스텔라랩',
       duration: '2024.07 ~ 2024.08',
       role: '인턴',
+      stack: ['TypeScript', 'React', 'Webpack', 'OpenLayers'],
       tasks: [
-        'Figma Plugin API 기반 지도 연동 플러그인 개발 (TypeScript, React, Webpack)',
+        'Figma Plugin API 기반 지도 연동 플러그인 개발',
         'Figma 레이어(폴리곤)의 EPSG:3857 ↔ EPSG:4326 좌표계 변환 및 위경도 좌표 추출 구현',
         'OpenLayers 라이브러리로 폴리곤 드래그/리사이즈/회전 등 커스텀 기능 구현',
         'Nominatim API를 활용한 지도 내 장소 검색 기능 추가',
@@ -31,8 +33,9 @@ export default function Experience() {
       company: '이파피루스',
       duration: '2022.04 ~ 2023.12',
       role: '정규직',
+      stack: ['Angular', 'TypeScript', 'SCSS'],
       tasks: [
-        'Angular 기반 웹 PDF 뷰어 솔루션 프론트엔드 기능 개발 및 유지보수',
+        '웹 PDF 뷰어 솔루션 프론트엔드 기능 개발 및 유지보수',
         'i18n 라이브러리를 활용한 다국어(영어, 일본어) 처리',
         'PDF 인쇄 문서 보안 강화를 위한 비가시 워터마크(추적코드) 삽입 기능 구현',
         '우클릭 커스텀 컨텍스트 메뉴 개발',
@@ -60,6 +63,13 @@ export default function Experience() {
                 )}
               </div>
               <div className="text-gray-500">{experience.duration}</div>
+              <div className="flex flex-wrap gap-2 mt-3">
+                {experience.stack.map((tech, techIndex) => (
+                  <span key={techIndex} className="px-2 py-0.5 bg-emerald-50 text-emerald-600 text-xs font-medium rounded-full border border-emerald-200">
+                    {tech}
+                  </span>
+                ))}
+              </div>
               <ul className="list-disc list-inside text-gray-600 mt-2 text-sm">
                 {experience.tasks.map((task, taskIndex) => (
                   <li key={taskIndex}>{task}</li>
