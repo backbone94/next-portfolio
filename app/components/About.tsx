@@ -19,6 +19,8 @@ export default function About() {
             alt="About"
             width={180}
             height={180}
+            priority
+            sizes="180px"
           />
         </a>
         <h1 className="text-3xl font-extrabold text-gray-800 mb-1">이정준</h1>
