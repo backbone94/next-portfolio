@@ -2,7 +2,7 @@ export default function Experience() {
   const experiences = [
     {
       company: '아이티센엔텍',
-      duration: '2025.06 ~',
+      duration: '2025.06 ~ 2026.05',
       role: '정규직',
       stack: ['Vue.js', 'Spring Boot', 'Oracle', 'MyBatis'],
       tasks: [
