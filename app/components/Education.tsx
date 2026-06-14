@@ -20,7 +20,7 @@ export default function Education() {
     },
     {
       title: 'OPIc IM2',
-      issueDate: '2024.12',
+      issueDate: '2024.11',
       icon: '🌍',
     },
     {
