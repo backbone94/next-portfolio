@@ -25,7 +25,7 @@ export default function Education() {
     },
     {
       title: '정보처리기사',
-      issueDate: '2021.10',
+      issueDate: '2021.11',
       icon: '📜',
     },
   ];
