@@ -1,45 +1,61 @@
 import Image from 'next/image';
+import Reveal from './Reveal';
+import Section from './Section';
+
+const categories = [
+  {
+    label: '프론트엔드',
+    skills: [
+      { src: '/images/skill/typescript.ico', label: 'TypeScript' },
+      { src: '/images/skill/react.ico', label: 'React' },
+      { src: '/images/skill/vue.ico', label: 'Vue.js' },
+      { src: '/images/skill/angular.ico', label: 'Angular' },
+      { src: '/images/skill/nextjs.ico', label: 'Next.js' },
+    ],
+  },
+  {
+    label: '백엔드 · 데이터베이스',
+    skills: [
+      { src: '/images/skill/java.ico', label: 'Java' },
+      { src: '/images/skill/spring.ico', label: 'Spring Boot' },
+      { src: '/images/skill/oracle.ico', label: 'Oracle' },
+      { src: '/images/skill/nestjs.png', label: 'NestJS' },
+      { src: '/images/skill/prisma.png', label: 'Prisma' },
+    ],
+  },
+];
 
 export default function Skill() {
-  const categories = [
-    {
-      label: 'Frontend',
-      skills: [
-        { src: "/images/skill/typescript.ico", alt: "TypeScript", label: "TypeScript" },
-        { src: "/images/skill/react.ico", alt: "React", label: "React" },
-        { src: "/images/skill/vue.ico", alt: "Vue.js", label: "Vue.js" },
-        { src: "/images/skill/angular.ico", alt: "Angular", label: "Angular" },
-        { src: "/images/skill/nextjs.ico", alt: "Next.js", label: "Next.js" },
-      ],
-    },
-    {
-      label: 'Backend & Database',
-      skills: [
-        { src: "/images/skill/java.ico", alt: "Java", label: "Java" },
-        { src: "/images/skill/spring.ico", alt: "Spring Boot", label: "Spring Boot" },
-        { src: "/images/skill/oracle.ico", alt: "Oracle", label: "Oracle" },
-      ],
-    },
-  ];
-
   return (
-    <section id="skill" className="select-none container mx-auto p-8 my-12 max-w-2xl bg-gradient-to-r from-violet-50 via-white to-violet-50 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 border-t-4 border-violet-400">
-      <div className="text-center text-4xl font-extrabold mb-8 text-gray-800">SKILL</div>
-      <div className="space-y-6">
+    <Section
+      id="skill"
+      title="기술 스택"
+      lead="프레임워크에 구애받지 않는 기술 스택을 쌓았습니다."
+    >
+      {/* 제목만 Reveal이고 여기가 정적이면 내용이 먼저 떠 있다가 제목이 나중에 온다 */}
+      <Reveal className="grid gap-4 md:grid-cols-2">
         {categories.map((category) => (
-          <div key={category.label}>
-            <div className="text-sm font-semibold text-violet-500 mb-3 pl-1">{category.label}</div>
-            <div className="grid grid-cols-3 sm:grid-cols-5 gap-4">
-              {category.skills.map((skill, index) => (
-                <div key={index} className="text-center group bg-white p-3 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
-                  <Image src={skill.src} alt={skill.alt} width={48} height={48} className="mx-auto w-12 h-12 rounded-lg group-hover:scale-110 transition-transform duration-300" />
-                  <span className="block mt-2 text-sm font-medium text-gray-700">{skill.label}</span>
-                </div>
+          <div key={category.label} className="rounded-xl border border-border bg-surface p-6">
+            <h3 className="text-sm font-medium text-muted">{category.label}</h3>
+            <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-4">
+              {category.skills.map((skill) => (
+                <li key={skill.label} className="flex items-center gap-2.5">
+                  {skill.src && (
+                    <Image
+                      src={skill.src}
+                      alt=""
+                      width={22}
+                      height={22}
+                      className="h-[22px] w-[22px]"
+                    />
+                  )}
+                  <span className="font-medium">{skill.label}</span>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         ))}
-      </div>
-    </section>
+      </Reveal>
+    </Section>
   );
 }

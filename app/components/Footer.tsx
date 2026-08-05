@@ -1,8 +1,9 @@
 export default function Footer() {
   return (
-    <footer className="w-full py-4 bg-gray-800 text-white">
-      <div className="container mx-auto text-center">
-        <span className="text-sm">Made By Jun 2026. All Rights Reserved.</span>
+    <footer className="border-t border-border">
+      <div className="mx-auto flex max-w-shell flex-wrap items-center justify-between gap-3 px-5 py-8 text-sm text-muted md:px-8">
+        <span>이정준 · AI Native Developer</span>
+        <span>© {new Date().getFullYear()}</span>
       </div>
     </footer>
   );
