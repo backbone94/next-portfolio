@@ -42,10 +42,16 @@ const config: Config = {
           '0%, 100%': { opacity: '0.55', transform: 'translateY(0)' },
           '50%': { opacity: '1', transform: 'translateY(6px)' },
         },
+        /* "/#id" 링크로 도착했을 때 어느 카드인지 알려주는 신호. 링이 한 번 퍼졌다 사라진다. */
+        'focus-pulse': {
+          '0%': { boxShadow: '0 0 0 0 rgb(var(--accent) / 0.55)' },
+          '100%': { boxShadow: '0 0 0 10px rgb(var(--accent) / 0)' },
+        },
       },
       animation: {
         rise: 'rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both',
         'scroll-cue': 'scroll-cue 2.4s cubic-bezier(0.45, 0, 0.55, 1) infinite',
+        'focus-pulse': 'focus-pulse 0.45s cubic-bezier(0.22, 1, 0.36, 1) 1',
       },
     },
   },

@@ -8,6 +8,7 @@ type Props = {
   /** 순차 등장을 위한 지연(초). 목록에서 index로 계산해 넘긴다. */
   delay?: number;
   className?: string;
+  id?: string;
 };
 
 /**
@@ -40,7 +41,7 @@ type Props = {
 const REVEAL_THRESHOLD = 0.7;
 const REVEAL_ROOT_MARGIN = `0px 0px -${100 - REVEAL_THRESHOLD * 100}% 0px`;
 
-export default function Reveal({ children, delay = 0, className }: Props) {
+export default function Reveal({ children, delay = 0, className, id }: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -92,6 +93,7 @@ export default function Reveal({ children, delay = 0, className }: Props) {
   return (
     <div
       ref={ref}
+      id={id}
       data-reveal
       className={className}
       style={delay ? { transitionDelay: `${delay}s` } : undefined}

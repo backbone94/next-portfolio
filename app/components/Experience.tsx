@@ -1,3 +1,4 @@
+import HashHighlight from './HashHighlight';
 import Reveal from './Reveal';
 import Section from './Section';
 
@@ -21,6 +22,8 @@ type Job = {
   /** 확인된 경우에만 적는다. 추정해서 채우지 않는다. */
   role?: string;
   current?: boolean;
+  /** 스킬 카드에서 "/#id"로 이 회사 카드까지 스크롤·강조할 때 쓴다. */
+  id?: string;
   projects: Project[];
 };
 
@@ -50,6 +53,7 @@ const experiences: Job[] = [
     company: '아이티센엔텍',
     duration: '2025.06 — 2026.05',
     role: '정규직',
+    id: 'itcen-entech',
     projects: [
       {
         name: '삼성전자 DS 임직원 OA 장비 관리 시스템',
@@ -112,13 +116,15 @@ export default function Experience() {
       title="경력"
       lead="프론트엔드로 시작해 백엔드와 클라우드 운영까지 넓은 영역의 이력을 쌓았습니다."
     >
+      <HashHighlight />
       <ol className="space-y-4">
         {experiences.map((job, index) => (
           <li key={job.company}>
             <Reveal
               // 경력은 시간순 목록이라 차례로 도착하는 것이 내용상 참이다.
               delay={index * 0.06}
-              className={`rounded-xl border p-6 md:p-7 ${
+              id={job.id}
+              className={`scroll-mt-24 rounded-xl border p-6 md:p-7 ${
                 job.current ? 'border-accent/45 bg-surface' : 'border-border bg-surface'
               }`}
             >
