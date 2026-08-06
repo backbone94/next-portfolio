@@ -27,10 +27,12 @@ export const PROFILE = {
  */
 export const HERO_PROJECT_SLUG = 'the1seoul';
 
+/**
+ * 전화번호는 두지 않는다. 검색에 걸리는 공개 도메인이라 평문으로 적어 두면
+ * 스크래퍼가 그대로 긁어간다. 필요한 사람은 이력서 PDF에서 확인한다.
+ */
 export const CONTACT = {
   email: 'backbone94@naver.com',
-  phone: '010-9287-1684',
-  phoneHref: 'tel:+821092871684',
   github: 'https://github.com/backbone94',
   blog: 'https://sandy-cyclone-cbb.notion.site/55b2fd6390f540caa557399c36957e70',
 } as const;

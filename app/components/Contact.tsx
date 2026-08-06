@@ -2,7 +2,6 @@ import { CONTACT, RESUME_URL } from '../content/site';
 
 const channels = [
   { label: '이메일', value: CONTACT.email, href: `mailto:${CONTACT.email}` },
-  { label: '전화', value: CONTACT.phone, href: CONTACT.phoneHref },
   { label: 'GitHub', value: 'backbone94', href: CONTACT.github, external: true },
   { label: '블로그', value: 'Notion', href: CONTACT.blog, external: true },
 ];
