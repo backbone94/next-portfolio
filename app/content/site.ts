@@ -1,10 +1,24 @@
 /**
  * 사이트 전역 상수.
  *
- * RESUME_URL: 이력서 PDF. 파일은 아직 없으며 `public/resume.pdf`에 넣으면
- * 바로 연결된다. 경로를 한 곳에서만 바꾸도록 여기에 둔다.
+ * SITE_URL: 배포 주소. metadata·sitemap·robots가 모두 이 값을 읽는다.
+ * Vercel Primary Domain이 www 없는 쪽이므로 여기도 www를 붙이지 않는다 —
+ * 어긋나면 canonical이 실제 서빙 주소와 달라진다.
+ *
+ * RESUME_URL: 이력서 PDF. 경로를 한 곳에서만 바꾸도록 여기에 둔다.
  */
+export const SITE_URL = 'https://leejj.dev';
+
 export const RESUME_URL = '/resume.pdf';
+
+/** 이름·직함은 히어로·푸터·구조화 데이터가 함께 쓴다. 세 곳이 어긋나지 않게 여기서 낸다. */
+export const PROFILE = {
+  name: '이정준',
+  nameEn: 'Jeongjun Lee',
+  jobTitle: 'AI Native Developer',
+  affiliation: '와커스 (WACUS)',
+  alumniOf: '아주대학교 소프트웨어학과',
+} as const;
 
 /**
  * 히어로가 크게 보여주는 프로젝트.

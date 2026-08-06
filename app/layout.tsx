@@ -2,20 +2,26 @@ import type { Metadata } from 'next';
 import './globals.css';
 import Header from './components/Header';
 import Footer from './components/Footer';
-
-const siteUrl = 'https://leejj.dev';
+import { SITE_URL } from './content/site';
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Jun's Portfolio",
     template: "%s · Jun's Portfolio",
   },
   description:
     '고객과 제품, 그리고 피드백',
+  /*
+    루트를 canonical로 못박는다. 같은 내용이 www·vercel.app 주소로도 열려
+    있어 중복 문서로 잡힐 여지가 있다. 하위 페이지는 각자 alternates로 덮는다.
+  */
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     type: 'website',
-    url: siteUrl,
+    url: SITE_URL,
     siteName: "Jun's Portfolio",
     title: "Jun's Portfolio",
     description:

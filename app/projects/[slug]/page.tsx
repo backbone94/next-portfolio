@@ -19,6 +19,7 @@ export function generateMetadata({ params }: Props): Metadata {
   return {
     title: project.title,
     description: project.summary,
+    alternates: { canonical: `/projects/${project.slug}` },
     openGraph: {
       type: 'article',
       title: project.title,

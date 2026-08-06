@@ -5,6 +5,7 @@ import ProjectList from './ProjectList';
 export const metadata: Metadata = {
   title: '프로젝트',
   description: '이정준이 진행한 실무·사이드 프로젝트 목록입니다.',
+  alternates: { canonical: '/projects' },
 };
 
 export default function ProjectsPage() {
