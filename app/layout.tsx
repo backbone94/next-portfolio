@@ -3,7 +3,7 @@ import './globals.css';
 import Header from './components/Header';
 import Footer from './components/Footer';
 
-const siteUrl = 'https://next-portfolio-orcin-nu.vercel.app';
+const siteUrl = 'https://www.leejj.dev';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -12,15 +12,20 @@ export const metadata: Metadata = {
     template: "%s · Jun's Portfolio",
   },
   description:
-    '이정준의 포트폴리오. 프론트엔드에서 시작해 백엔드와 인프라까지 맡아 왔고, AI 도구를 붙여 제품 하나를 끝까지 만듭니다.',
+    '고객과 제품, 그리고 피드백',
   openGraph: {
     type: 'website',
     url: siteUrl,
     siteName: "Jun's Portfolio",
     title: "Jun's Portfolio",
     description:
-      '빌드 20초→5초, 8,000명 대상 메일 장애 해결. 프론트엔드에서 백엔드와 인프라까지, AI 도구를 붙여 제품을 끝까지 만듭니다.',
-    images: [{ url: '/images/about-img.jpg', width: 800, height: 600, alt: '이정준' }],
+      '고객과 제품, 그리고 피드백',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "Jun's Portfolio",
+    description:
+      '고객과 제품, 그리고 피드백',
   },
 };
 
