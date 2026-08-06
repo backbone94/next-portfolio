@@ -22,6 +22,20 @@ export default function ProjectMedia({ media, priority = false }: Props) {
    * 일부 파일은 75MB라 첫 프레임까지 파일 전체를 받아야 한다.
    */
   const [playing, setPlaying] = useState<number[]>([]);
+  /**
+   * 서버 렌더 시점에는 알 수 없어 false로 시작한다. 자동 재생 쪽이 기본이고,
+   * 축소를 요청한 사용자에게만 마운트 후 멈춘 화면으로 바뀐다.
+   */
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const query = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(query.matches);
+
+    const onChange = (event: MediaQueryListEvent) => setPrefersReducedMotion(event.matches);
+    query.addEventListener('change', onChange);
+    return () => query.removeEventListener('change', onChange);
+  }, []);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -76,6 +90,24 @@ export default function ProjectMedia({ media, priority = false }: Props) {
                   priority={priority && index === 0}
                   loading={priority && index === 0 ? undefined : 'lazy'}
                   className="h-full w-full object-contain"
+                />
+              ) : item.type === 'animation' ? (
+                /*
+                  GIF 자리를 대신한다. 소리가 없고 스스로 도는 짧은 화면이라
+                  재생 버튼을 두지 않는다. 동작 축소를 요청한 사용자에게는
+                  자동 재생 대신 컨트롤을 줘서 직접 켜게 한다.
+                */
+                /* eslint-disable-next-line jsx-a11y/media-has-caption */
+                <video
+                  src={item.src}
+                  aria-label={item.alt}
+                  autoPlay={!prefersReducedMotion}
+                  controls={prefersReducedMotion}
+                  loop
+                  muted
+                  playsInline
+                  preload="metadata"
+                  className="swiper-no-swiping h-full w-full object-contain"
                 />
               ) : playing.includes(index) ? (
                 /* eslint-disable-next-line jsx-a11y/media-has-caption */

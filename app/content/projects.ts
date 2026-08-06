@@ -1,5 +1,11 @@
+/**
+ * animation은 원래 GIF였던 화면 녹화다. 같은 내용을 mp4로 담으면 34MB가 1MB가
+ * 되는데(search.gif 하나가 11.6MB였다), 클릭해야 재생되는 video로 두면 짧은
+ * UI 시연을 보려고 한 번씩 눌러야 한다. 파일은 영상이되 GIF처럼 알아서 도는
+ * 종류를 따로 둔다.
+ */
 export type MediaItem = {
-  type: 'image' | 'video';
+  type: 'image' | 'video' | 'animation';
   src: string;
   alt: string;
 };
@@ -320,12 +326,12 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
         src: '/images/movie-search/home_picture.png',
         alt: 'MovieTalk 홈 화면. 가운데 영화 검색창이 있고 아래로 인기작·현재 상영작·개봉 예정작 포스터가 세 줄로 나열되어 있다',
       },
-      { type: 'image', src: '/images/movie-search/home.gif', alt: '홈에서 인기작·상영작 목록을 무한스크롤로 넘겨 보는 화면' },
-      { type: 'image', src: '/images/movie-search/search.gif', alt: '영화 제목을 입력해 검색 결과를 받아오는 화면' },
-      { type: 'image', src: '/images/movie-search/detail_page.gif', alt: '영화 상세 화면에서 정보와 한 줄 리뷰를 확인하고 좋아요를 누르는 모습' },
-      { type: 'image', src: '/images/movie-search/alarm.gif', alt: '개봉 예정작에 알림을 설정하는 화면' },
+      { type: 'animation', src: '/images/movie-search/home.mp4', alt: '홈에서 인기작·상영작 목록을 무한스크롤로 넘겨 보는 화면' },
+      { type: 'animation', src: '/images/movie-search/search.mp4', alt: '영화 제목을 입력해 검색 결과를 받아오는 화면' },
+      { type: 'animation', src: '/images/movie-search/detail_page.mp4', alt: '영화 상세 화면에서 정보와 한 줄 리뷰를 확인하고 좋아요를 누르는 모습' },
+      { type: 'animation', src: '/images/movie-search/alarm.mp4', alt: '개봉 예정작에 알림을 설정하는 화면' },
       { type: 'image', src: '/images/movie-search/mail.png', alt: '개봉 알림으로 발송된 안내 메일' },
-      { type: 'image', src: '/images/movie-search/profile.gif', alt: '프로필 이미지를 올려 계정 정보를 수정하는 화면' },
+      { type: 'animation', src: '/images/movie-search/profile.mp4', alt: '프로필 이미지를 올려 계정 정보를 수정하는 화면' },
     ],
     features: '영화 검색, 최신 인기작 & 현재 상영작 & 개봉 예정작 조회, 특정 영화의 상세 정보 조회, 한 줄 리뷰 달기(+좋아요 기능), 개봉 예정작 알림 설정, 네이버 블로그 글 Fetch, 유튜브 영상 Fetch, 이메일 인증, 무한스크롤 등',
     stack: 'React, Redux Toolkit, TypeScript, (Next.js), Express, MongoDB, AWS S3',
@@ -353,13 +359,13 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
         src: '/images/blog/home.png',
         alt: '블로그 홈 화면. 상단에 Home·Language·Framework 카테고리와 검색·프로필이 있고 본문에 유튜브 영상이 embed되어 있다',
       },
-      { type: 'image', src: '/images/blog/darkmode.gif', alt: '우측 상단 아이콘으로 다크모드와 라이트모드를 전환하는 화면' },
-      { type: 'image', src: '/images/blog/category.gif', alt: '새 카테고리를 추가하고 상단 메뉴에 반영되는 화면' },
-      { type: 'image', src: '/images/blog/folder.gif', alt: '카테고리 아래에 폴더를 만들어 글을 분류하는 화면' },
-      { type: 'image', src: '/images/blog/post.gif', alt: 'CKEditor로 글을 작성해 발행하는 화면' },
+      { type: 'animation', src: '/images/blog/darkmode.mp4', alt: '우측 상단 아이콘으로 다크모드와 라이트모드를 전환하는 화면' },
+      { type: 'animation', src: '/images/blog/category.mp4', alt: '새 카테고리를 추가하고 상단 메뉴에 반영되는 화면' },
+      { type: 'animation', src: '/images/blog/folder.mp4', alt: '카테고리 아래에 폴더를 만들어 글을 분류하는 화면' },
+      { type: 'animation', src: '/images/blog/post.mp4', alt: 'CKEditor로 글을 작성해 발행하는 화면' },
       { type: 'image', src: '/images/blog/comment.png', alt: '글 하단에 달린 댓글 목록' },
       { type: 'image', src: '/images/blog/profile.png', alt: 'S3에 업로드한 이미지로 프로필을 설정한 화면' },
-      { type: 'image', src: '/images/blog/mobile.gif', alt: '같은 블로그를 모바일 폭에서 열어 반응형으로 배치가 바뀌는 화면' },
+      { type: 'animation', src: '/images/blog/mobile.mp4', alt: '같은 블로그를 모바일 폭에서 열어 반응형으로 배치가 바뀌는 화면' },
     ],
     features: '카테고리 및 폴더 생성, 글쓰기 및 댓글 달기, S3 이미지 업로드, 반응형 웹(모바일), 다크모드 등',
     stack: 'React, Redux Saga, Express, MongoDB, AWS EC2 & S3',
