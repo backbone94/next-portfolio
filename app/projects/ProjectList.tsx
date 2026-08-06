@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from 'react';
 import ProjectCard from '../components/ProjectCard';
-import Reveal from '../components/Reveal';
 import type { Project } from '../content/projects';
 
 type Props = {
@@ -49,9 +48,7 @@ export default function ProjectList({ projects, tags }: Props) {
 
       <div className="mt-5 grid gap-5 md:grid-cols-2">
         {visible.map((project, index) => (
-          <Reveal key={`${activeTag}-${project.slug}`} className="h-full">
-            <ProjectCard project={project} priority={index < 2} />
-          </Reveal>
+          <ProjectCard key={project.slug} project={project} priority={index < 2} />
         ))}
       </div>
     </div>
