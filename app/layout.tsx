@@ -3,7 +3,7 @@ import './globals.css';
 import Header from './components/Header';
 import Footer from './components/Footer';
 
-const siteUrl = 'https://www.leejj.dev';
+const siteUrl = 'https://leejj.dev';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
