@@ -62,6 +62,20 @@
     background-color: rgb(var(--accent) / 0.28);
   }
 
+  /*
+    OpenAI·Perplexity 로고는 브랜드 색이 따로 없는 단색(검정) 마크라, 다크
+    배경(웜 그래파이트)에서 그대로 두면 칠과 배경이 거의 같은 명도라 묻힌다.
+    다크에서만 반전해 흰색으로 띄우고, 라이트에서는 원래 검정 그대로 둔다.
+    AWS·Docker 같은 브랜드 색 아이콘은 반전하면 색이 망가지므로 대상이 아니다.
+  */
+  [data-mono-icon] {
+    filter: invert(1);
+  }
+
+  :root.light [data-mono-icon] {
+    filter: invert(0);
+  }
+
   /* 숫자가 세로로 정렬되도록 */
   time,
   [data-numeric] {

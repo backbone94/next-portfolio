@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Reveal from './Reveal';
 import Section from './Section';
 
-type SkillItem = { label: string; src?: string };
+type SkillItem = { label: string; src?: string; mono?: boolean };
 type SkillCategory = { label: string; skills: SkillItem[] };
 
 const categories: SkillCategory[] = [
@@ -39,8 +39,8 @@ const categories: SkillCategory[] = [
   {
     label: 'AI',
     skills: [
-      { src: '/images/skill/openai.svg', label: 'OpenAI' },
-      { src: '/images/skill/perplexity.svg', label: 'Perplexity' },
+      { src: '/images/skill/openai.svg', label: 'OpenAI', mono: true },
+      { src: '/images/skill/perplexity.svg', label: 'Perplexity', mono: true },
     ],
   },
 ];
@@ -67,6 +67,7 @@ export default function Skill() {
                       width={22}
                       height={22}
                       unoptimized={skill.src.endsWith('.svg')}
+                      data-mono-icon={skill.mono || undefined}
                       className="h-[22px] w-[22px]"
                     />
                   )}
