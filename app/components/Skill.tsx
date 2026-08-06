@@ -2,7 +2,15 @@ import Image from 'next/image';
 import Reveal from './Reveal';
 import Section from './Section';
 
-const categories = [
+/**
+ * 아이콘은 있는 것만 붙인다. 인프라·AI는 마땅한 아이콘 파일이 없는데,
+ * 그 때문에 항목을 빼면 "백엔드와 인프라까지"라는 소개가 스택에서 증명되지
+ * 않는다. 글자만 있는 항목을 허용하는 편이 낫다.
+ */
+type SkillItem = { label: string; src?: string };
+type SkillCategory = { label: string; skills: SkillItem[] };
+
+const categories: SkillCategory[] = [
   {
     label: '프론트엔드',
     skills: [
@@ -22,6 +30,20 @@ const categories = [
       { src: '/images/skill/nestjs.png', label: 'NestJS' },
       { src: '/images/skill/prisma.png', label: 'Prisma' },
     ],
+  },
+  /* 아래 둘은 프로젝트 스택과 경력에 이미 적혀 있던 것을 끌어올린 것이다. */
+  {
+    label: '인프라 · 운영',
+    skills: [
+      { label: 'AWS' },
+      { label: 'Docker' },
+      { label: 'nginx' },
+      { label: 'GitHub Actions' },
+    ],
+  },
+  {
+    label: 'AI',
+    skills: [{ label: 'OpenAI' }, { label: 'Perplexity' }, { label: 'Naver CLOVA' }],
   },
 ];
 
