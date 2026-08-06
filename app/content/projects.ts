@@ -59,7 +59,7 @@ export const projects: Project[] = [
     featured: true,
     features:
       '진료과별 안내, 의료진 소개, 학술발표, 첨단보유장비, 병원소식 · 공지사항 · 칼럼 · 수술체험기 · 예약문의 게시판, 회원가입 및 소셜 로그인, 통합 검색, 의무기록사본 발급 안내',
-    stack: 'Next.js, React, NestJS, Prisma, PostgreSQL, nginx, Docker, GitHub Actions, AWS Lightsail',
+    stack: 'Next.js, React, NestJS, Prisma, PostgreSQL, Nginx, Docker, GitHub Actions, AWS Lightsail',
     reference: 'https://the1seoul.com',
     duration: '2026.07—2026.08',
     description: `와커스에서 맡은 <strong>강남 더원서울안과 홈페이지 전면 리뉴얼</strong>입니다. 지금 <a href="https://the1seoul.com" target="_blank">the1seoul.com</a>에서 운영 중이며, 저는 사용자 사이트를 중심으로 관리자 페이지와 백엔드 API까지 오가며 작업했습니다. 여러 명이 함께 만든 프로젝트이고 아래는 그중 제가 맡은 부분입니다.<h3>화면에 박혀 있던 내용을 데이터로</h3>
@@ -73,7 +73,7 @@ export const projects: Project[] = [
     아이디 · 비밀번호 찾기에는 캡차가 있는데, 눈으로 읽어야만 통과할 수 있었습니다. 안과 홈페이지에서 시력이 나쁜 사람이 계정을 못 찾는 상황이 될 수 있어 <strong>음성 듣기</strong>를 추가했습니다.<br><br>
     이전 회사에서 PDF 뷰어에 스크린리더 대응을 넣었던 경험이 여기서 다시 쓰였습니다. 접근성은 기능을 다 만든 뒤 덧붙이는 게 아니라, 그 기능이 누구를 막고 있는지 보는 일에 가깝다고 생각합니다.<h3>옛 서버에서 새 서버로 옮기기</h3>
     리뉴얼은 코드를 새로 쓰는 것으로 끝나지 않았습니다. 실제로 운영 중인 사이트를 새 인스턴스로 <strong>옮겨 태우는 일</strong>을 함께 맡았습니다.<br><br>
-    새 서버는 nginx · 프론트엔드(유저 사이트 · 어드민) · 백엔드 · Redis를 각각 컨테이너로 분리하고, <strong>Docker Compose</strong>로 정의한 전용 브리지 네트워크에 묶어 nginx가 컨테이너 이름으로 각 서비스에 라우팅하도록 구성했습니다. 블루-그린 배포로 새 컨테이너를 띄울 때도 같은 네트워크에 붙이기만 하면 됐고, 이 구조 위에서 뒤에 나오는 무중단 전환도 자연스럽게 붙일 수 있었습니다.<br><br>
+    새 서버는 Nginx · 프론트엔드(유저 사이트 · 어드민) · 백엔드 · Redis를 각각 컨테이너로 분리하고, <strong>Docker Compose</strong>로 정의한 전용 브리지 네트워크에 묶어 Nginx가 컨테이너 이름으로 각 서비스에 라우팅하도록 구성했습니다. 블루-그린 배포로 새 컨테이너를 띄울 때도 같은 네트워크에 붙이기만 하면 됐고, 이 구조 위에서 뒤에 나오는 무중단 전환도 자연스럽게 붙일 수 있었습니다.<br><br>
     게시판 글과 팝업 이미지는 레거시 서버에 쌓여 있었습니다. 업로드 파일은 코드 저장소에 들어가지 않는 데이터라 git으로는 따라오지 않습니다. 그대로 두면 글은 보이는데 이미지만 404가 납니다. 옛 서버의 실제 폴더를 새 서버의 도커 볼륨으로 옮겨 붙였습니다.<br><br>
     인증서는 발급받은 뒤 만료 전에 스스로 갱신되도록 걸어 뒀습니다. 사람이 기억해서 눌러야 하는 일로 남기면 언젠가 만료된 인증서로 병원 홈페이지가 열립니다. 준비가 끝나고 나서 도메인을 새 서버로 넘겼습니다.<br><br>
     이 작업은 순서가 곧 안전장치였습니다. 인증서를 미리 준비해 두지 않고 도메인부터 넘기면 그 사이 방문자는 경고 화면을 봅니다. 되돌리기 어려운 일일수록 먼저 확인하고 나중에 넘긴다는 걸 운영 중인 사이트를 옮기며 배웠습니다.<h3>배포에서 배운 것</h3>
@@ -424,6 +424,19 @@ export const PROJECT_TYPES = ['실무', '졸업작품', '사이드', '기타'] a
  * 등장하는 것만 남긴다. 하나짜리 태그까지 모두 노출하면 칩이 26개가 되어
  * 필터가 오히려 훑기 어려워지기 때문이다.
  */
+/**
+ * 스킬 하나가 실제로 등장하는 프로젝트를 찾는다. tags뿐 아니라 stack
+ * 자유텍스트("nginx, Docker, GitHub Actions")도 뒤진다 — Docker·nginx·
+ * GitHub Actions·OpenAI·Perplexity는 tags 배열에 없고 stack에만 있어서다.
+ * 단어 경계(\b)로 끊어야 "Java"가 "JavaScript"에 오탐하지 않는다.
+ */
+export function getProjectsForSkill(skill: string) {
+  const pattern = new RegExp(`\\b${skill.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+  return projects.filter(
+    (project) => pattern.test(project.tags.join(' ')) || pattern.test(project.stack)
+  );
+}
+
 export function getFilterTags() {
   const counts = new Map<string, number>();
   projects.forEach((project) => {

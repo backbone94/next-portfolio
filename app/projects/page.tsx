@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { getFilterTags, projects } from '../content/projects';
 import ProjectList from './ProjectList';
 
@@ -18,7 +19,9 @@ export default function ProjectsPage() {
         </p>
       </header>
 
-      <ProjectList projects={projects} tags={getFilterTags()} />
+      <Suspense fallback={null}>
+        <ProjectList projects={projects} tags={getFilterTags()} />
+      </Suspense>
     </div>
   );
 }
