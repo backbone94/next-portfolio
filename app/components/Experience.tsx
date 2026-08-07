@@ -124,6 +124,8 @@ export default function Experience() {
               // 경력은 시간순 목록이라 차례로 도착하는 것이 내용상 참이다.
               delay={index * 0.06}
               id={job.id}
+              // 기술 스택에서 "/#itcen-entech"로 건너오는 지점. 강조는 여기까지다.
+              hashHighlight
               className={`scroll-mt-24 rounded-xl border p-6 md:p-7 ${
                 job.current ? 'border-accent/45 bg-surface' : 'border-border bg-surface'
               }`}

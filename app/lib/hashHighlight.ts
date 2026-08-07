@@ -1,4 +1,13 @@
 const HIGHLIGHT_CLASS = 'animate-focus-pulse';
+/**
+ * 이 표시가 붙은 요소만 강조 대상이다.
+ *
+ * 해시가 있다고 무조건 잡으면 헤더의 "경력"(#experience)·"연락처"(#contact) 같은
+ * 섹션 앵커까지 걸린다. 섹션은 화면보다 길어서 block: 'center'로 맞추면 제목을
+ * 한참 지난 한가운데에 떨어지고, 펄스도 카드가 아니라 섹션 전체를 두른다.
+ * 표시가 없으면 손대지 않고 브라우저의 기본 앵커 이동(scroll-mt 반영)에 맡긴다.
+ */
+const HIGHLIGHT_ATTR = 'data-hash-highlight';
 /** 스크롤이 멈췄는지 확인하는 간격과, 몇 번 연속 같아야 멈춘 것으로 볼지 */
 const SETTLE_INTERVAL_MS = 100;
 const SETTLE_TICKS = 2;
@@ -62,7 +71,7 @@ function onScrollSettled(run: () => void) {
  */
 export function runHashHighlight(id: string) {
   const el = document.getElementById(id);
-  if (!el) return;
+  if (!el || !el.hasAttribute(HIGHLIGHT_ATTR)) return;
 
   if (prefersReducedMotion()) {
     el.scrollIntoView({ behavior: 'auto', block: 'center' });
