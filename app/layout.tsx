@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/next';
 import type { Metadata } from 'next';
 import './globals.css';
 import Header from './components/Header';
@@ -71,6 +72,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <main id="main">{children}</main>
         <Footer />
         <ScrollToTop />
+        {/*
+          방문 여부를 알 수단이 하나도 없었다. 쿠키를 쓰지 않고 개인을 식별하지도
+          않아 동의 배너 없이 둘 수 있다. 개발 중에는 아무것도 보내지 않는다.
+        */}
+        <Analytics />
       </body>
     </html>
   );
