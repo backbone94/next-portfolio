@@ -67,15 +67,15 @@ export default function ProjectList({ visible, total, tags, activeTag, skill }: 
         주소를 직접 친 경우다. 그래도 빈 화면만 남겨 두지는 않는다.
       */}
       {visible.length === 0 ? (
-        <p className="mt-5 rounded-xl border border-border bg-surface px-6 py-10 text-center text-sm text-muted">
-          조건에 맞는 프로젝트가 없습니다.{' '}
+        <div className="mt-5 rounded-xl border border-border bg-surface px-6 py-10 text-center">
+          <p className="text-sm text-muted">조건에 맞는 프로젝트가 없습니다.</p>
           <Link
             href="/projects"
-            className="font-medium text-accent underline decoration-accent/40 underline-offset-4"
+            className="mt-3 inline-block text-sm font-medium text-accent underline decoration-accent/40 underline-offset-4"
           >
             전체 보기
           </Link>
-        </p>
+        </div>
       ) : (
         <div className="mt-5 grid gap-5 md:grid-cols-2">
           {visible.map((project, index) => (
