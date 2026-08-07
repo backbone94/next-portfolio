@@ -20,19 +20,19 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
   },
+  /*
+    openGraph·twitter에 title/description을 다시 적지 않는다. 여기서 못박으면
+    하위 페이지가 openGraph만 덮었을 때 twitter 쪽은 이 값에 그대로 묶여,
+    프로젝트 상세를 X에 공유해도 카드 제목이 "Jun's Portfolio"로 나간다.
+    비워 두면 각 페이지의 title·description이 그대로 따라온다.
+  */
   openGraph: {
     type: 'website',
     url: SITE_URL,
     siteName: "Jun's Portfolio",
-    title: "Jun's Portfolio",
-    description:
-      '고객과 제품, 그리고 피드백',
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Jun's Portfolio",
-    description:
-      '고객과 제품, 그리고 피드백',
   },
 };
 
