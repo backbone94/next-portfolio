@@ -10,6 +10,14 @@ export function generateStaticParams() {
   return projects.map((project) => ({ slug: project.slug }));
 }
 
+/**
+ * 프로젝트는 로컬 파일의 고정된 목록이라 여기 없는 슬러그는 존재할 수 없다.
+ * 열어 두면 없는 주소마다 서버 렌더를 시도하다 notFound()에 걸리는데, 그때는
+ * 404 화면이 스트리밍으로 넘어가 HTML에 아무것도 안 담긴다. 닫아 두면 정적
+ * 404 라우트가 그대로 나가 서버가 완성한 화면을 준다.
+ */
+export const dynamicParams = false;
+
 export function generateMetadata({ params }: Props): Metadata {
   const project = getProject(params.slug);
   if (!project) return {};
