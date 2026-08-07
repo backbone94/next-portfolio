@@ -24,11 +24,15 @@ export default function FeaturedProjects() {
       }
     >
       <div className="grid gap-5 md:grid-cols-2">
-        {gridProjects.map((project, index) => (
+        {gridProjects.map((project) => (
           // 지연 없이 같이 올라온다. 좌우는 읽는 순서가 아니라서 어긋나게 하면
           // 없는 순서를 있는 것처럼 보이게 할 뿐이다.
+          //
+          // priority는 주지 않는다. 이 구역은 100svh짜리 히어로 아래라 처음엔
+          // 반드시 화면 밖이고, 미리 받아 봐야 정작 LCP인 히어로 이미지와
+          // 대역폭만 다툰다. 스크롤해서 만날 때 lazy로 받으면 된다.
           <Reveal key={project.slug} className="h-full">
-            <ProjectCard project={project} priority={index < 2} />
+            <ProjectCard project={project} />
           </Reveal>
         ))}
       </div>

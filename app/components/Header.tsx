@@ -46,6 +46,8 @@ export default function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
+                  // 색만으로는 어느 메뉴에 있는지 화면 낭독기가 알 수 없다
+                  aria-current={isActive ? 'page' : undefined}
                   className={`rounded-full px-3.5 py-2 text-sm font-medium transition-colors hover:text-text ${
                     isActive ? 'text-accent' : 'text-muted'
                   }`}
