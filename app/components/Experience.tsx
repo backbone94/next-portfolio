@@ -45,6 +45,7 @@ const experiences: Job[] = [
           '의료진 소개·학술발표·유튜브·메인 팝업을 관리자 페이지에서 직접 운영하도록 연동',
           '시각장애 사용자가 계정을 찾을 수 있도록 캡차에 음성 듣기 추가',
           '신규 서버 이관 — DB·업로드 파일 옮기고 SSL 인증서 발급·자동 갱신 구성 후 도메인 전환',
+          '검색 결과 노출을 위한 구조화 데이터(JSON-LD) 적용 및 SEO 관리자 설정 화면 정리',
         ],
       },
     ],
@@ -124,6 +125,8 @@ export default function Experience() {
               // 경력은 시간순 목록이라 차례로 도착하는 것이 내용상 참이다.
               delay={index * 0.06}
               id={job.id}
+              // 기술 스택에서 "/#itcen-entech"로 건너오는 지점. 강조는 여기까지다.
+              hashHighlight
               className={`scroll-mt-24 rounded-xl border p-6 md:p-7 ${
                 job.current ? 'border-accent/45 bg-surface' : 'border-border bg-surface'
               }`}

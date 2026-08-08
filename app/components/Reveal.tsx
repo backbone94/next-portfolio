@@ -9,6 +9,8 @@ type Props = {
   delay?: number;
   className?: string;
   id?: string;
+  /** "/#id"로 도착했을 때 강조 대상으로 삼을지. 표시가 없으면 기본 앵커 이동만 한다. */
+  hashHighlight?: boolean;
 };
 
 /**
@@ -41,7 +43,7 @@ type Props = {
 const REVEAL_THRESHOLD = 0.7;
 const REVEAL_ROOT_MARGIN = `0px 0px -${100 - REVEAL_THRESHOLD * 100}% 0px`;
 
-export default function Reveal({ children, delay = 0, className, id }: Props) {
+export default function Reveal({ children, delay = 0, className, id, hashHighlight }: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -95,6 +97,7 @@ export default function Reveal({ children, delay = 0, className, id }: Props) {
       ref={ref}
       id={id}
       data-reveal
+      data-hash-highlight={hashHighlight || undefined}
       className={className}
       style={delay ? { transitionDelay: `${delay}s` } : undefined}
     >

@@ -84,7 +84,7 @@ const projects = [
   {
     title: '더원서울안과 홈페이지 리뉴얼',
     // 팀 규모는 적지 않는다. 저장소 커밋 계정으로는 실제 인원을 확정할 수 없다.
-    meta: '2026.07—현재 · 사용자 사이트 · 백엔드 · 인프라 참여 · Next.js, NestJS, Prisma, PostgreSQL, AWS',
+    meta: '2026.07—2026.08 · 사용자 사이트 · 백엔드 · 인프라 참여 · Next.js, NestJS, Prisma, PostgreSQL, AWS',
     lines: [
       '안과 병원 홈페이지 전면 리뉴얼. 사용자 사이트와 관리자 페이지, 백엔드 API를 오가며 작업했습니다. (the1seoul.com 운영 중)',
       '회원가입부터 네이버 · 카카오 소셜 로그인까지 인증 전반을 맡았고 아이디 열거와 무차별 로그인 시도를 막는 처리를 함께 넣었습니다.',
@@ -130,7 +130,7 @@ const projects = [
 const skills = [
   ['프론트엔드', 'TypeScript, React, Vue.js, Angular, Next.js, Tailwind CSS'],
   ['백엔드 · DB', 'Java, Spring Boot, Node.js, NestJS, Prisma, Oracle, MySQL, PostgreSQL'],
-  ['인프라', 'AWS (EC2, S3, RDS, ElastiCache), GitHub Actions, Vercel'],
+  ['인프라', 'AWS (EC2, S3, RDS, ElastiCache), Docker, nginx, GitHub Actions, Vercel'],
   ['AI 활용', 'OpenAI, Perplexity, Naver CLOVA, Cursor'],
 ];
 
