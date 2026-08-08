@@ -27,8 +27,8 @@ const profile = {
   title: 'AI Native Developer',
   contacts: ['backbone94@naver.com', '010-9287-1684', 'github.com/backbone94'],
   summary:
-    '프론트엔드에서 시작해 백엔드와 인프라까지 맡아 왔습니다. Angular · Vue · React · Next.js를 모두 실무에서 썼고 ' +
-    'Spring Boot와 AWS로 서버와 클라우드도 직접 운영했습니다. 운영 중인 서비스에서 터진 문제를 찾아 고친 기록이 많습니다.',
+    '프론트엔드에서 시작해 백엔드와 인프라까지 맡아 왔습니다. Angular · Vue · React · Next.js 프론트엔드 프레임워크 모두를 실무에서 사용한 경험이 있고 ' +
+    'Spring Boot/Nest.js와 AWS로 서버 및 클라우드도 직접 운영했습니다. Claude Code, Cursor 등 AI 도구를 개발 전 과정에 적극 활용하며, OpenAI·Perplexity API로 서비스 기능도 직접 구현했습니다.',
 };
 
 const experiences = [
