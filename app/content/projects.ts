@@ -83,7 +83,7 @@ export const projects: Project[] = [
     title: '슬기로운 아이티센 생활 | 셔틀 서비스',
     slug: 'shuttle',
     summary: '셔틀이 지금 어디쯤인지 확인하고 QR로 탑승하는 사내 모바일 서비스',
-    highlight: '신입 교육 11개 팀 가운데 유일하게 본사 상용화 검토까지 갔습니다',
+    highlight: '신입 교육 11개 팀 가운데 유일하게 본사 상용화 검토까지 갔습니다.',
     role: '프론트엔드 단독 (5인 팀)',
     tags: ['실무', 'React', 'Spring Boot', 'WebSocket', 'AI/LLM', 'PWA'],
     featured: true,
@@ -111,7 +111,7 @@ export const projects: Project[] = [
     title: 'Figma to Map Plugin',
     slug: 'figma-to-map',
     summary: 'Figma에서 그린 도형을 지도 위에 올려놓고 위경도를 뽑아내는 플러그인',
-    highlight: '좌표 변환이 자꾸 어긋나길래 EPSG:3857과 4326의 차이를 공부해 직접 풀었습니다',
+    highlight: '지도와 관련된 프로젝트로써, EPSG:3857/4326 등 좌표 변환의 개념을 알게 되었습니다.',
     role: '단독 개발 (인턴)',
     tags: ['실무', 'TypeScript', 'React', 'OpenLayers'],
     featured: true,
@@ -148,8 +148,8 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
   {
     title: 'Music Diary',
     slug: 'music-diary',
-    summary: '그날 쓴 일기를 읽고 어울리는 음악을 골라 주는 웹 서비스',
-    highlight: 'CLOVA로는 감정이 세 단계밖에 안 나와 OpenAI로 갈아탔고, 호출당 0.15달러라 상업화는 어렵다고 봤습니다',
+    summary: '그날 쓴 일기를 읽고 어울리는 음악을 골라 주는 서비스',
+    highlight: '단순 일기 어플이 아닌, 사용자의 감정을 분석해주는 기능에 집중하였습니다.',
     role: '단독 개발',
     tags: ['사이드', 'Next.js', 'React', 'AI/LLM', 'Prisma'],
     featured: true,
@@ -180,8 +180,8 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
   {
     title: '살롱 | SSALON',
     slug: 'ssalon',
-    summary: '한 번 모이고 끝나는 모임을 3D 증표로 남겨 두는 서비스',
-    highlight: '프론트엔드만 하던 사람이 백엔드를 맡아 JWT와 Redis Refresh Token으로 인증을 설계했습니다',
+    summary: '한 번 모이고 끝나는 일회성 모임을 3D 증표로 남겨 두는 서비스',
+    highlight: '프론트엔드 실무 경력이 있었음에도 백엔드 개발을 도전하게 된 프로젝트입니다.',
     role: '백엔드 주도 (5인 팀)',
     tags: ['졸업작품', 'Angular', 'Spring Boot', 'Three.js', 'AWS', 'AI/LLM'],
     featured: true,
@@ -221,8 +221,8 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
   {
     title: '웹 PDF 뷰어 솔루션',
     slug: 'pdf-viewer',
-    summary: '이파피루스의 상용 웹 PDF 뷰어입니다. 비가시 워터마크와 다크모드, 스크린리더 대응을 맡았습니다',
-    highlight: '인쇄해도 남는 눈에 안 보이는 추적코드를 만들면서 DPI와 해상도를 제대로 익혔습니다',
+    summary: '브라우저에서의 실시간 전자문서(PDF) 뷰어 솔루션',
+    highlight: '프론트엔드로써 첫 실무 경력을 쌓았습니다.',
     role: '기능 개발 전담',
     tags: ['실무', 'Angular', 'SCSS', '웹접근성'],
     // 메인은 최근작 위주로 좁게 간다. 이 프로젝트는 /projects 목록에서 만난다.
@@ -259,7 +259,7 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
     title: "Jun's Portfolio (Original)",
     slug: 'portfolio-original',
     summary: 'HTML/CSS/JS만으로 만든 첫 포트폴리오 사이트',
-    highlight: '모바일에서 디자인이 깨지는 걸 보고 프레임워크가 왜 필요한지 알게 됐습니다',
+    highlight: '모바일에서 디자인이 깨지는 걸 보고 프레임워크의 중요성을 인지하게 되었습니다.',
     role: '단독 개발',
     tags: ['사이드', 'HTML/CSS/JS'],
     featured: false,
@@ -283,8 +283,8 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
   {
     title: "Jun's Portfolio (Next.js)",
     slug: 'portfolio-nextjs',
-    summary: '지금 보고 계신 이 사이트. Next.js와 Tailwind로 리뉴얼했습니다',
-    highlight: '반응형과 SEO를 생각해 App Router로 다시 만들었습니다',
+    summary: '지금 보고 있는 현재 포트폴리오 사이트',
+    highlight: '기존 포트폴리오 사이트를 반응형과 SEO를 고려하여 Next.js로 다시 구현하였습니다.',
     role: '단독 개발',
     tags: ['사이드', 'Next.js', 'Tailwind'],
     featured: false,
@@ -316,7 +316,7 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
     title: 'Movie Search',
     slug: 'movie-search',
     summary: '영화를 찾아보고 한 줄 리뷰를 남기고 개봉 알림도 받는 사이트',
-    highlight: 'Redux Saga의 장황함에 지쳐 Redux Toolkit으로 옮겼더니 코드가 절반으로 줄었습니다',
+    highlight: 'Redux Saga의 장황함에 지쳐 Redux Toolkit으로 옮겼더니 코드가 절반으로 줄었습니다.',
     role: '단독 개발',
     tags: ['사이드', 'React', 'Redux', 'TypeScript', 'Express'],
     featured: false,
@@ -349,7 +349,7 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
     title: 'Blog',
     slug: 'blog',
     summary: '카테고리와 댓글, 다크모드까지 붙여 본 첫 CRUD 웹사이트',
-    highlight: '처음으로 React SPA를 만들고 EC2에 직접 배포까지 해봤습니다',
+    highlight: '처음으로 React SPA를 만들고 EC2에 직접 배포까지 해봤습니다.',
     role: '단독 개발',
     tags: ['사이드', 'React', 'Redux', 'Express', 'AWS'],
     featured: false,
@@ -375,15 +375,15 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
     contribution: '100%',
     description: `Blog는 저의 첫 CRUD 웹사이트 프로젝트입니다. 개발자라면 자신만의 기록 공간이 필수적으로 있어야 한다고 생각했기 때문에 첫 번째 프로젝트로 블로그를 만들어 보았습니다.<h3>무엇으로 만들었나</h3>
     여기서 첫 <strong>React</strong> SPA 사이트를 만들었고, 서버와의 비동기 통신에는 <strong>Redux Saga</strong>를 썼습니다. 글쓰기는 텍스트 에디터 중 하나인 CKEditor로 구현하였습니다. 프로필 이미지는 <strong>AWS의 S3</strong>에 올리도록 만들었고 <strong>AWS EC2 인스턴스</strong>로 실제 배포 단계까지 밟아 봤습니다.<h3>Redux Saga에서 겪은 좌절</h3>
-    Redux Saga는 <strong>러닝커브</strong>를 각오하고 시작했지만, 개발하는 내내 반복되고 장황한 코드 패턴과 생소한 generator 함수에 좌절했던 기억이 있습니다. 지금 돌아보면 이 정도 규모에 Redux Saga를 쓴 것 자체가 비효율이었지만, 덕분에 <strong>비동기 통신</strong> 개념은 확실히 잡았습니다.<h3>백엔드를 처음 만져 보고</h3>
+    Redux Saga는 <strong>러닝커브</strong>를 각오하고 시작했지만, 개발하는 내내 반복되고 장황한 코드 패턴과 생소한 generator 함수에 좌절했던 기억이 있습니다. 지금 돌아보면 이 정도 규모에 Redux Saga를 쓴 것 자체가 비효율이었지만, 덕분에 <strong>비동기 통신</strong> 개념은 확실히 잡았습니다.<h3>JS의 매력</h3>
     프론트엔드 개발자가 목표였지만, Node.js 환경에서 백엔드를 다뤄 보니 JavaScript의 매력을 새삼 느꼈습니다.<br>
     아직 미흡한 점이 많아, 나중에 실제 제 블로그로 쓸 수 있도록 코드를 리팩토링하고 기능을 더할 생각입니다.`,
   },
   {
     title: 'RC Car',
     slug: 'rc-car',
-    summary: '휴대폰으로 조종하고 초음파 센서로 혼자 달리는 아두이노 RC카',
-    highlight: '웹으로 방향을 정하기 전에 납땜과 회로를 직접 만져 본 프로젝트입니다',
+    summary: '휴대폰으로 조종하고 초음파 센서로 자율주행을 하는 아두이노 RC카',
+    highlight: '웹 개발자로 진로를 정하기 전에 납땜과 회로, 그리고 프로그래밍을 처음으로 하게 된 계기의 프로젝트입니다.',
     role: '단독 개발',
     tags: ['기타', 'Arduino', 'Android'],
     featured: false,
