@@ -72,7 +72,7 @@ export default function Header() {
               height="16"
               viewBox="0 0 16 16"
               stroke="currentColor"
-              strokeWidth="1.4"
+              strokeWidth="1.5"
               strokeLinecap="round"
               aria-hidden
             >

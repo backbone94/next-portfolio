@@ -70,7 +70,13 @@ export default function ProjectCard({
 
         <p className="mt-2 text-sm leading-relaxed text-muted">{project.summary}</p>
 
-        <p className="mt-4 border-l-2 border-accent/50 pl-3 text-sm leading-relaxed">
+        {/*
+          앰버 좌측 선이었다. 같은 장치를 카드·상세 하이라이트·본문 h3
+          세 곳에서 쓰다 보니 강조가 강조를 잃었다. 색면 하나만 남기고
+          (상세 페이지 머리글) 여기는 가로선으로 물러난다 — 사이트가
+          이미 쓰고 있는 선 언어라 새 장치를 들일 필요도 없다.
+        */}
+        <p className="mt-4 border-t border-border pt-4 text-sm leading-relaxed">
           {project.highlight}
         </p>
 

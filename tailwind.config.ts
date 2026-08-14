@@ -17,6 +17,9 @@ const config: Config = {
         border: token('border'),
         accent: token('accent'),
         'accent-ink': token('accent-ink'),
+        /* 앰버 색면 위의 본문·라벨. opacity 대신 최종 색을 못박은 값이다. */
+        'accent-ink-body': token('accent-ink-body'),
+        'accent-ink-soft': token('accent-ink-soft'),
       },
       borderColor: {
         DEFAULT: token('border'),

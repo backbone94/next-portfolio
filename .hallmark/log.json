@@ -1,0 +1,42 @@
+{
+  "runs": [
+    {
+      "date": "2026-08-14",
+      "verb": "audit + redesign",
+      "scope": "app",
+      "genre": "editorial",
+      "designSystem": "DESIGN.md",
+      "designedAsApp": true,
+      "theme": "locked — warm graphite + single amber (DESIGN.md)",
+      "findings": "1 critical · 5 major · 4 minor",
+      "critical": [
+        "stamp lies — DESIGN.md rejects the category default grid, but four home sections shipped the same card rhythm"
+      ],
+      "changed": [
+        "Section.tsx: per-section vertical rhythm (wide/base/close/quiet); section heads no longer animate",
+        "Skill.tsx: 4 cards -> hairline definition list",
+        "Education.tsx: 2 cards -> quiet hairline index, max-w-3xl",
+        "Experience.tsx: card chrome removed, hairline rows",
+        "globals.css: accent-ink-body/soft tokens, warm-tinted light surface, word-break keep-all, overflow-x clip",
+        "Contact.tsx: opacity -> named tokens (light label 3.95 -> 4.79), CTA label shortened + nowrap",
+        "side-stripe reduced from 3 uses to 1 (project detail header only)",
+        "icon stroke unified to 1.5 — EXCEPT Hero.tsx, which is back on 1.75 (see heroDecision)"
+      ],
+      "heroDecision": {
+        "chosen": "original — untouched. Reverted from git HEAD at the user's request.",
+        "rejected": [
+          "A — min-h calc(100svh-17rem) + justify-start, so the project heading clears the fold",
+          "B — full 100svh with the screenshot clipped at the fold"
+        ],
+        "why": "The user prefers the original full-viewport hero with the scroll-cue arrow. B was rejected on measurement: its crop is leftover space, not a controlled value (0% cropped at 1280x1200, 37% at 1280x945, 60% at 1440x790). A held above ~773px viewport height but was still a change the user did not want.",
+        "openTell": "Hallmark still flags this hero as 'full-viewport centred hero' + scroll cue — a recognised generated-landing shape. Kept deliberately; do not re-flag it as a finding on future runs without asking.",
+        "restored": [
+          "app/components/Hero.tsx — git checkout HEAD",
+          "tailwind.config.ts — scroll-cue keyframe + animation put back (Hero depends on it)",
+          "DESIGN.md — hero layout entry restored to describe the original"
+        ]
+      },
+      "note": "Diversification rule inverted (designed-as-app): pages share the system; variety lives in section form, not theme."
+    }
+  ]
+}

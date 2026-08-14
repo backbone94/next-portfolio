@@ -93,8 +93,14 @@ export default function ProjectDetailPage({ params }: Props) {
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-14">
         <div className="order-2 min-w-0 lg:order-1">
           <h2 className="text-xl font-bold tracking-[-0.01em]">이렇게 만들었습니다</h2>
+          {/*
+            h3에도 앰버 좌측 선이 붙어 있었다. 바로 위 머리글 하이라이트가
+            같은 장치를 쓰는데 본문 소제목까지 겹치면, 한 화면에 같은 강조가
+            대여섯 번 나온다. 소제목은 무게와 위 여백만으로 충분히 선다 —
+            이 사이트의 위계는 색이 아니라 무게가 만든다는 규칙 그대로다.
+          */}
           <div
-            className="mt-5 max-w-prose text-[0.9688rem] leading-[1.9] text-text/85 [&_a]:text-accent [&_a]:underline [&_a]:underline-offset-4 [&_h3]:mb-2.5 [&_h3]:mt-10 [&_h3]:border-l-2 [&_h3]:border-accent [&_h3]:pl-3 [&_h3]:text-[1.0625rem] [&_h3]:font-bold [&_h3]:leading-snug [&_h3]:text-text [&_strong]:font-bold [&_strong]:text-text"
+            className="mt-5 max-w-prose text-[0.9688rem] leading-[1.9] text-text/85 [&_a]:text-accent [&_a]:underline [&_a]:underline-offset-4 [&_h3]:mb-2.5 [&_h3]:mt-10 [&_h3]:text-[1.0625rem] [&_h3]:font-black [&_h3]:leading-snug [&_h3]:tracking-[-0.01em] [&_h3]:text-text [&_strong]:font-bold [&_strong]:text-text"
             dangerouslySetInnerHTML={{ __html: project.description }}
           />
         </div>

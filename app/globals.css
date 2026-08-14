@@ -4,6 +4,10 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hallmark · genre: editorial · design-system: DESIGN.md · designed-as-app
+ * pre-emit critique: P5 H5 E4 S5 R5 V4
+ */
+
 /*
   컴포넌트 클래스는 두지 않는다. 전부 유틸리티로 처리해 선택자가 서로
   상쇄되는 일을 없앤다. 여기에는 토큰과 접근성 바닥선만 둔다.
@@ -24,11 +28,20 @@
     --border: 62 57 51;
     --accent: 255 178 36;
     --accent-ink: 23 21 15;
+    /*
+      앰버 색면 위의 본문과 라벨. opacity로 흐리게 만들던 자리다.
+      불투명도는 대비를 계산할 수 없는 값이라 — 라이트에서 라벨이 3.95까지
+      떨어져 있었다 — 최종 색을 토큰으로 못박는다. 아래 값은 앰버 위에서
+      각각 7.43 : 1, 5.04 : 1이다.
+    */
+    --accent-ink-body: 58 45 18;
+    --accent-ink-soft: 94 68 21;
   }
 
   :root.light {
     --bg: 250 248 244;
-    --surface: 255 255 255;
+    /* 순백은 나머지가 전부 웜 틴트인 팔레트에서 혼자 계열 밖으로 튄다 */
+    --surface: 255 253 250;
     --surface-2: 244 241 235;
     --text: 26 24 21;
     --muted: 107 101 92;
@@ -36,6 +49,9 @@
     /* 밝은 배경에서 4.5:1을 넘기려면 다크의 앰버를 그대로 쓸 수 없다 */
     --accent: 146 77 4;
     --accent-ink: 255 252 246;
+    /* 앰버 위에서 5.41 : 1, 4.78 : 1 */
+    --accent-ink-body: 244 235 222;
+    --accent-ink-soft: 235 221 202;
   }
 
   html {
@@ -46,10 +62,28 @@
     color-scheme: light;
   }
 
+  /*
+    가로 넘침 안전판. hidden이 아니라 clip이어야 한다 — hidden은 스크롤
+    컨테이너를 만들어 헤더와 상세 사이드바의 position: sticky를 죽인다.
+  */
+  html,
+  body {
+    overflow-x: clip;
+  }
+
   body {
     @apply bg-bg text-text antialiased;
     font-family: 'Wanted Sans Variable', system-ui, sans-serif;
     font-optical-sizing: auto;
+    /*
+      한글은 기본값(word-break: normal)에서 음절 사이 어디서나 끊긴다.
+      "어떻게 만들었는 / 지"처럼 어절 중간이 잘리는데, 카드 본문이나
+      20rem 사이드바처럼 좁은 폭에서 계속 일어난다. keep-all이 어절을
+      묶고, anywhere가 긴 영문 URL·식별자는 그래도 끊어 넘침을 막는다.
+      둘은 짝이다 — keep-all만 두면 긴 영단어가 컨테이너를 밀어낸다.
+    */
+    word-break: keep-all;
+    overflow-wrap: anywhere;
   }
 
   /* 마우스 클릭에는 링을 띄우지 않고 키보드 이동에만 띄운다 */

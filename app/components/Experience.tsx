@@ -115,20 +115,28 @@ export default function Experience() {
       id="experience"
       title="경력"
       lead="프론트엔드로 시작해 백엔드와 클라우드 운영까지 넓은 영역의 이력을 쌓았습니다."
+      space="base"
     >
       <HashHighlight />
-      <ol className="space-y-4">
+      {/*
+        카드였다. 위 프로젝트 카드와 같은 상자(rounded-xl · border ·
+        bg-surface)를 써서, 스크린샷이 있는 것과 글만 있는 것이 같은 무게로
+        보였다. 여기서 상자를 걷어 내면 프로젝트 카드가 페이지에서 유일하게
+        "떠 있는" 것이 되고 — 그게 이 포트폴리오가 보여주려는 것이다.
+
+        경계는 가로선 하나로 충분하다. 재직 중 표시는 앰버 배지가 이미
+        하고 있어서 테두리 색까지 겹칠 이유가 없다.
+      */}
+      <ol className="border-t border-border">
         {experiences.map((job, index) => (
-          <li key={job.company}>
+          <li key={job.company} className="border-b border-border">
             <Reveal
               // 경력은 시간순 목록이라 차례로 도착하는 것이 내용상 참이다.
               delay={index * 0.06}
               id={job.id}
               // 기술 스택에서 "/#itcen-entech"로 건너오는 지점. 강조는 여기까지다.
               hashHighlight
-              className={`scroll-mt-24 rounded-xl border p-6 md:p-7 ${
-                job.current ? 'border-accent/45 bg-surface' : 'border-border bg-surface'
-              }`}
+              className="scroll-mt-24 rounded-lg py-7 md:py-9"
             >
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1.5">
               <h3 className="text-lg font-bold tracking-[-0.01em]">{job.company}</h3>

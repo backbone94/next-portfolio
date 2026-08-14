@@ -1,0 +1,13 @@
+{
+  "scannedAt": "2026-08-14",
+  "designMd": "DESIGN.md",
+  "systemManaged": true,
+  "framework": "Next.js 14.2.8 (app router)",
+  "fontStack": "Wanted Sans Variable (wanted-sans, package.json:19 · globals.css:1)",
+  "palette": "RGB-channel custom properties in :root, dark default + .light (app/globals.css)",
+  "tailwind": "v3, reads CSS vars via token() helper (tailwind.config.ts:4)",
+  "motion": "motion-cut — no framer-motion/gsap/lenis. Reveal.tsx toggles data-revealed, CSS owns the transition.",
+  "spacing": "Tailwind 4pt + max-w-shell 78rem / max-w-prose 42rem",
+  "genre": "editorial",
+  "preserve": ["font stack", "palette", "spacing scale", "DESIGN.md contract"]
+}

@@ -25,7 +25,7 @@ export default function ProjectList({ visible, total, tags, activeTag, skill }: 
       {skill ? (
         <div className="flex flex-wrap items-center gap-3">
           <span className="rounded-full border border-accent bg-accent/10 px-3.5 py-1.5 text-sm font-medium text-accent">
-            &quot;{skill}&quot; 관련 프로젝트
+            &ldquo;{skill}&rdquo; 관련 프로젝트
           </span>
           <Link
             href="/projects"

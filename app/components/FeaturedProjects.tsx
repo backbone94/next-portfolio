@@ -14,6 +14,8 @@ export default function FeaturedProjects() {
       id="project"
       title="프로젝트"
       lead="각 프로젝트마다 어떤 화면을 어떻게 만들었는지 자세히 적어 뒀습니다."
+      // 페이지에서 가장 넓게 여는 구역. 이 사이트가 보여주려는 것이 여기 있다.
+      space="wide"
       action={
         <Link
           href="/projects"
