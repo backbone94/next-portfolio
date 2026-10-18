@@ -3,12 +3,14 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { CONTACT } from '../content/site';
+import { systemShowsCopyNotice } from '../lib/clipboard';
 
 /**
  * 누르면 메일 주소를 복사한다. mailto: 링크는 기본 메일 앱이 없는 컴퓨터(웹메일만
  * 쓰는 경우가 많다)에서 아무 반응이 없다.
  *
- * 결과는 버튼 글자를 바꾸지 않고 화면 아래쪽 가운데의 토스트로 잠깐 알린다.
+ * 결과는 버튼 글자를 바꾸지 않고 화면 아래쪽 가운데의 토스트로 잠깐 알린다. 안드로이드 13 이상은
+ * 시스템이 복사 알림을 직접 띄우므로, 그때는 성공 토스트를 띄우지 않는다.
  * 브라우저가 복사를 막으면 주소를 토스트에 보여 줘서 직접 옮겨 적을 수 있게 한다.
  * 토스트는 body에 바로 붙인다. 조상 요소에 transform(떠오르는 연출)이 걸려 있으면
  * fixed가 화면이 아니라 그 요소를 기준으로 잡힌다.
@@ -20,7 +22,12 @@ export default function CopyEmailButton({ className, children = '메일' }: { cl
   const [toast, setToast] = useState<{ id: number; text: string } | null>(null);
   // 서버가 그린 화면에는 토스트 자리가 없다. 화면이 뜬 뒤에 붙여야 처음 화면과 어긋나지 않는다.
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  // 안드로이드 13 이상은 시스템이 "복사했어요"를 띄운다. 그때는 성공 토스트를 생략한다(lib/clipboard.ts).
+  const [systemNotice, setSystemNotice] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+    systemShowsCopyNotice().then(setSystemNotice);
+  }, []);
 
   useEffect(() => {
     if (!toast) return;
@@ -32,8 +39,10 @@ export default function CopyEmailButton({ className, children = '메일' }: { cl
     let text: string;
     try {
       await navigator.clipboard.writeText(CONTACT.email);
+      if (systemNotice) return;
       text = `${CONTACT.email} 주소를 복사했습니다.`;
     } catch {
+      // 복사가 막혔으면 시스템 알림도 뜨지 않는다. 어느 환경이든 주소를 보여 준다
       text = `메일 주소는 ${CONTACT.email}입니다.`;
     }
     // 연달아 눌러도 떠오르는 연출이 다시 돌도록 매번 새 key를 준다

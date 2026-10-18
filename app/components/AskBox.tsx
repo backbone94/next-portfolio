@@ -777,8 +777,10 @@ export default function AskBox({ initial, askOnLoad }: Props) {
   if (!started) {
     // 정가운데에 두면 눈이 가는 입력창이 화면 중심보다 아래에 놓여 처져 보인다. 아래 여백으로 묶음을 화면 높이의 12%만큼 올려
     // 입력창이 위에서 44% 안팎에 오게 한다.
+    // 휴대폰(sm 미만)은 반대다. 질문 버튼이 세 줄로 늘어 묶음 아래쪽이 길어지므로, 같은 여백을 주면 입력창이 36%까지 올라간다.
+    // 그래서 위 여백을 조금 주어 묶음을 내리고, 입력창이 화면 한가운데(375×812에서 51%)에 오게 한다.
     return (
-      <section className="relative mx-auto flex min-h-[100svh] max-w-intro flex-col justify-center px-5 pb-[24svh] lg:px-0">
+      <section className="relative mx-auto flex min-h-[100svh] max-w-intro flex-col justify-center px-5 pt-[5svh] sm:pb-[24svh] sm:pt-0 lg:px-0">
         <div className="animate-rise">
           <h1 className="text-[clamp(2rem,5vw,3rem)] font-black leading-[1.2] tracking-[-0.03em]">
             안녕하세요, 이정준입니다.
