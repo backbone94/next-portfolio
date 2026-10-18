@@ -75,6 +75,32 @@ export function claudeAvailable() {
 type Emit = (event: AskStreamEvent) => void;
 
 /**
+ * 답에 깨진 글자(U+FFFD, "�")가 섞였으면 그 주변 원본 조각을 돌려준다. 없으면 null이다.
+ *
+ * 2026-10-18 미리보기에서 "쓰였습니다"가 "�였습니다"로 온 적이 있다. SDK는 바이트를 줄 단위로
+ * 모은 뒤 글자로 바꾸므로 조각 경계에서 한글이 잘릴 수 없고, 같은 질문을 로컬에서 5번 다시 물었을 때는
+ * 재현되지 않았다. API가 그때만 깨진 조각을 보냈는지 확인하려고, 다시 생기면 증거를 남긴다.
+ * codes는 글자마다의 코드 값이다. 로그나 표에서 "�"가 어떤 글자인지 헷갈리지 않게 숫자로도 남긴다.
+ */
+export type BrokenText = { messageId: string; count: number; around: { index: number; text: string; codes: string[] }[] };
+
+function findBroken(deltas: string[], messageId: string): BrokenText | null {
+  const hits = deltas.flatMap((text, index) => (text.includes('�') ? [index] : []));
+  if (hits.length === 0) return null;
+  // 앞뒤 두 조각씩. 깨진 글자가 여러 군데여도 처음 세 군데만 본다
+  const indexes = Array.from(new Set(hits.slice(0, 3).flatMap((i) => [i - 2, i - 1, i, i + 1, i + 2]))).filter((i) => i >= 0 && i < deltas.length);
+  return {
+    messageId,
+    count: hits.length,
+    around: indexes.map((index) => ({
+      index,
+      text: deltas[index],
+      codes: Array.from(deltas[index]).map((ch) => ch.codePointAt(0)!.toString(16).toUpperCase().padStart(4, '0')),
+    })),
+  };
+}
+
+/**
  * 답을 흘려 보내며 쓴다. 글자와 출처가 도착하는 대로 emit으로 내보내고, 다 끝나면
  * 검사와 손질을 마친 최종 답을 돌려준다. 화면은 마지막에 그 답으로 갈아 끼운다.
  * 방문자가 창을 닫으면 signal이 호출을 끊어 남은 출력 비용을 아낀다.
@@ -114,6 +140,8 @@ export async function streamClaude(
   const segments: AskAnswer['segments'] = [];
   // 글 조각만 받는다. 다른 모델로 넘어간 자리 표시(fallback) 같은 조각은 건너뛴다
   let inText = false;
+  // 받은 글 조각을 손대기 전 그대로 모아 둔다. 깨진 글자가 섞였을 때만 쓴다(findBroken).
+  const deltas: string[] = [];
 
   for await (const event of stream) {
     if (event.type === 'content_block_start') {
@@ -126,6 +154,7 @@ export async function streamClaude(
       const segment = segments[segments.length - 1];
       if (event.delta.type === 'text_delta') {
         segment.text += event.delta.text;
+        deltas.push(event.delta.text);
         emit({ type: 'text', text: event.delta.text });
       } else if (event.delta.type === 'citations_delta') {
         const citation = event.delta.citation;
@@ -156,7 +185,12 @@ export async function streamClaude(
     cacheWrite: message.usage.cache_creation_input_tokens ?? 0,
     output: message.usage.output_tokens,
   };
-  console.info('[ask] claude usage', JSON.stringify({ ...usage, cited: sources.length }));
+  const broken = findBroken(deltas, message.id);
+  if (broken) {
+    usage.broken = broken;
+    console.warn('[ask] 깨진 글자', JSON.stringify(broken));
+  }
+  console.info('[ask] claude usage', JSON.stringify({ ...usage, broken: undefined, cited: sources.length }));
   onUsage?.(usage);
   if (message.stop_reason === 'refusal') {
     return notice('이 질문에는 답하기 어렵습니다. 포트폴리오와 관련된 질문을 해 주세요.');

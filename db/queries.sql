@@ -44,5 +44,12 @@ where env = 'production'
 group by page
 order by asked desc;
 
--- 6. 1년이 지난 기록 지우기. 지우면 되돌릴 수 없으니 먼저 select count(*)로 건수를 확인한다.
+-- 6. 깨진 글자(�)가 섞인 Claude 답. broken에 그 주변 원본 조각과 글자 코드가 남는다.
+--    codes에 FFFD가 있으면 API가 보낸 조각부터 깨져 있었다는 뜻이다. 미리보기 기록도 함께 본다.
+select created_at, env, page, question, answer, broken
+from ask_log
+where answer like '%' || chr(65533) || '%' or broken is not null
+order by created_at desc;
+
+-- 7. 1년이 지난 기록 지우기. 지우면 되돌릴 수 없으니 먼저 select count(*)로 건수를 확인한다.
 -- delete from ask_log where created_at < now() - interval '1 year';

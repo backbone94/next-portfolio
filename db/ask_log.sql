@@ -23,7 +23,12 @@ create table if not exists ask_log (
   input_tokens  integer,
   cache_read    integer,
   cache_write   integer,
-  output_tokens integer
+  output_tokens integer,
+  -- Claude 답에 깨진 글자(U+FFFD)가 섞였을 때만 그 주변 원본 조각을 남긴다 (claude.ts의 findBroken)
+  broken        jsonb
 );
+
+-- 표를 먼저 만든 뒤에 추가한 칸. 이미 만든 표에도 붙도록 따로 둔다
+alter table ask_log add column if not exists broken jsonb;
 
 create index if not exists ask_log_created_at on ask_log (created_at desc);
