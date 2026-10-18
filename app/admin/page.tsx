@@ -153,6 +153,27 @@ function Dashboard({ stats }: { stats: Stats }) {
         </Block>
       </div>
 
+      <Block title="최근 방문" note="한국 시간 기준, 최근 100건. 방문자 값이 같으면 같은 날 같은 기기다">
+        {stats.recent.length === 0 ? (
+          <Empty />
+        ) : (
+          <Table head={['시각', '페이지', '유입 경로', '위치', '기기', '방문자']}>
+            {stats.recent.map((v, i) => (
+              <tr key={i} className="border-t align-top">
+                <td className="whitespace-nowrap py-2 pr-4" data-numeric>
+                  <time>{v.at}</time>
+                </td>
+                <td className="py-2 pr-4">{pageName(v.path)}</td>
+                <td className="py-2 pr-4 text-muted">{v.referrer ?? '(직접 방문)'}</td>
+                <td className="py-2 pr-4 text-muted">{v.city ? `${v.city} · ${countryName(v.country)}` : countryName(v.country)}</td>
+                <td className="whitespace-nowrap py-2 pr-4 text-muted">{DEVICE[v.device ?? ''] ?? v.device}</td>
+                <td className="py-2 font-mono text-xs text-muted">{v.visitor}</td>
+              </tr>
+            ))}
+          </Table>
+        )}
+      </Block>
+
       <Block title="많이 들어온 질문">
         <CountTable head={['질문', '횟수', '마지막']} rows={stats.questions.map((q) => [q.question, q.asked, q.last])} />
       </Block>

@@ -22,6 +22,15 @@ export type Stats = {
   countries: Count[];
   cities: { country: string | null; city: string | null; count: number }[];
   devices: Count[];
+  recent: {
+    at: string;
+    path: string;
+    referrer: string | null;
+    country: string | null;
+    city: string | null;
+    device: string | null;
+    visitor: string;
+  }[];
   questions: { question: string; asked: number; last: string }[];
   claudeAnswers: { at: string; page: string | null; question: string; route: string | null; confidence: number | null }[];
   claudeDaily: { day: string; calls: number; input: number; cacheWrite: number; cacheRead: number; output: number }[];
@@ -33,7 +42,7 @@ export async function loadStats(env: Env, days: number): Promise<Stats | null> {
   const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
   const kst = (column: string) => `(${column} at time zone 'Asia/Seoul')`;
 
-  const [totals, daily, pages, referrers, countries, cities, devices, askTotals, questions, claudeAnswers, claudeDaily] =
+  const [totals, daily, pages, referrers, countries, cities, devices, recent, askTotals, questions, claudeAnswers, claudeDaily] =
     await Promise.all([
       // visitor 값은 날마다 바뀌므로 서로 다른 값의 수가 곧 "날짜별 순방문 수의 합"이다
       sql`select count(*)::int as visits, count(distinct visitor)::int as visitors
@@ -62,6 +71,14 @@ export async function loadStats(env: Env, days: number): Promise<Stats | null> {
       sql`select device as label, count(distinct visitor)::int as count
           from visit_log where env = ${env} and created_at > ${since}
           group by device order by count desc`,
+      // 방문 한 건씩. 시각은 한국 시간으로 초까지, 방문자 값은 같은 날 같은 사람인지 알아볼 만큼 앞 6자리만 낸다
+      sql.query(
+        `select to_char(${kst('created_at')}, 'YYYY-MM-DD HH24:MI:SS') as at, path, referrer, country, city, device,
+                left(visitor, 6) as visitor
+         from visit_log where env = $1 and created_at > $2
+         order by created_at desc limit 100`,
+        [env, since],
+      ),
       sql`select count(*)::int as asks, count(*) filter (where answered_by = 'claude')::int as claude
           from ask_log where env = ${env} and created_at > ${since}`,
       sql.query(
@@ -97,6 +114,7 @@ export async function loadStats(env: Env, days: number): Promise<Stats | null> {
     countries: countries as Count[],
     cities: cities as Stats['cities'],
     devices: devices as Count[],
+    recent: recent as Stats['recent'],
     questions: questions as Stats['questions'],
     claudeAnswers: claudeAnswers as Stats['claudeAnswers'],
     claudeDaily: claudeDaily as Stats['claudeDaily'],
