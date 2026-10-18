@@ -352,8 +352,6 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
   },
 ];
 
-export const featuredProjects = projects.filter((project) => project.featured);
-
 export function getProject(slug: string) {
   return projects.find((project) => project.slug === slug);
 }
@@ -366,14 +364,9 @@ export function summaryPhrase(project: Project) {
   return project.summary.replace(/\s*프로젝트$/, '');
 }
 
-/** 각 프로젝트 tags 배열의 첫 항목으로 쓰이는 유형. 필터에서 항상 먼저 노출된다. */
+/** 각 프로젝트 tags 배열의 첫 항목으로 쓰이는 유형. "프로젝트 전부" 답이 이 순서로 건수를 센다. */
 export const PROJECT_TYPES = ['실무', '졸업작품', '사이드', '기타'] as const;
 
-/**
- * 필터 칩 목록. 유형을 먼저 놓고, 기술 태그는 2개 이상의 프로젝트에
- * 등장하는 것만 남긴다. 하나짜리 태그까지 모두 노출하면 칩이 26개가 되어
- * 필터가 오히려 훑기 어려워지기 때문이다.
- */
 /**
  * 스킬 하나가 실제로 등장하는 프로젝트를 찾는다. tags뿐 아니라 stack
  * 자유텍스트("nginx, Docker, GitHub Actions")도 뒤진다 — Docker·nginx·
@@ -385,19 +378,4 @@ export function getProjectsForSkill(skill: string) {
   return projects.filter(
     (project) => pattern.test(project.tags.join(' ')) || pattern.test(project.stack)
   );
-}
-
-export function getFilterTags() {
-  const counts = new Map<string, number>();
-  projects.forEach((project) => {
-    project.tags.forEach((tag) => counts.set(tag, (counts.get(tag) ?? 0) + 1));
-  });
-
-  const types = PROJECT_TYPES.filter((type) => counts.has(type));
-  const techTags = Array.from(counts.entries())
-    .filter(([tag, count]) => count >= 2 && !PROJECT_TYPES.includes(tag as never))
-    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-    .map(([tag]) => tag);
-
-  return [...types, ...techTags];
 }

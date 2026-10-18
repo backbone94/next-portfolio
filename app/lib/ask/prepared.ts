@@ -1,6 +1,4 @@
-import { certifications, education } from '@/app/components/Education';
-import { experiences } from '@/app/components/Experience';
-import { categories as skillCategories } from '@/app/components/Skill';
+import { certifications, education, experiences, skillCategories } from '@/app/content/career';
 import { projectAnswers, STARTER_LABELS, STARTER_QUESTIONS, type StarterKind } from '@/app/content/projectAnswers';
 import {
   getProject,
