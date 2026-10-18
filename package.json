@@ -10,7 +10,10 @@
     "resume": "node scripts/build-resume.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.135.0",
+    "@neondatabase/serverless": "^1.2.0",
     "@vercel/analytics": "^2.0.1",
+    "@vercel/functions": "^3.10.1",
     "next": "14.2.8",
     "react": "^18",
     "react-dom": "^18",

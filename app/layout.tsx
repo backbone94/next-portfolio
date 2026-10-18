@@ -4,16 +4,21 @@ import './globals.css';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
+import HideOnAskHome from './components/HideOnAskHome';
 import { SITE_URL } from './content/site';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+  /*
+    탭 제목은 어느 페이지든 "Jun's Portfolio" 하나로 둔다. template에 %s가 없어서
+    하위 페이지가 title을 정해도 탭에는 이 값만 나온다. 공유 카드 제목은 각
+    페이지의 openGraph.title이 따로 맡는다.
+  */
   title: {
     default: "Jun's Portfolio",
-    template: "%s · Jun's Portfolio",
+    template: "Jun's Portfolio",
   },
-  description:
-    '고객과 제품, 그리고 피드백',
+  description: '이정준의 경력과 프로젝트를 검색창에 물어보세요. 모든 답은 실제 기록을 근거로 합니다.',
   /*
     루트를 canonical로 못박는다. 같은 내용이 www·vercel.app 주소로도 열려
     있어 중복 문서로 잡힐 여지가 있다. 하위 페이지는 각자 alternates로 덮는다.
@@ -37,26 +42,24 @@ export const metadata: Metadata = {
   },
 };
 
-/** 첫 페인트 전에 테마를 확정해 깜빡임을 막는다. 기본값은 다크. */
-const THEME_SCRIPT = `(function(){try{if(localStorage.getItem('theme')==='light'){document.documentElement.classList.add('light')}}catch(e){}})()`;
-
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="ko" suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
-      </head>
+    <html lang="ko">
       <body>
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded focus:bg-accent focus:px-4 focus:py-2 focus:font-medium focus:text-accent-ink"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:bg-accent focus:px-4 focus:py-2 focus:font-medium focus:text-accent-ink"
         >
           본문으로 건너뛰기
         </a>
-        <Header />
+        <HideOnAskHome>
+          <Header />
+        </HideOnAskHome>
         <main id="main">{children}</main>
-        <Footer />
-        <ScrollToTop />
+        <HideOnAskHome>
+          <Footer />
+          <ScrollToTop />
+        </HideOnAskHome>
         {/*
           방문 여부를 알 수단이 하나도 없었다. 쿠키를 쓰지 않고 개인을 식별하지도
           않아 동의 배너 없이 둘 수 있다. 개발 중에는 아무것도 보내지 않는다.

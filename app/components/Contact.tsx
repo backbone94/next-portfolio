@@ -14,7 +14,7 @@ export default function Contact() {
   return (
     /* pt는 위 섹션과 거리를 벌리려고 준다. 마지막 구역이니 앞과 붙어 있지 않는 편이 낫다 */
     <section id="contact" className="scroll-mt-32 px-5 pb-16 pt-16 md:px-8 md:pb-24 md:pt-28">
-      <div className="mx-auto max-w-shell rounded-2xl bg-accent px-6 py-14 text-accent-ink md:px-12 md:py-20">
+      <div className="mx-auto max-w-shell bg-accent px-6 py-14 text-accent-ink md:px-12 md:py-20">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16">
           <div>
             <h2 className="text-[clamp(1.9rem,4.5vw,3rem)] font-black leading-[1.05] tracking-[-0.03em]">
@@ -39,7 +39,7 @@ export default function Contact() {
             */}
             <a
               href={RESUME_URL}
-              className="mt-8 inline-flex items-center gap-2.5 whitespace-nowrap rounded-full bg-accent-ink px-6 py-3.5 font-medium text-accent transition-opacity hover:opacity-85"
+              className="mt-8 inline-flex items-center gap-2.5 whitespace-nowrap bg-accent-ink px-6 py-3.5 font-medium text-accent transition-opacity hover:opacity-85"
             >
               이력서 PDF
               <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -49,7 +49,7 @@ export default function Contact() {
           </div>
 
           {/* self-start가 없으면 dl이 부모 그리드에서 늘어나 아래에 빈 띠가 생긴다 */}
-          <dl className="grid gap-px self-start overflow-hidden rounded-xl bg-accent-ink/15">
+          <dl className="grid gap-px self-start overflow-hidden bg-accent-ink/15">
             {channels.map((channel) => (
               <div key={channel.label} className="bg-accent">
                 <a

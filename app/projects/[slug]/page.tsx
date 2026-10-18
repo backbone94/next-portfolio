@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import ProjectAsk from '../../components/ProjectAsk';
+import ProjectFacts from '../../components/ProjectFacts';
 import ProjectMedia from '../../components/ProjectMedia';
 import { getProject, projects } from '../../content/projects';
 
@@ -42,143 +43,73 @@ export default function ProjectDetailPage({ params }: Props) {
   const project = getProject(params.slug);
   if (!project) notFound();
 
-  const index = projects.findIndex((p) => p.slug === project.slug);
-  const prev = projects[index - 1];
-  const next = projects[index + 1];
-  const [type, ...techTags] = project.tags;
+  const [type] = project.tags;
 
-  // 확인되지 않은 항목은 줄 자체를 내보내지 않는다. 라벨만 남고 값이 비면
-  // 빠뜨린 것처럼 보이고, 채우려다 없는 숫자를 지어내게 된다.
-  const meta = [
-    { label: '기간', value: project.duration },
-    { label: '역할', value: project.role },
-    { label: '인원', value: project.teamSize },
-    { label: '기여도', value: project.contribution },
-  ].filter((item) => item.value);
+  // 확인되지 않은 항목은 아예 내보내지 않는다. 값이 비면 빠뜨린 것처럼 보이고,
+  // 채우려다 없는 숫자를 지어내게 된다.
+  const facts = [type, project.duration, project.role, project.teamSize].filter(Boolean);
 
   return (
     <article className="mx-auto max-w-shell px-5 pb-24 pt-8 md:px-8 md:pt-12">
-      <Link
-        href="/projects"
-        className="inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-accent"
-      >
-        <span aria-hidden>←</span> 프로젝트
-      </Link>
+      {/* 상세는 대화에서 새 탭으로 열린다. 목록으로 돌아가는 길은 탭을 닫는 것이라 따로 두지 않는다. */}
+      <header>
+        <h1 className="text-[clamp(2rem,5vw,3rem)] font-black leading-[1.2] tracking-[-0.03em]">{project.title}</h1>
+        {/* 한 줄 소개는 "…프로젝트"로 끝나는 명사구라 본문 문장처럼 두면 아래 문장과 같은 말을 되풀이하는 것처럼 읽힌다. 제목에 붙은 부제로 둔다. */}
+        <p className="mt-2 text-lg font-medium text-muted">{project.summary}</p>
 
-      <header className="mt-7 max-w-4xl">
-        <div className="flex items-center gap-2.5 text-sm">
-          <span className="font-medium text-accent">{type}</span>
-          <span className="text-border">·</span>
-          <time className="text-muted">{project.duration}</time>
-        </div>
-
-        <h1 className="mt-3 text-[clamp(2rem,5vw,3.25rem)] font-black leading-[1.05] tracking-[-0.03em]">
-          {project.title}
-        </h1>
-
-        <p className="mt-4 max-w-prose text-[1.0625rem] leading-relaxed text-muted">
-          {project.summary}
+        {/* 예전에는 오른쪽 정보 상자에 나눠 담았다. 한 줄로 모아 제목 아래에 둔다. */}
+        <p className="mt-4 text-[0.9375rem] text-muted">
+          {facts.map((fact, i) => (
+            <span key={fact}>
+              {i > 0 && (
+                <span aria-hidden className="mx-2 text-border">
+                  ·
+                </span>
+              )}
+              {fact}
+            </span>
+          ))}
         </p>
 
-        <p className="mt-5 max-w-prose border-l-2 border-accent pl-4 text-[1.0625rem] leading-relaxed">
-          {project.highlight}
-        </p>
+        <p className="mt-6 max-w-prose font-semibold leading-[1.75]">{project.highlight}</p>
       </header>
 
       {/* 화면이 먼저다 */}
-      <div className="my-10 md:my-14">
+      <div className="my-10 md:my-12">
         <ProjectMedia media={project.media} priority />
       </div>
 
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-14">
-        <div className="order-2 min-w-0 lg:order-1">
-          <h2 className="text-xl font-bold tracking-[-0.01em]">이렇게 만들었습니다</h2>
-          {/*
-            h3에도 앰버 좌측 선이 붙어 있었다. 바로 위 머리글 하이라이트가
-            같은 장치를 쓰는데 본문 소제목까지 겹치면, 한 화면에 같은 강조가
-            대여섯 번 나온다. 소제목은 무게와 위 여백만으로 충분히 선다 —
-            이 사이트의 위계는 색이 아니라 무게가 만든다는 규칙 그대로다.
-          */}
-          <div
-            className="mt-5 max-w-prose text-[0.9688rem] leading-[1.9] text-text/85 [&_a]:text-accent [&_a]:underline [&_a]:underline-offset-4 [&_h3]:mb-2.5 [&_h3]:mt-10 [&_h3]:text-[1.0625rem] [&_h3]:font-black [&_h3]:leading-snug [&_h3]:tracking-[-0.01em] [&_h3]:text-text [&_strong]:font-bold [&_strong]:text-text"
-            dangerouslySetInnerHTML={{ __html: project.description }}
-          />
-        </div>
-
-        <aside className="order-1 lg:order-2">
-          <div className="rounded-xl border border-border bg-surface p-6 lg:sticky lg:top-24">
-            <dl className="space-y-4">
-              {meta.map((item) => (
-                <div key={item.label}>
-                  <dt className="text-xs text-muted">{item.label}</dt>
-                  <dd className="mt-1 text-sm font-medium">{item.value}</dd>
-                </div>
-              ))}
-              <div>
-                <dt className="text-xs text-muted">주요 기능</dt>
-                <dd className="mt-1 text-sm leading-relaxed">{project.features}</dd>
-              </div>
-              <div>
-                <dt className="text-xs text-muted">기술 스택</dt>
-                <dd className="mt-1 text-sm leading-relaxed">{project.stack}</dd>
-              </div>
-              {(project.github || project.reference) && (
-                <div>
-                  <dt className="text-xs text-muted">{project.github ? 'GitHub' : 'Reference'}</dt>
-                  <dd className="mt-1">
-                    <a
-                      href={project.github || project.reference}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="break-all text-sm text-accent underline underline-offset-4"
-                    >
-                      {project.github || project.reference}
-                    </a>
-                  </dd>
-                </div>
-              )}
-            </dl>
-
-            <div className="mt-6 flex flex-wrap gap-1.5 border-t border-border pt-5">
-              {techTags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full border border-border px-2.5 py-1 text-xs text-muted"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-        </aside>
+      {/* 훑어보는 사람이 먼저 찾는 사실. 화면 아래에 넓게 깔고, 대화창은 그 아래 본문 옆에서 시작한다. */}
+      <div className="mb-12 md:mb-14">
+        <ProjectFacts project={project} />
       </div>
 
-      <nav className="mt-16 grid gap-4 border-t border-border pt-8 sm:grid-cols-2">
-        {prev ? (
-          <Link
-            href={`/projects/${prev.slug}`}
-            className="group rounded-xl border border-border bg-surface p-5 transition-colors hover:border-accent/60"
-          >
-            <span className="text-xs text-muted">이전</span>
-            <span className="mt-1 block font-medium transition-colors group-hover:text-accent">
-              {prev.title}
-            </span>
-          </Link>
-        ) : (
-          <span />
-        )}
-        {next && (
-          <Link
-            href={`/projects/${next.slug}`}
-            className="group rounded-xl border border-border bg-surface p-5 transition-colors hover:border-accent/60 sm:text-right"
-          >
-            <span className="text-xs text-muted">다음</span>
-            <span className="mt-1 block font-medium transition-colors group-hover:text-accent">
-              {next.title}
-            </span>
-          </Link>
-        )}
-      </nav>
+      {/* 제목과 화면은 넓게 두고, 그 아래부터 본문과 옆 칸이 나란히 선다. 예전 정보 상자가 있던 자리다. */}
+      <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_23rem] lg:gap-14">
+        <div className="min-w-0">
+          {/*
+        본문은 대화 답변과 같은 글자 크기와 줄 간격을 쓴다. 대화에서 넘어와 읽을 때
+        다른 사이트로 옮겨 온 느낌이 들지 않게 하려는 것이다.
+      */}
+          <section aria-labelledby="how">
+            <h2 id="how" className="text-xl font-bold tracking-[-0.01em]">
+              이렇게 만들었습니다
+            </h2>
+            <div
+              className="mt-5 max-w-prose leading-[1.75] text-text/90 [&_a]:text-accent [&_a]:underline [&_a]:underline-offset-4 [&_h3]:mb-2 [&_h3]:mt-9 [&_h3]:text-[1.0625rem] [&_h3]:font-bold [&_h3]:leading-snug [&_h3]:text-text [&_p+p]:mt-4 [&_strong]:font-semibold [&_strong]:text-text"
+              dangerouslySetInnerHTML={{ __html: project.description }}
+            />
+          </section>
+        </div>
+
+        {/*
+        옆 칸은 정보 상자 대신 대화창이다. 이전·다음 프로젝트 이동도 없앴다. 다른 프로젝트가
+        궁금하면 여기서 물어보면 된다. 넓은 화면에서는 본문을 따라 내려오고, 좁은 화면에서는 본문 뒤에 온다.
+      */}
+        <aside data-hides-scroll-top className="lg:sticky lg:top-24 lg:self-start">
+          <ProjectAsk slug={project.slug} title={project.title} />
+        </aside>
+      </div>
     </article>
   );
 }

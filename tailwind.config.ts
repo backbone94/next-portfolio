@@ -1,11 +1,10 @@
 import type { Config } from "tailwindcss";
 
-/** globals.css의 CSS 변수를 그대로 읽는다. 테마 토글이 클래스 하나로 끝난다. */
+/** globals.css의 CSS 변수를 그대로 읽는다. 색을 바꿀 때는 globals.css의 토큰만 고친다. */
 const token = (name: string) => `rgb(var(--${name}) / <alpha-value>)`;
 
 const config: Config = {
   content: ["./app/**/*.{js,ts,jsx,tsx,mdx}"],
-  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -34,6 +33,10 @@ const config: Config = {
       maxWidth: {
         shell: '78rem',
         prose: '42rem',
+        // 대화 화면 폭. 답에 카드와 목록이 들어가 넓게 쓴다.
+        chat: '62.5rem',
+        // 질문하기 전 첫 화면 폭. 인사말과 검색창 하나뿐이라 대화 화면만큼 넓으면 검색창이 길어 보인다.
+        intro: '48rem',
       },
       keyframes: {
         rise: {

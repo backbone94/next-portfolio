@@ -16,7 +16,7 @@ type Project = {
   tasks: string[];
 };
 
-type Job = {
+export type Job = {
   company: string;
   duration: string;
   /** 확인된 경우에만 적는다. 추정해서 채우지 않는다. */
@@ -27,10 +27,10 @@ type Job = {
   projects: Project[];
 };
 
-const experiences: Job[] = [
+export const experiences: Job[] = [
   {
     company: '와커스 (WACUS)',
-    duration: '2026.07 — 재직 중',
+    duration: '2026.07 – 재직 중',
     current: true,
     // 직무(정규직/계약직)는 아직 확인 전이라 비워 둔다. 지어내지 않는다.
     projects: [
@@ -51,7 +51,7 @@ const experiences: Job[] = [
   },
   {
     company: '아이티센엔텍',
-    duration: '2025.06 — 2026.05',
+    duration: '2025.06 – 2026.05',
     role: '정규직',
     id: 'itcen-entech',
     projects: [
@@ -71,7 +71,7 @@ const experiences: Job[] = [
   },
   {
     company: '베스텔라랩',
-    duration: '2024.07 — 2024.08',
+    duration: '2024.07 – 2024.08',
     role: '인턴',
     projects: [
       {
@@ -90,7 +90,7 @@ const experiences: Job[] = [
   },
   {
     company: '이파피루스',
-    duration: '2022.04 — 2023.12',
+    duration: '2022.04 – 2023.12',
     role: '정규직',
     projects: [
       {
@@ -136,13 +136,13 @@ export default function Experience() {
               id={job.id}
               // 기술 스택에서 "/#itcen-entech"로 건너오는 지점. 강조는 여기까지다.
               hashHighlight
-              className="scroll-mt-24 rounded-lg py-7 md:py-9"
+              className="scroll-mt-24 py-7 md:py-9"
             >
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1.5">
               <h3 className="text-lg font-bold tracking-[-0.01em]">{job.company}</h3>
               {job.role && <span className="text-sm text-muted">{job.role}</span>}
               {job.current && (
-                <span className="rounded-full bg-accent px-2.5 py-0.5 text-xs font-medium text-accent-ink">
+                <span className="bg-accent px-2.5 py-0.5 text-xs font-medium text-accent-ink">
                   현재
                 </span>
               )}
@@ -160,7 +160,7 @@ export default function Experience() {
                       {project.stack.map((tech) => (
                         <span
                           key={tech}
-                          className="rounded-full border border-border px-2.5 py-1 text-xs text-muted"
+                          className="border border-border px-2.5 py-1 text-xs text-muted"
                         >
                           {tech}
                         </span>
@@ -173,7 +173,7 @@ export default function Experience() {
                       <li key={task} className="flex gap-3 text-sm leading-relaxed text-text/80">
                         <span
                           aria-hidden
-                          className="mt-[0.6em] h-1 w-1 shrink-0 rounded-full bg-accent/70"
+                          className="mt-[0.6em] h-1 w-1 shrink-0 bg-accent/70"
                         />
                         <span>{task}</span>
                       </li>

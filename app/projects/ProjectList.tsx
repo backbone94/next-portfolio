@@ -24,7 +24,7 @@ export default function ProjectList({ visible, total, tags, activeTag, skill }: 
     <div>
       {skill ? (
         <div className="flex flex-wrap items-center gap-3">
-          <span className="rounded-full border border-accent bg-accent/10 px-3.5 py-1.5 text-sm font-medium text-accent">
+          <span className="border border-accent bg-accent/10 px-3.5 py-1.5 text-sm font-medium text-accent">
             &ldquo;{skill}&rdquo; 관련 프로젝트
           </span>
           <Link
@@ -45,7 +45,7 @@ export default function ProjectList({ visible, total, tags, activeTag, skill }: 
                 href={isAll ? '/projects' : `/projects?tag=${encodeURIComponent(tag)}`}
                 scroll={false}
                 aria-current={isActive ? 'true' : undefined}
-                className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors ${
+                className={`border px-3.5 py-1.5 text-sm font-medium transition-colors ${
                   isActive
                     ? 'border-accent bg-accent text-accent-ink'
                     : 'border-border text-muted hover:border-accent hover:text-accent'
@@ -67,7 +67,7 @@ export default function ProjectList({ visible, total, tags, activeTag, skill }: 
         주소를 직접 친 경우다. 그래도 빈 화면만 남겨 두지는 않는다.
       */}
       {visible.length === 0 ? (
-        <div className="mt-5 rounded-xl border border-border bg-surface px-6 py-10 text-center">
+        <div className="mt-5 border border-border bg-surface px-6 py-10 text-center">
           <p className="text-sm text-muted">조건에 맞는 프로젝트가 없습니다.</p>
           <Link
             href="/projects"

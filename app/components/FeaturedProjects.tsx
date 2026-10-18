@@ -19,7 +19,7 @@ export default function FeaturedProjects() {
       action={
         <Link
           href="/projects"
-          className="rounded-full border border-border px-4 py-2 text-sm font-medium transition-colors hover:border-accent hover:text-accent"
+          className="border border-border px-4 py-2 text-sm font-medium transition-colors hover:border-accent hover:text-accent"
         >
           전체 {projects.length}개
         </Link>

@@ -1,11 +1,11 @@
 import Section from './Section';
 
-const education = {
+export const education = {
   institution: '아주대학교 소프트웨어학과',
-  duration: '2020.03 — 2025.02',
+  duration: '2020.03 – 2025.02',
 };
 
-const certifications = [
+export const certifications = [
   { title: 'SQLD', issueDate: '2025.12' },
   { title: 'AWS SAA', issueDate: '2025.09' },
   { title: 'OPIc IM2', issueDate: '2024.11' },

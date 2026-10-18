@@ -23,13 +23,13 @@ export default function NotFound() {
       <div className="mt-9 flex flex-wrap gap-3">
         <Link
           href="/projects"
-          className="rounded-full bg-accent px-6 py-3 font-medium text-accent-ink transition-opacity hover:opacity-85"
+          className="rounded-lg bg-accent px-6 py-3 font-medium text-accent-ink transition-opacity hover:opacity-85"
         >
           프로젝트 보기
         </Link>
         <Link
           href="/"
-          className="rounded-full border border-border px-6 py-3 font-medium transition-colors hover:border-accent hover:text-accent"
+          className="rounded-lg border border-border px-6 py-3 font-medium transition-colors hover:border-accent hover:text-accent"
         >
           홈으로
         </Link>

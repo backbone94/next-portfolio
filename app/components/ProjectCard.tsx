@@ -21,7 +21,7 @@ export default function ProjectCard({
   return (
     <Link
       href={`/projects/${project.slug}`}
-      className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-surface transition-colors duration-300 hover:border-accent/60"
+      className="group flex h-full flex-col overflow-hidden border border-border bg-surface transition-colors duration-300 hover:border-accent/60"
     >
       <div className="relative aspect-video overflow-hidden bg-surface-2">
         {thumbnail ? (
@@ -36,7 +36,7 @@ export default function ProjectCard({
         ) : videoCount > 0 ? (
           /* 영상만 있는 프로젝트. 빈 상자로 보이지 않도록 의도된 패널로 만든다. */
           <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-surface-2 px-8 text-center">
-            <span className="grid h-11 w-11 place-items-center rounded-full bg-accent text-accent-ink">
+            <span className="grid h-11 w-11 place-items-center bg-accent text-accent-ink">
               <svg width="15" height="15" viewBox="0 0 15 15" fill="currentColor" aria-hidden>
                 <path d="M4.5 2.8v9.4l8-4.7z" />
               </svg>
@@ -51,7 +51,7 @@ export default function ProjectCard({
         )}
 
         {videoCount > 0 && thumbnail && (
-          <span className="absolute bottom-3 right-3 rounded-full bg-bg/80 px-2.5 py-1 text-xs font-medium backdrop-blur-sm">
+          <span className="absolute bottom-3 right-3 bg-bg/80 px-2.5 py-1 text-xs font-medium backdrop-blur-sm">
             영상 {videoCount}
           </span>
         )}
@@ -84,7 +84,7 @@ export default function ProjectCard({
           {techTags.map((tag) => (
             <span
               key={tag}
-              className="rounded-full border border-border px-2.5 py-1 text-xs text-muted"
+              className="border border-border px-2.5 py-1 text-xs text-muted"
             >
               {tag}
             </span>
