@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { ASK, askHref } from './content/site';
 
 /**
  * 기본 404는 사이트 밖에 있는 화면처럼 보인다 — 헤더도 푸터도 없고 영어 한 줄만
@@ -21,8 +22,9 @@ export default function NotFound() {
       </p>
 
       <div className="mt-9 flex flex-wrap gap-3">
+        {/* 옛 목록 주소(/projects)는 이 대화로 넘어간다. 넘김을 한 번 거치지 않게 바로 연다. */}
         <Link
-          href="/projects"
+          href={askHref(ASK.projects)}
           className="rounded-lg bg-accent px-6 py-3 font-medium text-accent-ink transition-opacity hover:opacity-85"
         >
           프로젝트 보기

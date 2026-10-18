@@ -12,12 +12,6 @@ export const SITE_URL = 'https://leejj.dev';
 export const RESUME_URL = '/resume.pdf';
 
 /**
- * 포트폴리오 본문(프로젝트·경력·기술·연락처)이 있던 주소. 지금은 첫 화면(/)으로
- * 넘긴다(next.config.mjs). 옛 링크를 그리는 컴포넌트가 아직 이 값을 읽는다.
- */
-export const PORTFOLIO_PATH = '/portfolio';
-
-/**
  * 자주 묻는 질문의 대표 문장. 헤더 메뉴, 첫 화면 바로가기, 옛 주소 넘기기가
  * 모두 이 문장으로 /?q=를 만든다. 직접 쓴 답변으로 이어지는 문장이어야 한다.
  */
@@ -62,13 +56,6 @@ export const PROFILE = {
   affiliation: '와커스 (WACUS)',
   alumniOf: '아주대학교 소프트웨어학과',
 } as const;
-
-/**
- * 히어로가 크게 보여주는 프로젝트.
- * 대표 프로젝트 그리드는 이 항목을 제외한다 — 같은 화면이 연달아 두 번 나오면
- * 아래 카드가 자리값을 못 한다.
- */
-export const HERO_PROJECT_SLUG = 'the1seoul';
 
 /**
  * 전화번호는 두지 않는다. 검색에 걸리는 공개 도메인이라 평문으로 적어 두면

@@ -1,5 +1,4 @@
-import { certifications, education } from '@/app/components/Education';
-import { experiences } from '@/app/components/Experience';
+import { certifications, education, experiences } from '@/app/content/career';
 import { projects, summaryPhrase } from '@/app/content/projects';
 import { ASK, CONTACT, PROFILE, RESUME_URL, askHref } from '@/app/content/site';
 

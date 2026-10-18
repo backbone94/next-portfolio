@@ -1,6 +1,9 @@
-import HashHighlight from './HashHighlight';
-import Reveal from './Reveal';
-import Section from './Section';
+/**
+ * 경력·학력·자격증·기술 목록. 검색창의 미리 써 둔 답(prepared.ts)과 Claude에게 넘기는 근거 자료(knowledge.ts)가 읽는다.
+ *
+ * 예전에는 옛 포트폴리오 화면의 컴포넌트(Experience, Education, Skill) 파일 안에 데이터가 함께 있었다.
+ * 화면을 걷어 내면서 데이터만 여기로 옮겼다.
+ */
 
 /**
  * 한 회사에서 여러 프로젝트를 한다. 회사 아래 프로젝트를 두고 한 일은 그
@@ -22,8 +25,6 @@ export type Job = {
   /** 확인된 경우에만 적는다. 추정해서 채우지 않는다. */
   role?: string;
   current?: boolean;
-  /** 스킬 카드에서 "/#id"로 이 회사 카드까지 스크롤·강조할 때 쓴다. */
-  id?: string;
   projects: Project[];
 };
 
@@ -53,7 +54,6 @@ export const experiences: Job[] = [
     company: '아이티센엔텍',
     duration: '2025.06 – 2026.05',
     role: '정규직',
-    id: 'itcen-entech',
     projects: [
       {
         name: '삼성전자 DS 임직원 OA 장비 관리 시스템',
@@ -109,83 +109,24 @@ export const experiences: Job[] = [
   },
 ];
 
-export default function Experience() {
-  return (
-    <Section
-      id="experience"
-      title="경력"
-      lead="프론트엔드로 시작해 백엔드와 클라우드 운영까지 넓은 영역의 이력을 쌓았습니다."
-      space="base"
-    >
-      <HashHighlight />
-      {/*
-        카드였다. 위 프로젝트 카드와 같은 상자(rounded-xl · border ·
-        bg-surface)를 써서, 스크린샷이 있는 것과 글만 있는 것이 같은 무게로
-        보였다. 여기서 상자를 걷어 내면 프로젝트 카드가 페이지에서 유일하게
-        "떠 있는" 것이 되고 — 그게 이 포트폴리오가 보여주려는 것이다.
+export const education = {
+  institution: '아주대학교 소프트웨어학과',
+  duration: '2020.03 – 2025.02',
+};
 
-        경계는 가로선 하나로 충분하다. 재직 중 표시는 앰버 배지가 이미
-        하고 있어서 테두리 색까지 겹칠 이유가 없다.
-      */}
-      <ol className="border-t border-border">
-        {experiences.map((job, index) => (
-          <li key={job.company} className="border-b border-border">
-            <Reveal
-              // 경력은 시간순 목록이라 차례로 도착하는 것이 내용상 참이다.
-              delay={index * 0.06}
-              id={job.id}
-              // 기술 스택에서 "/#itcen-entech"로 건너오는 지점. 강조는 여기까지다.
-              hashHighlight
-              className="scroll-mt-24 py-7 md:py-9"
-            >
-            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1.5">
-              <h3 className="text-lg font-bold tracking-[-0.01em]">{job.company}</h3>
-              {job.role && <span className="text-sm text-muted">{job.role}</span>}
-              {job.current && (
-                <span className="bg-accent px-2.5 py-0.5 text-xs font-medium text-accent-ink">
-                  현재
-                </span>
-              )}
-              <time className="ml-auto text-sm text-muted">{job.duration}</time>
-            </div>
+export const certifications = [
+  { title: 'SQLD', issueDate: '2025.12' },
+  { title: 'AWS SAA', issueDate: '2025.09' },
+  { title: 'OPIc IM2', issueDate: '2024.11' },
+  { title: '정보처리기사', issueDate: '2021.11' },
+];
 
-            {/* 구분선은 프로젝트가 둘 이상일 때만 보인다. 하나뿐이면 없던 층처럼 조용하다 */}
-            <ol className="mt-5 divide-y divide-border">
-              {job.projects.map((project) => (
-                <li key={project.name} className="py-5 first:pt-0 last:pb-0">
-                  <h4 className="font-bold tracking-[-0.01em]">{project.name}</h4>
+/** 주로 쓰는 기술. 갈래 이름과 기술 이름만 둔다. "기술 스택" 답이 이 순서대로 읽는다. */
+type SkillCategory = { label: string; skills: { label: string }[] };
 
-                  {project.stack && (
-                    <div className="mt-3 flex flex-wrap gap-1.5">
-                      {project.stack.map((tech) => (
-                        <span
-                          key={tech}
-                          className="border border-border px-2.5 py-1 text-xs text-muted"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
-                  <ul className="mt-4 space-y-2">
-                    {project.tasks.map((task) => (
-                      <li key={task} className="flex gap-3 text-sm leading-relaxed text-text/80">
-                        <span
-                          aria-hidden
-                          className="mt-[0.6em] h-1 w-1 shrink-0 bg-accent/70"
-                        />
-                        <span>{task}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-              ))}
-            </ol>
-            </Reveal>
-          </li>
-        ))}
-      </ol>
-    </Section>
-  );
-}
+export const skillCategories: SkillCategory[] = [
+  { label: '프론트엔드', skills: [{ label: 'TypeScript' }, { label: 'React' }, { label: 'Vue.js' }, { label: 'Angular' }, { label: 'Next.js' }] },
+  { label: '백엔드 · 데이터베이스', skills: [{ label: 'Spring Boot' }, { label: 'Oracle' }, { label: 'NestJS' }, { label: 'Prisma' }] },
+  { label: '인프라 · 운영', skills: [{ label: 'AWS' }, { label: 'Docker' }, { label: 'Nginx' }, { label: 'GitHub Actions' }] },
+  { label: 'AI', skills: [{ label: 'OpenAI' }, { label: 'Perplexity' }] },
+];

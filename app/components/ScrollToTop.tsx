@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { prefersReducedMotion } from '../lib/hashHighlight';
+import { prefersReducedMotion } from '../lib/motion';
 
 /** 한 화면 정도 내려가야 나타난다. 첫 화면부터 떠 있으면 필요 없을 때도 시야를 가린다. */
 const SHOW_THRESHOLD = 600;
