@@ -4,7 +4,7 @@ import { getProject, type Project } from '@/app/content/projects';
 import { askHref } from '@/app/content/site';
 import { claudeAvailable, fakeClaude, notice, streamClaude, type Scope } from '@/app/lib/ask/claude';
 import { NONE, ROUTES, starterAnswer } from '@/app/lib/ask/prepared';
-import { findProjects, routeQuestion, type RouteDecision } from '@/app/lib/ask/router';
+import { findProjects, routeQuestion, routeWithKeywords, type RouteDecision } from '@/app/lib/ask/router';
 import { recordAsk, type Usage } from '@/app/lib/ask/store';
 import type { AskAnswer, AskStreamEvent } from '@/app/lib/ask/types';
 
@@ -79,7 +79,7 @@ function streamAnswer(write: (emit: (event: AskStreamEvent) => void) => Promise<
 }
 
 export async function POST(request: Request) {
-  const body = (await request.json().catch(() => null)) as { question?: unknown; project?: unknown } | null;
+  const body = (await request.json().catch(() => null)) as { question?: unknown; project?: unknown; via?: unknown } | null;
   const asked = typeof body?.question === 'string' ? body.question.trim() : '';
   // 상세 페이지 옆 칸에서 온 질문이면 그 페이지의 프로젝트가 함께 온다
   const project = typeof body?.project === 'string' ? getProject(body.project) : undefined;
@@ -105,14 +105,22 @@ export async function POST(request: Request) {
     return Response.json(starter.answer);
   }
 
-  const decision = await routeQuestion(asked);
+  /*
+    화면의 버튼(첫 화면 질문, 이어지는 질문, "프로젝트 전체 보기")이 보낸 문장은 우리가 정해 둔 문장이라 키워드 규칙으로
+    충분히 가려진다. Jev를 거치지 않고 바로 미리 써 둔 답을 고른다. 0.2~1초 빨라진다.
+    키워드 규칙으로 답을 못 찾는 버튼 문장("빌드 시간은 어떻게 줄였나요?")만 평소처럼 Jev와 Claude로 간다.
+    via는 브라우저가 보내는 값이라 꾸밀 수 있지만, 꾸며도 키워드 규칙으로 고른 미리 써 둔 답이 나갈 뿐이라 비용이 늘지 않는다.
+  */
+  const shortcut = body?.via === 'button' ? routeWithKeywords(asked) : null;
+  const quick = shortcut && shortcut.route !== NONE ? (ROUTES[shortcut.route]?.answer(asked) ?? null) : null;
+  const decision: RouteDecision = quick && shortcut ? { ...shortcut, by: 'button' } : await routeQuestion(asked);
   // 어떤 질문이 들어오고 어디로 갔는지 보고 답변을 늘려 가는 용도다. IP는 남기지 않는다.
   const log: Log = (answer, usage) => {
     console.info('[ask]', JSON.stringify({ question: asked, ...decision, answeredBy: answer.source }));
     recordAsk({ question: asked, route: decision.route, decision, answer, usage });
   };
   const route = ROUTES[decision.route];
-  const prepared = decision.route !== NONE && route && decision.confidence >= ROUTE_THRESHOLD ? route.answer(asked) : null;
+  const prepared = quick ?? (decision.route !== NONE && route && decision.confidence >= ROUTE_THRESHOLD ? route.answer(asked) : null);
 
   if (prepared) {
     log(prepared);

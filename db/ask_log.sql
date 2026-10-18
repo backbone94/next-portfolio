@@ -13,7 +13,7 @@ create table if not exists ask_log (
   route         text,
   confidence    real,
   off_topic     real,
-  -- jev · keyword. 분류기를 거치지 않은 경우(미리 써 둔 프로젝트 답 등)는 null
+  -- jev · keyword · button(버튼 문장이라 Jev 없이 키워드 규칙으로 고름). 분류기를 거치지 않은 경우(미리 써 둔 프로젝트 답 등)는 null
   routed_by     text,
   -- prepared · claude · notice
   answered_by   text not null,

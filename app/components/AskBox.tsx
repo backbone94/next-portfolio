@@ -695,7 +695,7 @@ export default function AskBox({ initial, askOnLoad }: Props) {
       window.history.replaceState({ askChat: false }, '', '/');
       window.history.pushState({ askChat: true }, '', askHref(question));
       // 직접 쓴 답이 없는 질문이면 이제 물어본다. 기록 칸은 방금 쌓았다.
-      if (askOnLoad) ask(askOnLoad, { stacked: true });
+      if (askOnLoad) ask(askOnLoad, { stacked: true, typed: true });
     }, 0);
     return () => clearTimeout(timer);
     // 처음 한 번만 한다
@@ -712,7 +712,11 @@ export default function AskBox({ initial, askOnLoad }: Props) {
     if (top < 0 || top > 120) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
   }, [entries.length, lastAnswered]);
 
-  async function ask(question: string, { stacked = false } = {}) {
+  /**
+   * typed: 방문자가 직접 쓴 질문(입력창, 주소로 들어온 질문). 그 밖의 호출은 모두 화면에 있는 버튼이 보낸 정해진 문장이라,
+   * 서버가 분류기(Jev)를 거치지 않고 바로 답을 고른다(route.ts의 via: 'button').
+   */
+  async function ask(question: string, { stacked = false, typed = false } = {}) {
     const q = question.trim();
     if (!q || pending) return;
     const id = nextId.current++;
@@ -735,7 +739,7 @@ export default function AskBox({ initial, askOnLoad }: Props) {
       const res = await fetch('/api/ask', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: q }),
+        body: JSON.stringify({ question: q, via: typed ? 'typed' : 'button' }),
       });
       answer = res.headers.get('Content-Type')?.includes('ndjson') ? await readStream(res, (live) => update({ answer: live, live: true })) : await res.json();
       if (!answer.segments) throw new Error('bad response');
@@ -748,7 +752,7 @@ export default function AskBox({ initial, askOnLoad }: Props) {
 
   function onSubmit(event: FormEvent) {
     event.preventDefault();
-    ask(value);
+    ask(value, { typed: true });
   }
 
   const composer = (
