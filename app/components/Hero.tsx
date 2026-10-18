@@ -39,13 +39,13 @@ export default function Hero() {
           <div className="mt-9 flex flex-wrap gap-3">
             <Link
               href="/projects"
-              className="rounded-full bg-accent px-6 py-3 font-medium text-accent-ink transition-opacity hover:opacity-85"
+              className="bg-accent px-6 py-3 font-medium text-accent-ink transition-opacity hover:opacity-85"
             >
               프로젝트 보기
             </Link>
             <a
               href={RESUME_URL}
-              className="rounded-full border border-border px-6 py-3 font-medium transition-colors hover:border-accent hover:text-accent"
+              className="border border-border px-6 py-3 font-medium transition-colors hover:border-accent hover:text-accent"
             >
               이력서 PDF
             </a>
@@ -55,7 +55,7 @@ export default function Hero() {
         {/* 작업물이 첫 화면에서 실물 크기로 존재해야 한다 */}
         {heroProject && heroImage && (
           <Link href={`/projects/${heroProject.slug}`} className="group block">
-            <figure className="overflow-hidden rounded-xl border border-border bg-surface">
+            <figure className="overflow-hidden border border-border bg-surface">
               <Image
                 src={heroImage.src}
                 alt={heroImage.alt}

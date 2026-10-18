@@ -13,13 +13,13 @@ type SkillItem = {
 };
 type SkillCategory = { label: string; skills: SkillItem[] };
 
-const categories: SkillCategory[] = [
+export const categories: SkillCategory[] = [
   {
     label: '프론트엔드',
     skills: [
       { src: '/images/skill/typescript.ico', label: 'TypeScript' },
       { src: '/images/skill/react.ico', label: 'React' },
-      { src: '/images/skill/vue.ico', label: 'Vue.js', href: '/#itcen-entech' },
+      { src: '/images/skill/vue.ico', label: 'Vue.js', href: '/portfolio#itcen-entech' },
       { src: '/images/skill/angular.ico', label: 'Angular' },
       { src: '/images/skill/nextjs.ico', label: 'Next.js' },
     ],
@@ -28,7 +28,7 @@ const categories: SkillCategory[] = [
     label: '백엔드 · 데이터베이스',
     skills: [
       { src: '/images/skill/spring.ico', label: 'Spring Boot' },
-      { src: '/images/skill/oracle.ico', label: 'Oracle', href: '/#itcen-entech' },
+      { src: '/images/skill/oracle.ico', label: 'Oracle', href: '/portfolio#itcen-entech' },
       { src: '/images/skill/nestjs.png', label: 'NestJS' },
       { src: '/images/skill/prisma.png', label: 'Prisma' },
     ],
@@ -110,7 +110,7 @@ export default function Skill() {
                   }
 
                   const linkClassName =
-                    'group flex items-center gap-2.5 rounded-full transition-colors';
+                    'group flex items-center gap-2.5 transition-colors';
                   const label = (
                     <span className="font-medium underline decoration-border decoration-1 underline-offset-4 transition-colors group-hover:text-accent group-hover:decoration-accent">
                       {skill.label}
@@ -119,8 +119,8 @@ export default function Skill() {
 
                   return (
                     <li key={skill.label}>
-                      {href.startsWith('/#') ? (
-                        <HashHighlightLink href={href as `/#${string}`} className={linkClassName}>
+                      {href.startsWith('/portfolio#') ? (
+                        <HashHighlightLink href={href as `/portfolio#${string}`} className={linkClassName}>
                           {icon}
                           {label}
                         </HashHighlightLink>

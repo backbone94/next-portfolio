@@ -61,7 +61,7 @@ export const projects: Project[] = [
       '병원 예약 접수, 소셜 로그인, 통합 검색, 병원소식, 공지사항 등의 게시판, 의료진 소개',
     stack: 'Next.js, React, NestJS, Prisma, PostgreSQL, Nginx, Docker, GitHub Actions, AWS Lightsail',
     reference: 'https://the1seoul.com',
-    duration: '2026.07—2026.08',
+    duration: '2026.07–2026.08',
     description: `와커스에 이직 후 처음으로 맡은 <strong>홈페이지 전면 리뉴얼 프로젝트</strong>입니다. 지금 <a href="https://the1seoul.com" target="_blank">the1seoul.com</a>에서 운영 중이며, 아래는 그중 제가 맡은 부분입니다.<h3>백엔드 API를 프론트엔드와 연동</h3>
     제가 프로젝트에 투입되기 전에는 사이트에서 보이고 있던 모든 값들이 코드상에 하드코딩되어 있었습니다. 하드코딩을 모두 걷어내고, 팀원이 이미 구현해두었던 <strong>백엔드 API를 프론트엔드와 연동하였습니다.</strong><br>
     <h3>회원 인증을 처음부터 끝까지</h3>
@@ -94,7 +94,7 @@ export const projects: Project[] = [
     features: '실시간 셔틀 위치 조회, QR 기반 탑승 인증, 실시간 공지, 셔틀 시간표 관리, 1:1 문의, AI 챗봇 기능',
     stack: 'React, Spring Boot, PostgreSQL, WebSocket, Perplexity, GitHub Actions, AWS EC2, S3',
     github: 'https://github.com/1hajo/Seur-A-Saeng',
-    duration: '2025.05—2025.06',
+    duration: '2025.05–2025.06',
     teamSize: '5명 (프론트엔드 1명, 백엔드 4명)',
     contribution: '40% (프론트엔드 단독 개발, UI/UX 설계 및 구현)',
     description: `ITCEN의 사내 신입 교육 과정에서 임직원의 출퇴근 불편을 풀어 보려고 만든 <strong>셔틀버스 관리 서비스</strong>입니다.<h3>어떤 문제가 있었나</h3>
@@ -133,7 +133,7 @@ export const projects: Project[] = [
     features: '지도상에 Figma 컴포넌트 표시, 컴포넌트 드래그/리사이즈/회전, Figma <-> plugin 사이의 Import/Export, 지도 검색 기능 등',
     stack: 'Figma Plugin API, TypeScript, React, Webpack, MUI, OpenLayers',
     github: '',
-    duration: '2024.07.09—2024.08.21',
+    duration: '2024.07.09–2024.08.21',
     teamSize: '1명',
     contribution: '100%',
     description: `인턴으로서 참여한 첫 프로젝트입니다. 프로젝트의 목표는 Figma의 특정 레이어를 지도상의 원하는 위치에 배치하고, 해당 위치의 위경도 좌표를 저장할 수 있는 <strong>Figma 플러그인</strong>을 개발하는 것이었습니다.<h3>React와 TypeScript를 얹기까지</h3>
@@ -166,7 +166,7 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
     features: 'GitHub & Kakao 소셜 로그인, 일기 작성, 음악 추천, 감정 히스토리 분석 등',
     stack: 'React, React Query, Next.js, Tailwind CSS, Prisma, MySQL, Vercel, OpenAI, Naver CLOVA, Youtube',
     github: 'https://github.com/backbone94/music-recommendation',
-    duration: '2024.08.21—2024.09.05',
+    duration: '2024.08.21–2024.09.05',
     teamSize: '1명',
     contribution: '100%',
     description: `Music Diary는 사용자의 감정과 선호도에 맞는 음악을 추천하는 웹 애플리케이션입니다. Next.js로 만들었고, 사용자가 쓴 일기를 분석해 어울리는 음악을 추천하고 감정 히스토리를 정리해 줍니다.<h3>Next.js를 고른 이유</h3>
@@ -203,7 +203,7 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
     features: '3D 인터랙티브 증표, 모임/카테고리 추천 시스템, 모임 참가자 간 채팅, 모임 참가자 인증 등',
     stack: 'Angular, ThreeJS, Spring, MySQL, Redis, OpenAI, OAuth 2.0',
     github: 'https://github.com/backbone94/ssalon',
-    duration: '2024.03—2024.06',
+    duration: '2024.03–2024.06',
     teamSize: '5명 (프론트엔드 2명, 백엔드 3명)',
     contribution: '60% (백엔드 개발, AWS 클라우드 환경 구축, 채팅 기능, AI 이미지 생성 API, 프론트엔드 보조)',
     description: `<strong>아주대학교 소프트웨어학과 졸업 작품</strong>입니다. 일회성 모임을 위한 어플리케이션으로, 자신이 참여한 모임을 기념하는 "증표"를 만들어 간직하거나 직접 꾸며 친구들과 공유합니다.<h3>백엔드를 맡은 이유</h3>
@@ -245,7 +245,7 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
     features: '우클릭(Context menu) 커스텀 기능, 문서 추적코드 추가, 다크모드, 모바일 스크린 리더',
     stack: 'Angular, SCSS',
     reference: 'https://demo.epapyrus.com/ko/streamdocs',
-    duration: '2022.04.13—2023.12.15',
+    duration: '2022.04.13–2023.12.15',
     teamSize: '2명 (기능 구현 1명, 관리자 페이지 담당 1명)',
     contribution: '90% (관리자 페이지를 제외한 모든 기능 구현)',
     description: `
@@ -254,63 +254,6 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
     문서 보안을 위해 PDF에 <strong>보이지 않는 워터마크를 삽입</strong>해 원본과 열람 정보를 추적하는 기능을 구현했습니다. 실제 인쇄된 문서에도 남는 기술이라, 문서를 인쇄한 뒤 전용 앱으로 추적코드의 인식 정확도를 테스트했고 그 과정에서 이미지 해상도와 인쇄 DPI 개념을 익혔습니다.<h3>3. 다크모드</h3>
     접근성과 편의를 생각해 다크모드를 구현했습니다. SCSS로 사용자의 선호에 따라 <strong>다크모드와 라이트모드를 전환</strong>하도록 설계하였습니다.<h3>4. 모바일 스크린 리더</h3>
     안드로이드의 TalkBack, IOS의 VoiceOver 모바일 스크린 리더가 PDF의 내용을 읽을 수 있도록 <strong>웹 접근성(Web Accessibility)</strong>을 향상시켰습니다.`,
-  },
-  {
-    title: "Jun's Portfolio (Original)",
-    slug: 'portfolio-original',
-    summary: 'HTML/CSS/JS만으로 만든 첫 포트폴리오 사이트',
-    highlight: '모바일에서 디자인이 깨지는 걸 보고 프레임워크의 중요성을 인지하게 되었습니다.',
-    role: '단독 개발',
-    tags: ['사이드', 'HTML/CSS/JS'],
-    featured: false,
-    media: [
-      {
-        type: 'image',
-        src: '/images/portfolio/portfolio.png',
-        alt: '첫 포트폴리오 사이트의 SKILL 섹션. HTML·CSS·JavaScript·TypeScript·NodeJs·React·Redux·MongoDB 아이콘이 두 줄로 놓여 있다',
-      },
-    ],
-    features: '포트폴리오 사이트',
-    stack: 'HTML, CSS, JavaScript',
-    github: 'https://github.com/backbone94/portfolio',
-    duration: '2022.03.13—2022.03.31',
-    teamSize: '1명',
-    contribution: '100%',
-    description: `저의 첫 번째 <strong>포트폴리오 사이트</strong> 프로젝트입니다.<h3>왜 리뉴얼하게 됐나</h3>
-    간단하고 심플한 포트폴리오를 만드는 게 목표였기 때문에 기본적인 웹 기술인 <strong>HTML, CSS, JavaScript</strong>만으로 만들었습니다.<br>
-    그러나 반응형 디자인이 충분하지 않아 <strong>모바일 환경에서 디자인이 깨지는 문제</strong>가 있었습니다. 프레임워크 없이 개발하는 것의 한계를 여기서 느꼈고, 반응형과 유지보수를 생각해 리뉴얼을 결심했습니다.`,
-  },
-  {
-    title: "Jun's Portfolio (Next.js)",
-    slug: 'portfolio-nextjs',
-    summary: '지금 보고 있는 현재 포트폴리오 사이트',
-    highlight: '기존 포트폴리오 사이트를 반응형과 SEO를 고려하여 Next.js로 다시 구현하였습니다.',
-    role: '단독 개발',
-    tags: ['사이드', 'Next.js', 'Tailwind'],
-    featured: false,
-    media: [
-      {
-        type: 'image',
-        src: '/images/portfolio/portfolio_nextjs.png',
-        alt: '리뉴얼한 포트폴리오의 SKILL 섹션. 기술 아이콘이 카드 그리드로 놓이고 아래에 각 기술로 무엇을 할 수 있는지 설명이 붙어 있다',
-      },
-      {
-        type: 'image',
-        src: '/images/portfolio/portfolio_nextjs_mobile.png',
-        alt: '같은 화면의 모바일 레이아웃. 좁은 폭에 맞춰 카드가 다시 배치된 모습',
-      },
-    ],
-    features: '포트폴리오 사이트 리뉴얼',
-    stack: 'Next.js, Tailwind CSS',
-    github: 'https://github.com/backbone94/next-portfolio',
-    duration: '2024.09.05—',
-    teamSize: '1명',
-    contribution: '100%',
-    description: `첫 번째 포트폴리오 사이트를 새롭게 개편한 <strong>리뉴얼 포트폴리오</strong> 프로젝트입니다.<h3>Next.js를 고른 이유</h3>
-    리뉴얼한 사이트는 간단한 페이지라 특별한 프레임워크가 필요하지는 않았지만, 앞으로의 확장과 유지보수, SEO 최적화를 생각하면 <strong>Next.js</strong>가 낫겠다고 판단하였습니다.<br>
-    컴포넌트 스타일을 손쉽게 손볼 수 있는 Tailwind CSS로 첫 포트폴리오에서 문제였던 <strong>반응형 디자인</strong>을 해결해, 모바일에서도 깨지지 않는 일관된 화면으로 만들었습니다.<br>
-    Next.js로 개발한 만큼 배포는 <strong>Vercel</strong>로 간단히 끝냈습니다.<h3>남은 것</h3>
-    이번 리뉴얼에서 반응형 웹 디자인이 왜 중요한지 몸으로 알았고, 사용자 경험을 고려한 개발이 어떤 것인지도 감을 잡았습니다. 이 포트폴리오는 새로운 정보와 프로젝트로 계속 채워 나갈 생각입니다.`,
   },
   {
     title: 'Movie Search',
@@ -336,7 +279,7 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
     features: '영화 검색, 최신 인기작 & 현재 상영작 & 개봉 예정작 조회, 특정 영화의 상세 정보 조회, 한 줄 리뷰 달기(+좋아요 기능), 개봉 예정작 알림 설정, 네이버 블로그 글 Fetch, 유튜브 영상 Fetch, 이메일 인증, 무한스크롤 등',
     stack: 'React, Redux Toolkit, TypeScript, (Next.js), Express, MongoDB, AWS S3',
     github: 'https://github.com/backbone94/nextProject',
-    duration: '2022.03.15—2022.03.31',
+    duration: '2022.03.15–2022.03.31',
     teamSize: '1명',
     contribution: '100%',
     description: `Blog를 만든 경험을 살려, 제가 좋아하는 영화로 프로젝트를 만들어 봤습니다. 좋아하는 분야를 다뤄서인지 Blog 때보다 훨씬 재미있게 했습니다.<h3>기술 선택</h3>
@@ -370,7 +313,7 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
     features: '카테고리 및 폴더 생성, 글쓰기 및 댓글 달기, S3 이미지 업로드, 반응형 웹(모바일), 다크모드 등',
     stack: 'React, Redux Saga, Express, MongoDB, AWS EC2 & S3',
     github: 'https://github.com/backbone94/blog',
-    duration: '2022.02.11—2022.03.14',
+    duration: '2022.02.11–2022.03.14',
     teamSize: '1명',
     contribution: '100%',
     description: `Blog는 저의 첫 CRUD 웹사이트 프로젝트입니다. 개발자라면 자신만의 기록 공간이 필수적으로 있어야 한다고 생각했기 때문에 첫 번째 프로젝트로 블로그를 만들어 보았습니다.<h3>무엇으로 만들었나</h3>
@@ -400,7 +343,7 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
     features: '앱으로 RC 카 조종, 자율 주행 등',
     stack: '시스템 프로그래밍, Arduino 회로 조립, Android Studio App 개발',
     github: 'https://github.com/backbone94/arduino',
-    duration: '2022.02—2022.03',
+    duration: '2022.02–2022.03',
     teamSize: '1명',
     contribution: '100%',
     description: `본격적으로 웹 개발자가 되기로 결정하기 전에 진행한 프로젝트입니다. 웹 개발과는 무관하지만 복잡했던 회로 조립, 학교에서 배우지 않았던 납땜질과 아두이노 시스템 프로그래밍은 개인적으로 값진 경험이었습니다.<h3>앱으로 조종하고 혼자 달리게</h3>
@@ -413,6 +356,14 @@ export const featuredProjects = projects.filter((project) => project.featured);
 
 export function getProject(slug: string) {
   return projects.find((project) => project.slug === slug);
+}
+
+/**
+ * "○○ 프로젝트는 {소개}입니다" 문장에 넣을 소개. 소개가 "…리뉴얼 프로젝트"처럼 끝나면
+ * "프로젝트는 … 프로젝트입니다"로 겹치므로 끝의 "프로젝트"를 뗀다.
+ */
+export function summaryPhrase(project: Project) {
+  return project.summary.replace(/\s*프로젝트$/, '');
 }
 
 /** 각 프로젝트 tags 배열의 첫 항목으로 쓰이는 유형. 필터에서 항상 먼저 노출된다. */

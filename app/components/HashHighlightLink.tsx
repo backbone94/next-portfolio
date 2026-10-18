@@ -3,10 +3,11 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
+import { PORTFOLIO_PATH } from '../content/site';
 import { runHashHighlight } from '../lib/hashHighlight';
 
 /**
- * "/#id" 형태의 같은 페이지 앵커 전용 링크.
+ * "/portfolio#id" 형태의 같은 페이지 앵커 전용 링크.
  *
  * 이미 그 페이지에 있을 때 location.hash를 직접 대입하면 브라우저가 자체
  * 스크롤을 즉시(점프) 걸어 버려서 우리가 원하는 smooth 스크롤이 할 일이
@@ -20,15 +21,15 @@ export default function HashHighlightLink({
   className,
   children,
 }: {
-  href: `/#${string}`;
+  href: `/portfolio#${string}`;
   className?: string;
   children: ReactNode;
 }) {
   const pathname = usePathname();
-  const id = href.slice(2);
+  const id = href.split('#')[1];
 
   const handleClick = (event: React.MouseEvent) => {
-    if (pathname !== '/') return; // 다른 경로면 실제 이동이 필요하니 기본 동작 유지
+    if (pathname !== PORTFOLIO_PATH) return; // 다른 경로면 실제 이동이 필요하니 기본 동작 유지
 
     event.preventDefault();
     if (window.location.hash !== `#${id}`) {
