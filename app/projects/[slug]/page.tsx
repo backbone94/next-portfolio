@@ -85,7 +85,12 @@ export default function ProjectDetailPage({ params }: Props) {
       </div>
 
       {/* 제목과 화면은 넓게 두고, 그 아래부터 본문과 옆 칸이 나란히 선다. 예전 정보 상자가 있던 자리다. */}
-      <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_23rem] lg:gap-14">
+      {/*
+        좁은 화면에서도 열을 grid-cols-1(minmax(0, 1fr))로 못박는다. 열을 정하지 않으면 열 폭이 내용의 최소 폭을 따르는데,
+        대화창 입력칸은 글자 수만큼의 기본 폭이 있어서 휴대폰 글자 크기 설정을 키우면 화면보다 넓어진다.
+        그러면 같은 열의 본문까지 밀려나고, 넘친 부분은 overflow-x: clip에 잘려 보이지 않는다.
+      */}
+      <div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1fr)_23rem] lg:gap-14">
         <div className="min-w-0">
           {/*
         본문은 대화 답변과 같은 글자 크기와 줄 간격을 쓴다. 대화에서 넘어와 읽을 때
