@@ -18,9 +18,23 @@ import type { Metadata } from 'next';
 
 type Props = { searchParams: { q?: string | string[] } };
 
+/**
+ * 한 번 덜 풀린 질문("%ED%94%84…")을 한 번 더 푼다. /projects 넘김(next.config.mjs)은 목적지를 두 번 인코딩해 두는데,
+ * 로컬 개발 서버는 한 번 풀어서 보내고 Vercel은 그대로 보낸다. 그래서 배포 환경에서는 질문이 인코딩된 글자 그대로 와서,
+ * 미리 써 둔 답을 못 찾고 AI 호출까지 갈 수 있었다. 사람이 직접 쓴 질문에 "%EA"처럼 퍼센트 인코딩이 들어갈 일은 거의 없다.
+ */
+function decodeOnceMore(text: string) {
+  if (!/%[0-9A-Fa-f]{2}/.test(text)) return text;
+  try {
+    return decodeURIComponent(text);
+  } catch {
+    return text;
+  }
+}
+
 function resolve(searchParams: Props['searchParams']) {
   const raw = Array.isArray(searchParams.q) ? searchParams.q[0] : searchParams.q;
-  const question = raw?.trim().slice(0, 200);
+  const question = raw && decodeOnceMore(raw).trim().slice(0, 200);
   if (!question) return null;
   const { route } = routeWithKeywords(question);
   const answer = route !== NONE ? ROUTES[route]?.answer(question) : null;

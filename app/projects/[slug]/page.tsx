@@ -26,7 +26,9 @@ export function generateMetadata({ params }: Props): Metadata {
   const thumbnail = project.media.find((item) => item.type === 'image');
 
   return {
-    title: project.title,
+    // 탭 제목은 "{title} | 이정준"이다(layout.tsx). "슬기로운 아이티센 생활 | 셔틀 서비스"처럼 이름에 세로선이 있으면
+    // 세로선이 두 번 나와 어디까지가 프로젝트 이름인지 흐려진다. 탭 제목에서만 콜론으로 바꾼다.
+    title: project.title.replace(/\s*\|\s*/g, ': '),
     description: project.summary,
     alternates: { canonical: `/projects/${project.slug}` },
     openGraph: {
