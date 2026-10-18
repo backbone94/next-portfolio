@@ -68,7 +68,8 @@ export default function ProjectFacts({ project }: { project: Project }) {
 
       {/* 참고는 링크 버튼 하나라 버튼 폭만 쓰고(긴 주소는 16rem에서 줄임표로 자른다), 남은 폭은 주요 기능과 기술 스택이 반씩 나눈다 */}
       <dl
-        className={`grid divide-y divide-border lg:divide-y-0 ${
+        // grid-cols-1: 좁은 화면에서 열 폭이 가장 긴 태그나 참고 주소를 따라 화면 밖으로 늘어나지 않게 한다
+        className={`grid grid-cols-1 divide-y divide-border lg:divide-y-0 ${
           link ? 'lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_fit-content(16rem)]' : 'lg:grid-cols-2'
         } ${project.contribution ? 'border-t border-border' : ''}`}
       >

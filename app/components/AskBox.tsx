@@ -46,11 +46,13 @@ const isExternal = (href: string) =>
 /** "/?q=질문" 링크는 페이지를 옮기지 않고 같은 대화에 질문을 잇는다 */
 const questionOf = (href: string) => (href.startsWith('/?q=') ? decodeURIComponent(href.slice(4)) : null);
 
+/**
+ * 질문 버튼. 줄바꿈을 막지 않는다. 짧은 질문은 어절 단위 줄바꿈(keep-all) 덕에 어차피 한 줄로 서고,
+ * 긴 질문("더원서울안과 홈페이지 리뉴얼에서 가장 어려웠던 점은?")만 칸이 모자랄 때 줄을 바꾼다.
+ * 한 줄로 못박으면 휴대폰 글자 크기 설정을 키웠을 때 화면 밖으로 나가 잘린다.
+ */
 export const chip =
-  'whitespace-nowrap rounded-md bg-surface-2 px-3.5 py-1.5 text-sm font-medium text-text/80 transition-colors hover:bg-accent/10 hover:text-accent disabled:opacity-50';
-
-/** 좁은 칸에서 쓰는 질문 버튼. 긴 질문("슬기로운 아이티센 생활 | 셔틀 서비스에서 …")이 칸 밖으로 넘치지 않게 줄을 바꾼다. */
-const chipWrap = chip.replace('whitespace-nowrap', 'max-w-full text-left');
+  'max-w-full rounded-md bg-surface-2 px-3.5 py-1.5 text-left text-sm font-medium text-text/80 transition-colors hover:bg-accent/10 hover:text-accent disabled:opacity-50';
 
 /**
  * inline: "/?q=" 링크를 지금 대화에 이어 묻는다. 상세 페이지 옆 칸은 그 프로젝트만 답해서,
@@ -384,7 +386,7 @@ export function Answer({
   // 흘러오는 답은 도착하는 속도가 곧 연출이라 따로 늦추지 않는다
   const shown = useReveal(total, instant || live);
   const done = shown >= total && !live;
-  const pill = narrow ? chipWrap : chip;
+  const pill = chip;
   const [copied, setCopied] = useState<string | null>(null);
   async function copy(value: string) {
     // 브라우저가 복사를 막으면(권한, 창이 포커스를 잃음) 넘어간다. "복사했습니다"를 거짓으로 띄우지 않는다.
