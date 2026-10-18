@@ -15,7 +15,8 @@ export type RouteDecision = {
   offTopic: number;
   /** 선택한 route의 확률. 키워드 규칙은 1 또는 0이다. */
   confidence: number;
-  by: 'jev' | 'keyword';
+  /** button: 화면의 버튼이 보낸 정해진 문장이라 Jev 없이 키워드 규칙으로 골랐다 (route.ts) */
+  by: 'jev' | 'keyword' | 'button';
 };
 
 /*
