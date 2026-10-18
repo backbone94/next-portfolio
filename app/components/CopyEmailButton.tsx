@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { CONTACT } from '../content/site';
 import { systemShowsCopyNotice } from '../lib/clipboard';
+import { say } from '../lib/guide';
 
 /**
  * 누르면 메일 주소를 복사한다. mailto: 링크는 기본 메일 앱이 없는 컴퓨터(웹메일만
@@ -39,6 +40,7 @@ export default function CopyEmailButton({ className, children = '메일' }: { cl
     let text: string;
     try {
       await navigator.clipboard.writeText(CONTACT.email);
+      say('copied', 1800);
       if (systemNotice) return;
       text = `${CONTACT.email} 주소를 복사했습니다.`;
     } catch {

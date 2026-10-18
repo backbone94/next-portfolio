@@ -6,8 +6,10 @@ import { useEffect, useId, useLayoutEffect, useRef, useState, type FormEvent, ty
 import { ASK, CONTACT, RECORD_NOTICE, RESUME_URL, STARTERS, askHref } from '../content/site';
 import { answerToHtml, answerToMarkdown, applyStreamEvent, cleanSegments, toBlocks } from '../lib/ask/format';
 import type { AnswerProject, AskAnswer, AskStreamEvent } from '../lib/ask/types';
+import { say, type GuideCue } from '../lib/guide';
 import CopyEmailButton from './CopyEmailButton';
 import ProjectMedia from './ProjectMedia';
+import RobotGuide, { GUIDE_NAME, RobotAvatar } from './RobotGuide';
 
 /**
  * 첫 화면 전체. 요즘 AI 채팅 화면의 문법을 따른다.
@@ -392,6 +394,7 @@ export function Answer({
     // 브라우저가 복사를 막으면(권한, 창이 포커스를 잃음) 넘어간다. "복사했습니다"를 거짓으로 띄우지 않는다.
     if (!(await navigator.clipboard.writeText(value).then(() => true, () => false))) return;
     setCopied(value);
+    say('copied', 1800);
     setTimeout(() => setCopied(null), 1800);
   }
 
@@ -410,6 +413,7 @@ export function Answer({
       if (!(await navigator.clipboard.writeText(markdown).then(() => true, () => false))) return;
     }
     setCopied('answer');
+    say('copied', 1800);
     setTimeout(() => setCopied(null), 1800);
   }
 
@@ -661,6 +665,29 @@ export default function AskBox({ initial, askOnLoad }: Props) {
   const last = entries.at(-1);
   const announcement = !last ? '' : !last.answer || last.live ? '답을 찾는 중입니다.' : last.answer.segments.map((s) => s.text).join('');
 
+  // 안내 로봇이 지금 말할 상황. 처음에는 인사하고, 그 뒤로는 방문자가 하는 일에 맞춰 바뀐다.
+  // 복사·답 도착·링크에 마우스 올리기처럼 잠깐 지나가는 반응은 say()로 따로 보낸다.
+  const [greeted, setGreeted] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setGreeted(true), 2400);
+    return () => clearTimeout(timer);
+  }, []);
+  const guide: GuideCue = !last
+    ? value
+      ? 'typing'
+      : greeted
+        ? 'ask'
+        : 'hi'
+    : !last.answer || last.live
+      ? 'thinking'
+      : last.answer.source === 'notice'
+        ? 'oops'
+        : value
+          ? 'typing'
+          : last.answer.projects?.view === 'list'
+            ? 'pick'
+            : 'ask';
+
   useEffect(() => {
     let i = 0;
     const timer = setInterval(() => setPlaceholder(EXAMPLES[++i % EXAMPLES.length]), 2600);
@@ -748,6 +775,7 @@ export default function AskBox({ initial, askOnLoad }: Props) {
     }
     // 흘러온 답은 이미 다 보였다. 최종 답으로 갈아 끼울 때 글자가 다시 흘러나오지 않게 한다.
     update({ answer, live: false, ...(answer.source === 'claude' ? { instant: true } : {}) });
+    if (answer.source !== 'notice') say('done', 2200);
   }
 
   function onSubmit(event: FormEvent) {
@@ -768,24 +796,43 @@ export default function AskBox({ initial, askOnLoad }: Props) {
   const textLink = 'font-medium text-muted transition-colors hover:text-accent';
   const quickLinks = (
     <>
-      <a href={RESUME_URL} target="_blank" rel="noreferrer" className={textLink}>
+      <a href={RESUME_URL} target="_blank" rel="noreferrer" className={textLink} data-guide="pdf">
         이력서 PDF
       </a>
-      <CopyEmailButton className={textLink} />
-      <a href={CONTACT.github} target="_blank" rel="noreferrer" className={textLink}>
+      <span data-guide="mail" className="contents">
+        <CopyEmailButton className={textLink} />
+      </span>
+      <a href={CONTACT.github} target="_blank" rel="noreferrer" className={textLink} data-guide="code">
         GitHub
       </a>
     </>
   );
+  // 바로가기에 마우스를 올리거나 키보드로 옮겨 가면, 누르면 무엇이 열리는지 로봇이 먼저 말한다.
+  // 바로가기 사이 빈자리나 다른 버튼 위에서는 문구를 지우기만 한다. 직접 띄운 문구가 없으면 "Copied!" 같은 다른 반응을 건드리지 않는다.
+  const hovering = useRef(false);
+  const onGuideTarget = ({ target }: { target: EventTarget }) => {
+    const text = (target as HTMLElement).closest<HTMLElement>('[data-guide]')?.dataset.guide as GuideCue | undefined;
+    if (text) say(text);
+    else if (hovering.current) say(null);
+    hovering.current = Boolean(text);
+  };
+  const leaveGuideTarget = () => {
+    if (hovering.current) say(null);
+    hovering.current = false;
+  };
+  const guideHover = { onPointerOver: onGuideTarget, onFocus: onGuideTarget, onPointerLeave: leaveGuideTarget, onBlur: leaveGuideTarget };
 
   if (!started) {
     // 정가운데에 두면 눈이 가는 입력창이 화면 중심보다 아래에 놓여 처져 보인다. 아래 여백으로 묶음을 화면 높이의 12%만큼 올려
     // 입력창이 위에서 44% 안팎에 오게 한다.
-    // 휴대폰(sm 미만)은 반대다. 질문 버튼이 세 줄로 늘어 묶음 아래쪽이 길어지므로, 같은 여백을 주면 입력창이 36%까지 올라간다.
-    // 그래서 위 여백을 조금 주어 묶음을 내리고, 입력창이 화면 한가운데(375×812에서 51%)에 오게 한다.
+    // 휴대폰(sm 미만)은 질문 버튼이 세 줄로 늘고 안내 로봇까지 위에 서서 묶음이 화면 높이에 가깝다.
+    // 아래 여백으로 바닥의 바로가기 줄 자리를 비워 둔다. 세로가 짧은 화면에서는 묶음이 그 줄과 겹치지 않고 페이지가 조금 길어진다.
     return (
-      <section className="relative mx-auto flex min-h-[100svh] max-w-intro flex-col justify-center px-5 pt-[5svh] sm:pb-[24svh] sm:pt-0 lg:px-0">
+      <section className="relative mx-auto flex min-h-[100svh] max-w-intro flex-col justify-center px-5 pb-24 pt-6 sm:pb-[24svh] sm:pt-0 lg:px-0">
         <div className="animate-rise">
+          {/* 휴대폰에서는 줄인다. 질문 버튼이 여러 줄로 늘어나 세로 자리가 모자라다. */}
+          {/* 왼쪽 끝(흔드는 손과 그림자)을 인사말 첫 글자에 맞춘다 */}
+          <RobotGuide cue={guide} className="w-[150px] sm:w-[200px]" />
           <h1 className="text-[clamp(2rem,5vw,3rem)] font-black leading-[1.2] tracking-[-0.03em]">
             안녕하세요, 이정준입니다.
             <br />
@@ -804,7 +851,7 @@ export default function AskBox({ initial, askOnLoad }: Props) {
           <p className="mt-5 text-xs text-muted">{RECORD_NOTICE}</p>
         </div>
         {/* 질문하지 않고 훑으려는 사람을 위한 길. 화면을 옮기지 않고 같은 대화로 연다. */}
-        <nav aria-label="질문 없이 둘러보기" className="absolute inset-x-5 bottom-8 flex flex-wrap gap-x-5 gap-y-2 text-sm lg:inset-x-0">
+        <nav aria-label="질문 없이 둘러보기" className="absolute inset-x-5 bottom-8 flex flex-wrap gap-x-5 gap-y-2 text-sm lg:inset-x-0" {...guideHover}>
           <button type="button" onClick={() => ask(ASK.projects)} className={textLink}>
             프로젝트 전체 보기 →
           </button>
@@ -821,7 +868,9 @@ export default function AskBox({ initial, askOnLoad }: Props) {
         <button type="button" onClick={reset} className="font-bold tracking-tight transition-colors hover:text-accent">
           leejj.dev
         </button>
-        <div className="flex gap-4">{quickLinks}</div>
+        <div className="flex gap-4" {...guideHover}>
+          {quickLinks}
+        </div>
       </div>
 
       {/*
@@ -838,7 +887,14 @@ export default function AskBox({ initial, askOnLoad }: Props) {
             <div ref={i === entries.length - 1 ? lastQuestion : undefined} className="flex scroll-mt-6 justify-end">
               <p className="max-w-[85%] rounded-lg bg-surface-2 px-4 py-2.5 leading-relaxed">{question}</p>
             </div>
-            <div className="mt-5">{answer ? <Answer question={question} answer={answer} instant={instant} live={live} onFollow={ask} disabled={pending} /> : <Thinking />}</div>
+            {/* 메신저처럼 답변마다 안내 로봇의 얼굴과 이름을 붙인다. 답을 찾는 동안에는 얼굴이 떠다닌다. */}
+            <div className="mt-5 flex gap-3">
+              <RobotAvatar busy={!answer || live} className="h-8 w-8 sm:h-9 sm:w-9" />
+              <div className="min-w-0 flex-1">
+                <p className="mb-1.5 text-sm font-semibold leading-8 sm:leading-9">{GUIDE_NAME}</p>
+                {answer ? <Answer question={question} answer={answer} instant={instant} live={live} onFollow={ask} disabled={pending} /> : <Thinking />}
+              </div>
+            </div>
           </li>
         ))}
       </ol>

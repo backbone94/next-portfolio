@@ -96,3 +96,79 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* 안내 로봇 화면의 문구가 바뀔 때. 글자 자리는 RobotGuide가 매 프레임 옮기므로 transform은 건드리지 않는다. */
+@keyframes guide-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* 안내 로봇의 움직임(RobotGuide). 동작 줄이기를 켜면 위의 전역 규칙이 모두 멈춘다. */
+@keyframes guide-float {
+  50% {
+    transform: translateY(-4%);
+  }
+}
+
+@keyframes guide-sway {
+  0%,
+  100% {
+    transform: rotate(-1.5deg);
+  }
+  50% {
+    transform: rotate(1.5deg);
+  }
+}
+
+/* 떠오를 때(guide-float의 50%) 그림자가 작고 옅어진다 */
+@keyframes guide-shadow {
+  50% {
+    transform: scale(0.82);
+    opacity: 0.6;
+  }
+}
+
+/* 앞쪽 절반 동안 두 번 흔들고, 나머지는 쉰다 */
+@keyframes guide-wave {
+  0%,
+  55%,
+  100% {
+    transform: rotate(0);
+  }
+  12% {
+    transform: rotate(-14deg);
+  }
+  25% {
+    transform: rotate(8deg);
+  }
+  38% {
+    transform: rotate(-12deg);
+  }
+  48% {
+    transform: rotate(5deg);
+  }
+}
+
+@keyframes guide-blink {
+  0%,
+  44%,
+  52%,
+  100% {
+    transform: scaleY(1);
+  }
+  48% {
+    transform: scaleY(0.12);
+  }
+}
+
+/* guide-sway와 같은 주기로 반대로 돈다. 기울기 틀 안의 말풍선이 자리만 따라가고 글자는 똑바로 선다. */
+@keyframes guide-sway-counter {
+  0%,
+  100% {
+    transform: rotate(1.5deg);
+  }
+  50% {
+    transform: rotate(-1.5deg);
+  }
+}
