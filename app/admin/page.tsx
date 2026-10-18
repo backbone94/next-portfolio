@@ -55,6 +55,9 @@ export default async function AdminPage({ searchParams }: Props) {
       <p className="mt-4 max-w-prose text-muted">
         IP와 쿠키는 남기지 않습니다. 순방문은 같은 날 같은 기기를 한 명으로 셉니다. 날이 바뀌면 같은 사람도 새로 셉니다.
       </p>
+      <p className="mt-2 max-w-prose text-sm text-muted">
+        이 화면에 로그인한 브라우저와 EXCLUDED_IPS에 적은 IP의 방문은 기록하지 않습니다.
+      </p>
 
       <nav aria-label="기간과 환경" className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-sm">
         <Choices label="기간" items={PERIODS.map((d) => ({ key: String(d), text: `${d}일`, href: href({ days: d }), on: d === days }))} />

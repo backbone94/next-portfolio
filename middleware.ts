@@ -1,5 +1,5 @@
 import { NextResponse, type NextFetchEvent, type NextRequest } from 'next/server';
-import { recordVisit } from './app/lib/visit';
+import { ADMIN_COOKIE, recordVisit } from './app/lib/visit';
 
 /**
  * 하는 일은 둘이다.
@@ -7,6 +7,7 @@ import { recordVisit } from './app/lib/visit';
  * 1. /admin을 비밀번호로 막는다. ADMIN_PASSWORD가 비어 있으면 페이지가 없는 것처럼 404를 낸다.
  *    브라우저 기본 로그인 창(Basic Auth)을 쓴다. 아이디 칸은 무엇을 넣어도 되고 비밀번호만 본다.
  *    로그인 화면과 세션을 따로 만들지 않아도 되고, 브라우저가 창을 닫을 때까지 기억해 준다.
+ *    로그인에 성공하면 그 브라우저에 쿠키를 심어 이후 방문을 기록에서 뺀다. 방문자에게는 쿠키를 쓰지 않는다.
  * 2. 첫 화면과 프로젝트 상세를 연 방문을 기록한다(app/lib/visit.ts).
  */
 
@@ -36,7 +37,15 @@ export function middleware(request: NextRequest, event: NextFetchEvent) {
         headers: { 'WWW-Authenticate': 'Basic realm="admin", charset="UTF-8"', 'Content-Type': 'text/plain; charset=utf-8' },
       });
     }
-    return NextResponse.next({ headers: { 'X-Robots-Tag': 'noindex, nofollow' } });
+    const response = NextResponse.next({ headers: { 'X-Robots-Tag': 'noindex, nofollow' } });
+    response.cookies.set(ADMIN_COOKIE, '1', {
+      httpOnly: true,
+      secure: request.nextUrl.protocol === 'https:',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 365,
+    });
+    return response;
   }
 
   recordVisit(request, event);
