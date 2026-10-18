@@ -10,13 +10,14 @@ import { SITE_URL } from './content/site';
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   /*
-    탭 제목은 어느 페이지든 "Jun's Portfolio" 하나로 둔다. template에 %s가 없어서
-    하위 페이지가 title을 정해도 탭에는 이 값만 나온다. 공유 카드 제목은 각
-    페이지의 openGraph.title이 따로 맡는다.
+    첫 화면과 대화 화면의 탭 제목은 "Jun's Portfolio"다. title을 정하는 페이지는 프로젝트 상세뿐이라
+    상세만 "더원서울안과 홈페이지 리뉴얼 | 이정준"처럼 나온다. 예전에는 template에 %s를 빼서
+    모든 탭을 같은 제목으로 두었는데, 검색 결과에서 상세 페이지 아홉 개가 구분되지 않았다.
+    공유 카드 제목은 각 페이지의 openGraph.title이 따로 맡는다.
   */
   title: {
     default: "Jun's Portfolio",
-    template: "Jun's Portfolio",
+    template: '%s | 이정준',
   },
   description: '이정준의 경력과 프로젝트를 검색창에 물어보세요. 모든 답은 실제 기록을 근거로 합니다.',
   /*
