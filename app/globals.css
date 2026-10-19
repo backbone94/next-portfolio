@@ -129,27 +129,6 @@
   }
 }
 
-/* 앞쪽 절반 동안 두 번 흔들고, 나머지는 쉰다 */
-@keyframes guide-wave {
-  0%,
-  55%,
-  100% {
-    transform: rotate(0);
-  }
-  12% {
-    transform: rotate(-14deg);
-  }
-  25% {
-    transform: rotate(8deg);
-  }
-  38% {
-    transform: rotate(-12deg);
-  }
-  48% {
-    transform: rotate(5deg);
-  }
-}
-
 @keyframes guide-blink {
   0%,
   44%,

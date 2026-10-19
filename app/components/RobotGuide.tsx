@@ -8,7 +8,8 @@ import { GUIDE_EVENT, GUIDE_LINES, type GuideCue, type GuideMessage } from '../l
  *
  * 영상 없이 그림 한 장을 층으로 나눠 CSS로 움직인다(public/guide/robot-*.webp).
  * - 몸통: 위아래로 떠다니고, 발밑을 축으로 좌우로 살짝 기운다. 바닥 그림자는 떠오를 때 작아진다.
- * - 손: 손목 띠 바로 위에서 잘라 낸 손을 띠 윗변 가운데를 축으로 흔든다. 몸통 층에서는 손을 지우고 띠는 남겨 두었다.
+ * - 손: 손목 띠 바로 위에서 잘라 낸 손을 띠 윗변 가운데를 축으로 흔든다. 평소에는 가만히 있고, 로봇을 누를 때만 흔든다.
+ *   몸통 층에서는 손을 지우고 띠는 남겨 두었다.
  * - 눈: 따로 떼어 낸 눈을 세로로 납작하게 눌러 깜빡인다. 몸통 층의 눈 자리는 고글 색으로 메워 두었다.
  *
  * 몸통과 손은 바탕이 투명한 그림이다. 처음에는 흰 바탕 그림에 곱하기 혼합을 걸었는데, 움직이는 층에서는
@@ -37,13 +38,14 @@ const TALK_LINES = [GUIDE_LINES.ask, '반가워요! 👋', `저는 이 사이트
 /** 말이 저절로 바뀌는 간격. 입력창의 예시 질문(2.6초)보다 훨씬 느리게 두어 둘이 같이 깜빡거리지 않게 한다. */
 const TALK_EVERY = 6000;
 
-/** 누르면 한 번 뛰어오른다. 웅크렸다가(납작) 뛰어오르고(길쭉) 내려앉는다. */
-const HOP: Keyframe[] = [
-  { transform: 'translateY(0) scale(1, 1)' },
-  { transform: 'translateY(1%) scale(1.06, 0.94)', offset: 0.15 },
-  { transform: 'translateY(-14%) scale(0.96, 1.04)', offset: 0.45 },
-  { transform: 'translateY(0) scale(1.05, 0.95)', offset: 0.8 },
-  { transform: 'translateY(0) scale(1, 1)' },
+/** 누르면 손을 두 번 흔들고 내린다. */
+const WAVE: Keyframe[] = [
+  { transform: 'rotate(0)' },
+  { transform: 'rotate(-14deg)', offset: 0.22 },
+  { transform: 'rotate(8deg)', offset: 0.45 },
+  { transform: 'rotate(-12deg)', offset: 0.69 },
+  { transform: 'rotate(5deg)', offset: 0.87 },
+  { transform: 'rotate(0)' },
 ];
 
 /** 뒤에 점이 하나씩 늘어나는(. .. ...) 상황. 듣거나 찾는 중이라 기다리는 느낌을 준다. */
@@ -61,8 +63,7 @@ export default function RobotGuide({ cue, className = '' }: { cue: GuideCue; cla
   const [override, setOverride] = useState<GuideCue | null>(null);
   const [dots, setDots] = useState(1);
   const current = override ?? cue;
-  const hopRef = useRef<HTMLDivElement>(null);
-  const eyesRef = useRef<(HTMLImageElement | null)[]>([]);
+  const handRef = useRef<HTMLImageElement>(null);
   const pokes = useRef(0);
   const [poke, setPoke] = useState<{ id: number; line: string } | null>(null);
   const [turn, setTurn] = useState(0);
@@ -87,24 +88,9 @@ export default function RobotGuide({ cue, className = '' }: { cue: GuideCue; cla
     const next = turn + 1;
     setTurn(next);
     if (!idle) setPoke({ id: pokes.current++, line: TALK_LINES[next % TALK_LINES.length] });
-    // 동작 줄이기를 켜면 말만 바꾸고 뛰지 않는다
+    // 동작 줄이기를 켜면 말만 바꾸고 손은 흔들지 않는다
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    hopRef.current?.animate(HOP, { duration: 650, easing: 'ease-out' });
-    // 뛰는 동안 눈을 한 번 질끈 감는다. CSS 깜빡임 위에 잠시 덮어쓴다.
-    eyesRef.current.forEach((eye) =>
-      eye?.animate(
-        [
-          { transform: 'scaleY(1)' },
-          { transform: 'scaleY(0.15)', offset: 0.3 },
-          { transform: 'scaleY(0.15)', offset: 0.6 },
-          { transform: 'scaleY(1)' },
-        ],
-        {
-          duration: 500,
-          easing: 'ease-in-out',
-        },
-      ),
-    );
+    handRef.current?.animate(WAVE, { duration: 1300, easing: 'ease-in-out' });
   }
 
   useEffect(() => {
@@ -139,16 +125,13 @@ export default function RobotGuide({ cue, className = '' }: { cue: GuideCue; cla
         <div className="relative animate-[guide-float_3.2s_ease-in-out_infinite]">
           <div className="animate-[guide-sway_4.8s_ease-in-out_infinite] [transform-origin:50%_100%]">
             {/* 누르면 반응하는 자리. 장식이라 화면 낭독기와 키보드 이동에서는 빠진다(바깥 틀이 aria-hidden). */}
-            <div ref={hopRef} onClick={onPoke} className="relative aspect-[1010/1168] cursor-pointer touch-manipulation [transform-origin:50%_100%]">
+            <div onClick={onPoke} className="relative aspect-[1010/1168] cursor-pointer touch-manipulation">
               {/* eslint-disable-next-line @next/next/no-img-element -- 층을 정확히 겹쳐야 해서 next/image의 감싸는 요소를 피한다 */}
               <img src="/guide/robot-body.webp" alt="" draggable={false} className="absolute inset-0 h-full w-full" />
               {EYES.map(({ name, ...at }) => (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   key={name}
-                  ref={(el) => {
-                    eyesRef.current[name === 'left' ? 0 : 1] = el;
-                  }}
                   src={`/guide/robot-eye-${name}.webp`}
                   alt=""
                   draggable={false}
@@ -158,10 +141,11 @@ export default function RobotGuide({ cue, className = '' }: { cue: GuideCue; cla
               ))}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
+                ref={handRef}
                 src="/guide/robot-hand.webp"
                 alt=""
                 draggable={false}
-                className="absolute inset-0 h-full w-full animate-[guide-wave_2.8s_ease-in-out_infinite]"
+                className="absolute inset-0 h-full w-full"
                 style={{ transformOrigin: WRIST }}
               />
             </div>
