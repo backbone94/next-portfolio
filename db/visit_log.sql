@@ -21,3 +21,15 @@ create table if not exists visit_log (
 );
 
 create index if not exists visit_log_created_at on visit_log (created_at desc);
+
+-- 봇인지 가늠하는 정보. 처음 만든 표에는 없던 칸이라 있으면 건너뛰고 없을 때만 더한다.
+-- 브라우저 종류와 큰 버전, 운영체제만 (Chrome 141 · Android). User-Agent 원문은 남기지 않는다
+alter table visit_log add column if not exists browser text;
+-- 브라우저가 알려 준 첫 번째 언어 (ko-KR). 사람이 쓰는 브라우저는 거의 늘 보내고, 단순한 수집 프로그램은 자주 빠뜨린다
+alter table visit_log add column if not exists lang text;
+-- 요청에 Sec-Fetch-Mode 헤더가 있었는지. 요즘 브라우저는 늘 붙이고, curl 같은 도구는 붙이지 않는다
+alter table visit_log add column if not exists fetch_meta boolean;
+-- 페이지가 브라우저에서 실제로 실행됐는지. 화면이 1초 넘게 열려 있으면 /api/visit가 true로 바꾼다. HTML만 받아 가는 봇은 null로 남는다
+alter table visit_log add column if not exists js boolean;
+-- 자동화 도구가 조종하는 브라우저인지(navigator.webdriver). js와 같이 채워진다
+alter table visit_log add column if not exists webdriver boolean;
