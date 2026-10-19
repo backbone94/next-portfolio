@@ -586,6 +586,11 @@ function Composer({
   inputRef: RefObject<HTMLInputElement>;
 }) {
   const inputId = useId();
+  // 마우스가 있는 화면에서만 입력창에 바로 포커스를 준다. 터치 화면은 포커스가 가면 키보드가 저절로 올라와
+  // 화면 절반을 가린다. 대화를 시작하면 입력창이 화면 아래로 옮겨 가며 새로 그려지므로 그때도 여기를 지난다.
+  useEffect(() => {
+    if (window.matchMedia('(pointer: fine)').matches) inputRef.current?.focus();
+  }, [inputRef]);
   return (
     <form
       onSubmit={onSubmit}
@@ -612,7 +617,6 @@ function Composer({
         aria-describedby={`${inputId}-hint`}
         maxLength={200}
         autoComplete="off"
-        autoFocus
         className="peer min-w-0 flex-1 bg-transparent py-2 text-[1.0625rem] placeholder:text-muted/80 focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
       />
       {/* 입력창에 포커스가 있고 키보드가 있는 화면에서만 알려 준다. 휴대폰에는 Tab 키가 없다. */}
@@ -758,7 +762,9 @@ export default function AskBox({ initial, askOnLoad }: Props) {
     // 지금 보고 있는 질문을 주소에 남긴다. 새로고침하거나 주소를 보내도 같은 질문이 열린다.
     // 기록 칸은 대화를 시작할 때만 쌓는다. Next가 history.pushState를 감싸 두어서 직접 불러도 라우터와 어긋나지 않는다.
     window.history[inChat || stacked ? 'replaceState' : 'pushState']({ askChat: true }, '', askHref(q));
-    inputRef.current?.focus();
+    // 터치 화면은 질문을 보낸 뒤 키보드를 내린다. 키보드가 흘러나오는 답을 가린다(ProjectAsk와 같다).
+    if (window.matchMedia('(pointer: fine)').matches) inputRef.current?.focus();
+    else inputRef.current?.blur();
 
     const update = (patch: Partial<Entry>) => setLog((prev) => prev.map((e) => (e.id === id ? { ...e, ...patch } : e)));
     let answer: AskAnswer;
