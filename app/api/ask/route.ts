@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
+import type { NextRequest } from 'next/server';
 import { STARTER_QUESTIONS } from '@/app/content/projectAnswers';
 import { getProject, type Project } from '@/app/content/projects';
 import { askHref } from '@/app/content/site';
@@ -7,6 +8,7 @@ import { NONE, ROUTES, starterAnswer } from '@/app/lib/ask/prepared';
 import { findProjects, routeQuestion, routeWithKeywords, type RouteDecision } from '@/app/lib/ask/router';
 import { recordAsk, type Usage } from '@/app/lib/ask/store';
 import type { AskAnswer, AskStreamEvent } from '@/app/lib/ask/types';
+import { isOwner } from '@/app/lib/visit';
 
 /** 답이 정해지면 부른다. Vercel 로그에 한 줄 찍고 질문 기록(ask_log)에도 남긴다. usage는 Claude가 답했을 때만 온다. */
 type Log = (answer: AskAnswer, usage?: Usage) => void;
@@ -78,7 +80,7 @@ function streamAnswer(write: (emit: (event: AskStreamEvent) => void) => Promise<
   });
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   const body = (await request.json().catch(() => null)) as { question?: unknown; project?: unknown; via?: unknown } | null;
   const asked = typeof body?.question === 'string' ? body.question.trim() : '';
   // 상세 페이지 옆 칸에서 온 질문이면 그 페이지의 프로젝트가 함께 온다
@@ -93,7 +95,10 @@ export async function POST(request: Request) {
     return Response.json(notice('질문이 조금 많았습니다. 잠시 뒤에 다시 물어봐 주세요.'), { status: 429 });
   }
 
-  if (project) return answerInPanel(asked, project, ip, request.signal);
+  // 사이트 주인(관리자 화면에 로그인한 브라우저·EXCLUDED_IPS)이 한 질문은 답은 하되 기록하지 않는다
+  const record: typeof recordAsk = isOwner(request) ? () => {} : recordAsk;
+
+  if (project) return answerInPanel(asked, project, ip, request.signal, record);
 
   // 프로젝트 하나를 지목해 어려웠던 점·역할·결과를 짧게 물으면 미리 써 둔 답으로 바로 답한다. 둘 이상이면 비교라 Claude가 맡는다.
   const named = findProjects(asked);
@@ -101,7 +106,7 @@ export async function POST(request: Request) {
   if (starter) {
     const route = `starter:${named[0].slug}:${starter.kind}`;
     console.info('[ask]', JSON.stringify({ question: asked, route, answeredBy: 'prepared' }));
-    recordAsk({ question: asked, route, answer: starter.answer });
+    record({ question: asked, route, answer: starter.answer });
     return Response.json(starter.answer);
   }
 
@@ -117,7 +122,7 @@ export async function POST(request: Request) {
   // 어떤 질문이 들어오고 어디로 갔는지 보고 답변을 늘려 가는 용도다. IP는 남기지 않는다.
   const log: Log = (answer, usage) => {
     console.info('[ask]', JSON.stringify({ question: asked, ...decision, answeredBy: answer.source }));
-    recordAsk({ question: asked, route: decision.route, decision, answer, usage });
+    record({ question: asked, route: decision.route, decision, answer, usage });
   };
   const route = ROUTES[decision.route];
   const prepared = quick ?? (decision.route !== NONE && route && decision.confidence >= ROUTE_THRESHOLD ? route.answer(asked) : null);
@@ -173,13 +178,13 @@ const ELSEWHERE = /(다른|딴|그 ?밖의|나머지) ?(프로젝트|회사|직�
 
 const shortName =(p: Project) => p.title.split('|').pop()!.trim();
 
-async function answerInPanel(asked: string, project: Project, ip: string, signal: AbortSignal) {
+async function answerInPanel(asked: string, project: Project, ip: string, signal: AbortSignal, record: typeof recordAsk) {
   // 분류를 거친 질문은 그 확률도 남긴다. 옆 칸에서 어떤 질문이 어디로 가는지 보고 고치는 용도다.
   const log =
     (route: string, decision?: RouteDecision): Log =>
     (answer, usage) => {
       console.info('[ask]', JSON.stringify({ question: asked, project: project.slug, ...decision, route, answeredBy: answer.source }));
-      recordAsk({ question: asked, page: project.slug, route, decision, answer, usage });
+      record({ question: asked, page: project.slug, route, decision, answer, usage });
     };
   const reply = (answer: AskAnswer, route: string, decision?: RouteDecision) => {
     log(route, decision)(answer);
