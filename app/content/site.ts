@@ -6,10 +6,11 @@
  * 어긋나면 canonical이 실제 서빙 주소와 달라진다.
  *
  * RESUME_URL: 이력서 PDF. 경로를 한 곳에서만 바꾸도록 여기에 둔다.
+ * 뒤에 붙는 ?v=는 PDF 내용의 해시다(next.config.mjs). 파일을 바꾸면 주소도 바뀌어 예전 파일이 다시 열리지 않는다.
  */
 export const SITE_URL = 'https://leejj.dev';
 
-export const RESUME_URL = '/resume.pdf';
+export const RESUME_URL = `/resume.pdf?v=${process.env.RESUME_VERSION}`;
 
 /**
  * 자주 묻는 질문의 대표 문장. 헤더 메뉴, 첫 화면 바로가기, 옛 주소 넘기기가
