@@ -30,6 +30,14 @@ export type Stats = {
     city: string | null;
     device: string | null;
     visitor: string;
+    /** 아래는 봇을 가늠하는 정보. 이 칸들을 더하기 전에 남은 방문은 모두 null이다(db/visit_log.sql) */
+    browser: string | null;
+    lang: string | null;
+    fetchMeta: boolean | null;
+    js: boolean | null;
+    webdriver: boolean | null;
+    /** 1분 안에 남은 방문. 화면 실행 신호가 아직 오지 않았을 수 있다 */
+    fresh: boolean;
   }[];
   questions: { question: string; asked: number; last: string }[];
   claudeAnswers: { at: string; page: string | null; question: string; route: string | null; confidence: number | null }[];
@@ -74,7 +82,8 @@ export async function loadStats(env: Env, days: number): Promise<Stats | null> {
       // 방문 한 건씩. 시각은 한국 시간으로 초까지, 방문자 값은 같은 날 같은 사람인지 알아볼 만큼 앞 6자리만 낸다
       sql.query(
         `select to_char(${kst('created_at')}, 'YYYY-MM-DD HH24:MI:SS') as at, path, referrer, country, city, device,
-                left(visitor, 6) as visitor
+                left(visitor, 6) as visitor, browser, lang, fetch_meta as "fetchMeta", js, webdriver,
+                created_at > now() - interval '1 minute' as fresh
          from visit_log where env = $1 and created_at > $2
          order by created_at desc limit 100`,
         [env, since],

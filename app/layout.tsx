@@ -5,6 +5,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import HideOnAskHome from './components/HideOnAskHome';
+import VisitBeacon from './components/VisitBeacon';
 import { SITE_URL } from './content/site';
 
 export const metadata: Metadata = {
@@ -66,6 +67,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           않아 동의 배너 없이 둘 수 있다. 개발 중에는 아무것도 보내지 않는다.
         */}
         <Analytics />
+        <VisitBeacon />
       </body>
     </html>
   );

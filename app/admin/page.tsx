@@ -40,6 +40,22 @@ function pageName(path: string | null) {
 
 const DEVICE: Record<string, string> = { mobile: '휴대폰', tablet: '태블릿', desktop: '컴퓨터' };
 
+/**
+ * 봇으로 의심할 이유. 하나라도 있으면 봇 의심이다. 이 정보를 남기기 전의 방문은 null을 낸다.
+ * 화면 실행이 가장 확실한 신호다. HTML만 받아 가는 봇은 화면을 실행하지 않는다.
+ * 브라우저를 통째로 조종하는 봇은 화면을 실행하므로, 자동화 표시·언어·헤더로 한 번 더 거른다.
+ */
+function botReasons(v: Stats['recent'][number]): string[] | null {
+  if (v.browser == null) return null;
+  const reasons: string[] = [];
+  if (v.webdriver) reasons.push('자동화 브라우저');
+  if (!v.js && !v.fresh) reasons.push('화면 실행 안 됨');
+  if (!v.lang) reasons.push('언어 정보 없음');
+  if (v.fetchMeta === false) reasons.push('브라우저 헤더 없음');
+  if (v.browser.startsWith('기타')) reasons.push('알 수 없는 브라우저');
+  return reasons;
+}
+
 export default async function AdminPage({ searchParams }: Props) {
   if (!process.env.ADMIN_PASSWORD) notFound();
 
@@ -91,8 +107,25 @@ function Choices({ label, items }: { label: string; items: { key: string; text: 
   );
 }
 
+function Verdict({ visit }: { visit: Stats['recent'][number] }) {
+  const reasons = botReasons(visit);
+  if (reasons == null) return <span className="text-muted">정보 없음</span>;
+  if (reasons.length > 0) {
+    return (
+      <span className="whitespace-nowrap">
+        <span className="font-medium">봇 의심</span>
+        <span className="block text-xs text-muted">{reasons.join(', ')}</span>
+      </span>
+    );
+  }
+  return <span className="whitespace-nowrap text-muted">{visit.js ? '사람' : '확인 중'}</span>;
+}
+
 function Dashboard({ stats }: { stats: Stats }) {
   const maxDaily = Math.max(1, ...stats.daily.map((d) => d.visits));
+  const verdicts = stats.recent.map(botReasons).filter((r): r is string[] => r != null);
+  const judged = verdicts.length;
+  const suspects = verdicts.filter((r) => r.length > 0).length;
   return (
     <>
       <dl className="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-xl border bg-border md:grid-cols-4">
@@ -156,11 +189,14 @@ function Dashboard({ stats }: { stats: Stats }) {
         </Block>
       </div>
 
-      <Block title="최근 방문" note="한국 시간 기준, 최근 100건. 방문자 값이 같으면 같은 날 같은 기기다">
+      <Block
+        title="최근 방문"
+        note={`한국 시간 기준, 최근 100건. 방문자 값이 같으면 같은 날 같은 기기다. 판별한 ${number(judged)}건 중 봇 의심 ${number(suspects)}건`}
+      >
         {stats.recent.length === 0 ? (
           <Empty />
         ) : (
-          <Table head={['시각', '페이지', '유입 경로', '위치', '기기', '방문자']}>
+          <Table head={['시각', '페이지', '유입 경로', '위치', '기기', '언어', '판별', '방문자']}>
             {stats.recent.map((v, i) => (
               <tr key={i} className="border-t align-top">
                 <td className="whitespace-nowrap py-2 pr-4" data-numeric>
@@ -169,7 +205,14 @@ function Dashboard({ stats }: { stats: Stats }) {
                 <td className="py-2 pr-4">{pageName(v.path)}</td>
                 <td className="py-2 pr-4 text-muted">{v.referrer ?? '(직접 방문)'}</td>
                 <td className="py-2 pr-4 text-muted">{v.city ? `${v.city} · ${countryName(v.country)}` : countryName(v.country)}</td>
-                <td className="whitespace-nowrap py-2 pr-4 text-muted">{DEVICE[v.device ?? ''] ?? v.device}</td>
+                <td className="whitespace-nowrap py-2 pr-4 text-muted">
+                  {DEVICE[v.device ?? ''] ?? v.device}
+                  {v.browser && <span className="block text-xs">{v.browser}</span>}
+                </td>
+                <td className="whitespace-nowrap py-2 pr-4 text-muted">{v.lang ?? (v.browser ? '없음' : '')}</td>
+                <td className="py-2 pr-4">
+                  <Verdict visit={v} />
+                </td>
                 <td className="py-2 font-mono text-xs text-muted">{v.visitor}</td>
               </tr>
             ))}

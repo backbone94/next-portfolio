@@ -10,6 +10,8 @@ import type { NextFetchEvent, NextRequest } from 'next/server';
  * - IP·쿠키·User-Agent 원문은 남기지 않는다. 같은 날 같은 사람을 묶는 데만 IP와 User-Agent를 해시해 쓰고 버린다.
  *   해시에 그날 날짜를 섞어서 날이 바뀌면 같은 사람도 다른 값이 된다. 며칠에 걸쳐 한 사람을 따라갈 수 없다.
  * - 봇·크롤러, 링크 미리 불러오기(prefetch), 접속 주소가 없을 때는 남기지 않는다.
+ * - 이름을 밝히지 않는 봇도 많아서 봇인지 가늠할 정보를 같이 남긴다. 브라우저 종류, 언어, 브라우저가 붙이는 헤더가
+ *   있었는지, 그리고 화면이 실제로 실행됐는지(confirmVisit)를 기록한다. 판단은 관리자 화면이 한다.
  * - 사이트 주인의 방문도 남기지 않는다. 관리자 화면에 로그인한 브라우저(ADMIN_COOKIE)와
  *   EXCLUDED_IPS에 적은 IP(집 와이파이 등)에서 온 요청은 건너뛴다(isOwner). 질문 기록도 같은 기준을 쓴다.
  */
@@ -50,6 +52,46 @@ function device(ua: string) {
   if (/ipad|tablet|(android(?!.*mobile))/i.test(ua)) return 'tablet';
   if (/mobi|iphone|ipod|android/i.test(ua)) return 'mobile';
   return 'desktop';
+}
+
+/** 이름이 앞에 있을수록 먼저 본다. 웨일·삼성·엣지·인앱 브라우저는 User-Agent에 Chrome·Safari도 같이 적는다 */
+const BROWSERS: [string, RegExp][] = [
+  ['KakaoTalk', /KAKAOTALK\/?([\d.]+)?/i],
+  ['NAVER', /NAVER\(inapp|NAVER\/([\d.]+)/],
+  ['Instagram', /Instagram ([\d.]+)/],
+  ['Whale', /Whale\/([\d.]+)/],
+  ['Samsung', /SamsungBrowser\/([\d.]+)/],
+  ['Edge', /Edg(?:e|A|iOS)?\/([\d.]+)/],
+  ['Opera', /OPR\/([\d.]+)/],
+  ['Firefox', /(?:Firefox|FxiOS)\/([\d.]+)/],
+  ['Chrome', /(?:Chrome|CriOS)\/([\d.]+)/],
+  ['Safari', /Version\/([\d.]+).*Safari/],
+];
+
+/** 브라우저 종류와 큰 버전, 운영체제만 짧게 낸다 (Chrome 141 · Android). 원문은 남기지 않는다 */
+function browserLabel(ua: string) {
+  const os = /iphone|ipad|ipod/i.test(ua)
+    ? 'iOS'
+    : /android/i.test(ua)
+      ? 'Android'
+      : /windows/i.test(ua)
+        ? 'Windows'
+        : /cros/i.test(ua)
+          ? 'ChromeOS'
+          : /mac os x/i.test(ua)
+            ? 'macOS'
+            : /linux/i.test(ua)
+              ? 'Linux'
+              : null;
+  const found = BROWSERS.find(([, re]) => re.test(ua));
+  const major = found ? ua.match(found[1])?.[1]?.split('.')[0] : undefined;
+  const browser = found ? (major ? `${found[0]} ${major}` : found[0]) : '기타';
+  return os ? `${browser} · ${os}` : browser;
+}
+
+/** Accept-Language의 첫 번째 언어 (ko-KR,ko;q=0.9 → ko-KR) */
+function firstLanguage(request: NextRequest) {
+  return request.headers.get('accept-language')?.split(',')[0]?.split(';')[0]?.trim() || null;
 }
 
 /** 다른 사이트에서 왔을 때만 그 도메인을 낸다. 같은 사이트 안에서 옮겨 다닌 경우는 유입 경로가 아니다 */
@@ -98,9 +140,10 @@ export function recordVisit(request: NextRequest, event: NextFetchEvent) {
   const write = visitorId(clientIp(request), ua)
     .then(
       (visitor) => sql`
-        insert into visit_log (env, path, referrer, country, city, device, visitor)
+        insert into visit_log (env, path, referrer, country, city, device, visitor, browser, lang, fetch_meta)
         values (${process.env.VERCEL_ENV ?? 'development'}, ${request.nextUrl.pathname}, ${externalReferrer(request)},
-          ${header(request, 'x-vercel-ip-country')}, ${header(request, 'x-vercel-ip-city')}, ${device(ua)}, ${visitor})
+          ${header(request, 'x-vercel-ip-country')}, ${header(request, 'x-vercel-ip-city')}, ${device(ua)}, ${visitor},
+          ${browserLabel(ua)}, ${firstLanguage(request)}, ${h.has('sec-fetch-mode')})
       `,
     )
     .then(
@@ -108,4 +151,23 @@ export function recordVisit(request: NextRequest, event: NextFetchEvent) {
       (error) => console.warn('[visit] 방문 기록 실패', error instanceof Error ? error.message : error),
     );
   event.waitUntil(write);
+}
+
+/**
+ * 화면이 브라우저에서 실제로 실행됐다는 신호(app/components/VisitBeacon.tsx → /api/visit).
+ * 같은 방문자 값과 경로로 방금 남긴 방문 한 건에 js = true와 webdriver 값을 채운다. 쿠키 없이 묶으려고 방문자 값을 다시 계산한다.
+ * 맞는 방문이 없으면(주인의 방문, 봇으로 걸러진 요청, 10분이 지난 화면) 아무것도 하지 않는다.
+ */
+export async function confirmVisit(request: NextRequest, path: string, webdriver: boolean) {
+  if (!sql || isOwner(request)) return;
+  const visitor = await visitorId(clientIp(request), request.headers.get('user-agent') ?? '');
+  await sql`
+    update visit_log set js = true, webdriver = ${webdriver}
+    where id = (
+      select id from visit_log
+      where env = ${process.env.VERCEL_ENV ?? 'development'} and visitor = ${visitor} and path = ${path}
+        and js is null and created_at > now() - interval '10 minutes'
+      order by created_at desc limit 1
+    )
+  `;
 }
