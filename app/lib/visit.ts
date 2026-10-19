@@ -11,7 +11,7 @@ import type { NextFetchEvent, NextRequest } from 'next/server';
  *   해시에 그날 날짜를 섞어서 날이 바뀌면 같은 사람도 다른 값이 된다. 며칠에 걸쳐 한 사람을 따라갈 수 없다.
  * - 봇·크롤러, 링크 미리 불러오기(prefetch), 접속 주소가 없을 때는 남기지 않는다.
  * - 사이트 주인의 방문도 남기지 않는다. 관리자 화면에 로그인한 브라우저(ADMIN_COOKIE)와
- *   EXCLUDED_IPS에 적은 IP(집 와이파이 등)에서 온 요청은 건너뛴다.
+ *   EXCLUDED_IPS에 적은 IP(집 와이파이 등)에서 온 요청은 건너뛴다(isOwner). 질문 기록도 같은 기준을 쓴다.
  */
 
 const sql = process.env.DATABASE_URL ? neon(process.env.DATABASE_URL) : null;
@@ -26,6 +26,15 @@ const EXCLUDED_IPS = new Set(
     .map((ip) => ip.trim())
     .filter(Boolean),
 );
+
+function clientIp(request: NextRequest) {
+  return request.headers.get('x-real-ip') ?? request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? '';
+}
+
+/** 사이트 주인이 보낸 요청인지. 방문 기록과 질문 기록(app/api/ask)이 같은 기준으로 주인을 뺀다 */
+export function isOwner(request: NextRequest) {
+  return request.cookies.has(ADMIN_COOKIE) || EXCLUDED_IPS.has(clientIp(request));
+}
 
 /**
  * 해시에 섞는 비밀값. 따로 정하지 않으면 접속 주소를 쓴다. 어느 쪽이든 서버 밖으로 나가지 않는 값이라,
@@ -82,13 +91,11 @@ export function recordVisit(request: NextRequest, event: NextFetchEvent) {
   const h = request.headers;
   // 링크에 마우스를 올리거나 화면에 보일 때 Next가 미리 불러오는 요청. 실제로 연 페이지가 아니다
   if (h.get('next-router-prefetch') || h.get('purpose') === 'prefetch' || h.get('sec-purpose')?.includes('prefetch')) return;
-  if (request.cookies.has(ADMIN_COOKIE)) return;
+  if (isOwner(request)) return;
   const ua = h.get('user-agent') ?? '';
   if (!ua || BOT.test(ua)) return;
 
-  const ip = h.get('x-real-ip') ?? h.get('x-forwarded-for')?.split(',')[0]?.trim() ?? '';
-  if (EXCLUDED_IPS.has(ip)) return;
-  const write = visitorId(ip, ua)
+  const write = visitorId(clientIp(request), ua)
     .then(
       (visitor) => sql`
         insert into visit_log (env, path, referrer, country, city, device, visitor)
