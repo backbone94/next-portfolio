@@ -94,8 +94,14 @@ function firstLanguage(request: NextRequest) {
   return request.headers.get('accept-language')?.split(',')[0]?.split(';')[0]?.trim() || null;
 }
 
-/** 다른 사이트에서 왔을 때만 그 도메인을 낸다. 같은 사이트 안에서 옮겨 다닌 경우는 유입 경로가 아니다 */
-function externalReferrer(request: NextRequest) {
+/**
+ * 유입 경로. 주소에 ?ref=resume처럼 출처를 적어 두었으면 그 값을 ref:resume으로 낸다.
+ * PDF·메신저 앱·채용 사이트에서 연 링크는 브라우저가 Referer를 보내지 않아서, 직접 붙인 표시가 아니면 출처를 알 수 없다.
+ * 표시가 없으면 다른 사이트에서 왔을 때만 그 도메인을 낸다. 같은 사이트 안에서 옮겨 다닌 경우는 유입 경로가 아니다
+ */
+function source(request: NextRequest) {
+  const ref = request.nextUrl.searchParams.get('ref')?.trim().toLowerCase();
+  if (ref && /^[a-z0-9_-]{1,32}$/.test(ref)) return `ref:${ref}`;
   const raw = request.headers.get('referer');
   if (!raw) return null;
   try {
@@ -141,7 +147,7 @@ export function recordVisit(request: NextRequest, event: NextFetchEvent) {
     .then(
       (visitor) => sql`
         insert into visit_log (env, path, referrer, country, city, device, visitor, browser, lang, fetch_meta)
-        values (${process.env.VERCEL_ENV ?? 'development'}, ${request.nextUrl.pathname}, ${externalReferrer(request)},
+        values (${process.env.VERCEL_ENV ?? 'development'}, ${request.nextUrl.pathname}, ${source(request)},
           ${header(request, 'x-vercel-ip-country')}, ${header(request, 'x-vercel-ip-city')}, ${device(ua)}, ${visitor},
           ${browserLabel(ua)}, ${firstLanguage(request)}, ${h.has('sec-fetch-mode')})
       `,
