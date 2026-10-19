@@ -65,7 +65,7 @@ export async function loadStats(env: Env, days: number): Promise<Stats | null> {
           from visit_log where env = ${env} and created_at > ${since}
           group by path order by count desc limit 20`,
       // 방문자마다 그날 처음 연 페이지의 유입 경로만 센다. 사이트 안에서 옮겨 다닌 기록은 referrer가 null이라
-      // 전부 세면 "직접 방문"이 부풀어 오른다
+      // 전부 세면 "출처 없음"이 부풀어 오른다
       sql`select referrer as label, count(*)::int as count
           from (select distinct on (visitor) referrer from visit_log
                 where env = ${env} and created_at > ${since} order by visitor, created_at) first_visit

@@ -38,7 +38,21 @@ function pageName(path: string | null) {
   return (path && titles.get(path)) ?? path ?? '';
 }
 
-const DEVICE: Record<string, string> = { mobile: '휴대폰', tablet: '태블릿', desktop: '컴퓨터' };
+/**
+ * 유입 경로 이름. null은 브라우저가 출처를 보내지 않은 방문이다. 주소를 직접 친 경우뿐 아니라
+ * PDF·메신저 앱에서 연 링크, 북마크, 이름을 밝히지 않는 봇이 모두 여기에 섞인다.
+ * ref:로 시작하면 주소에 직접 붙인 출처 표시(?ref=resume)다(app/lib/visit.ts)
+ */
+const REF: Record<string, string> = { resume: '이력서 PDF' };
+
+function sourceName(referrer: string | null) {
+  if (!referrer) return '(출처 없음)';
+  if (!referrer.startsWith('ref:')) return referrer;
+  const ref = referrer.slice(4);
+  return REF[ref] ? `${REF[ref]} (?ref=${ref})` : `?ref=${ref}`;
+}
+
+const DEVICE: Record<string, string> ={ mobile: '휴대폰', tablet: '태블릿', desktop: '컴퓨터' };
 
 /**
  * 봇으로 의심할 이유. 하나라도 있으면 봇 의심이다. 이 정보를 남기기 전의 방문은 null을 낸다.
@@ -175,8 +189,8 @@ function Dashboard({ stats }: { stats: Stats }) {
         <Block title="많이 본 페이지">
           <CountTable head={['페이지', '방문', '순방문']} rows={stats.pages.map((p) => [pageName(p.label), p.count, p.visitors ?? 0])} />
         </Block>
-        <Block title="유입 경로" note="방문자마다 그날 처음 들어온 경로">
-          <CountTable head={['경로', '순방문']} rows={stats.referrers.map((r) => [r.label ?? '(직접 방문)', r.count])} />
+        <Block title="유입 경로" note="방문자마다 그날 처음 들어온 경로. 출처 없음은 PDF·메신저 앱·북마크처럼 브라우저가 출처를 보내지 않은 방문입니다">
+          <CountTable head={['경로', '순방문']} rows={stats.referrers.map((r) => [sourceName(r.label), r.count])} />
         </Block>
         <Block title="국가">
           <CountTable head={['국가', '순방문']} rows={stats.countries.map((c) => [countryName(c.label), c.count])} />
@@ -203,7 +217,7 @@ function Dashboard({ stats }: { stats: Stats }) {
                   <time>{v.at}</time>
                 </td>
                 <td className="py-2 pr-4">{pageName(v.path)}</td>
-                <td className="py-2 pr-4 text-muted">{v.referrer ?? '(직접 방문)'}</td>
+                <td className="py-2 pr-4 text-muted">{sourceName(v.referrer)}</td>
                 <td className="py-2 pr-4 text-muted">{v.city ? `${v.city} · ${countryName(v.country)}` : countryName(v.country)}</td>
                 <td className="whitespace-nowrap py-2 pr-4 text-muted">
                   {DEVICE[v.device ?? ''] ?? v.device}

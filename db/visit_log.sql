@@ -8,7 +8,8 @@ create table if not exists visit_log (
   env         text not null,
   -- 연 주소의 경로만 (/, /projects/the1seoul). 질문(?q=)은 ask_log에 따로 남으니 붙이지 않는다
   path        text not null,
-  -- 다른 사이트에서 왔을 때만 그 도메인 (www.google.com). 주소를 직접 쳤거나 사이트 안에서 옮겨 다니면 null
+  -- 주소에 ?ref=resume처럼 출처를 붙였으면 ref:resume, 아니면 다른 사이트에서 왔을 때만 그 도메인 (www.google.com).
+  -- 브라우저가 출처를 보내지 않았거나(PDF·메신저 앱·북마크·주소 입력) 사이트 안에서 옮겨 다니면 null
   referrer    text,
   -- Vercel이 붙여 주는 위치 헤더. 국가는 두 글자 코드(KR), 도시는 영문 이름이다
   country     text,
