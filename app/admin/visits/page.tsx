@@ -1,14 +1,14 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { ENVS, KINDS, PAGE_SIZE, PERIODS, loadVisits, type Env, type Kind } from '../stats';
-import { Block, Choices, VisitTable, adminHref, number } from '../ui';
+import { ENVS, KINDS, PAGE_SIZE, PERIODS, loadVisitorQuestions, loadVisits, type Env, type Kind } from '../stats';
+import { Block, Choices, QuestionTable, VisitTable, adminHref, number } from '../ui';
 
 /**
  * 방문 기록 전체. 대시보드(app/admin/page.tsx)는 최근 몇 건만 보여 주고, 여기서 최신순으로 쪽을 나눠 본다.
  * 비밀번호는 middleware.ts가 /admin 아래를 모두 묻는다.
  *
- * ?visitor=3fefab처럼 방문자 값을 주면 그 방문자의 방문만 본다. 같은 날 한 사람이 어떻게 옮겨 다녔는지 따라갈 때 쓴다.
+ * ?visitor=3fefab처럼 방문자 값을 주면 그 방문자의 방문과 질문만 본다. 같은 날 한 사람이 어떻게 옮겨 다니며 무엇을 물었는지 따라갈 때 쓴다.
  * ?kind=human · suspect로 사람이나 봇 의심만 고를 수 있다.
  */
 
@@ -33,7 +33,10 @@ export default async function VisitsPage({ searchParams }: Props) {
   const visitor = /^[0-9a-f]{6}$/.test(searchParams.visitor ?? '') ? searchParams.visitor! : null;
   const page = Math.max(1, Math.floor(Number(searchParams.page)) || 1);
 
-  const result = await loadVisits(env, days, { page, visitor, kind });
+  const [result, questions] = await Promise.all([
+    loadVisits(env, days, { page, visitor, kind }),
+    visitor ? loadVisitorQuestions(env, days, visitor) : null,
+  ]);
   const href = (next: { env?: Env; days?: number; kind?: Kind; visitor?: string | null; page?: number }) =>
     adminHref('/admin/visits', {
       env: next.env ?? env,
@@ -61,11 +64,17 @@ export default async function VisitsPage({ searchParams }: Props) {
 
       {visitor && (
         <p className="mt-6 text-sm">
-          방문자 <span className="font-mono">{visitor}</span>의 방문만 보고 있습니다.{' '}
+          방문자 <span className="font-mono">{visitor}</span>의 방문과 질문만 보고 있습니다.{' '}
           <Link href={href({ visitor: null })} className="font-medium text-accent underline-offset-4 hover:underline">
             모든 방문 보기
           </Link>
         </p>
+      )}
+
+      {questions && (
+        <Block title={`질문 ${number(questions.length)}건`} note="이 방문자가 이 기간에 한 질문입니다. 오래된 것부터 보여 줍니다">
+          <QuestionTable questions={questions} env={env} days={days} showVisitor={false} />
+        </Block>
       )}
 
       {result ? (

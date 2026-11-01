@@ -30,18 +30,20 @@ export type AskRecord = {
   decision?: RouteDecision;
   answer: AskAnswer;
   usage?: Usage;
+  /** 방문 기록과 같은 방문자 값(app/lib/visit.ts의 requestVisitor). 관리자 화면이 방문과 질문을 이어 보는 데 쓴다 */
+  visitor?: string;
 };
 
-export function recordAsk({ question, page, route, decision, answer, usage }: AskRecord) {
+export function recordAsk({ question, page, route, decision, answer, usage, visitor }: AskRecord) {
   if (!sql || process.env.ASK_DRY_RUN === '1') return;
   const text = answer.source === 'claude' ? answer.segments.map((s) => s.text).join('') : null;
   const write = sql`
     insert into ask_log (env, question, page, route, confidence, off_topic, routed_by, answered_by, answer,
-      model, input_tokens, cache_read, cache_write, output_tokens, broken)
+      model, input_tokens, cache_read, cache_write, output_tokens, broken, visitor)
     values (${process.env.VERCEL_ENV ?? 'development'}, ${question}, ${page ?? null}, ${route},
       ${decision?.confidence ?? null}, ${decision?.offTopic ?? null}, ${decision?.by ?? null}, ${answer.source}, ${text},
       ${usage?.model ?? null}, ${usage?.input ?? null}, ${usage?.cacheRead ?? null}, ${usage?.cacheWrite ?? null}, ${usage?.output ?? null},
-      ${usage?.broken ? JSON.stringify(usage.broken) : null}::jsonb)
+      ${usage?.broken ? JSON.stringify(usage.broken) : null}::jsonb, ${visitor ?? null})
   `.then(
     () => undefined,
     (error) => console.warn('[ask] 질문 기록 실패', error instanceof Error ? error.message : error),

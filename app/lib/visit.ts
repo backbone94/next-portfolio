@@ -135,6 +135,11 @@ async function visitorId(ip: string, ua: string) {
   return Array.from(new Uint8Array(digest).slice(0, 8), (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
+/** 이 요청을 보낸 방문자 값. 질문 기록(app/api/ask)이 방문 기록과 이어지도록 같은 값을 남긴다 */
+export function requestVisitor(request: NextRequest) {
+  return visitorId(clientIp(request), request.headers.get('user-agent') ?? '');
+}
+
 /** 방문 한 줄. 화면 실행 신호로 남기는 방문(confirmVisit)은 js와 webdriver를 처음부터 채운다 */
 function insertVisit(
   request: NextRequest,
