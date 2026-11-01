@@ -7,7 +7,8 @@
 import { gunzipSync } from 'node:zlib';
 
 const SOURCE = 'https://iptoasn.com/data/ip2asn-combined.tsv.gz';
-const BATCH = 10000;
+// 한 번에 보내는 대역 수. 관리자 화면 버튼은 60초 안에 끝나야 해서(app/admin/network/route.ts) DB 왕복을 20번 안쪽으로 줄인다
+const BATCH = 25000;
 
 /** 받은 파일을 대역 목록으로 정리한다. DB는 건드리지 않는다 */
 export async function fetchRanges() {
@@ -44,8 +45,9 @@ export async function loadAsn(sql, { onProgress } = {}) {
   const { rows } = await fetchRanges();
 
   await sql.query('drop table if exists ip_asn_new');
+  // 기본 키(인덱스)는 다 채운 뒤에 만든다. 한 줄씩 인덱스를 고치며 넣는 것보다 한 번에 만드는 쪽이 훨씬 빠르다
   await sql.query(`create table ip_asn_new (
-    range_start inet primary key,
+    range_start inet not null,
     range_end   inet not null,
     asn         bigint not null,
     name        text not null
@@ -59,6 +61,7 @@ export async function loadAsn(sql, { onProgress } = {}) {
     );
     onProgress?.(Math.min(i + BATCH, rows.length), rows.length);
   }
+  await sql.query('alter table ip_asn_new add constraint ip_asn_new_pkey primary key (range_start)');
 
   const refreshedAt = new Date().toISOString();
   await sql.transaction([
