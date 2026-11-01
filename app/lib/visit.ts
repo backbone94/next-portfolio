@@ -134,24 +134,42 @@ async function visitorId(ip: string, ua: string) {
   return Array.from(new Uint8Array(digest).slice(0, 8), (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
+/** 방문 한 줄. 화면 실행 신호로 남기는 방문(confirmVisit)은 js와 webdriver를 처음부터 채운다 */
+function insertVisit(
+  request: NextRequest,
+  path: string,
+  referrer: string | null,
+  visitor: string,
+  ua: string,
+  ran?: { webdriver: boolean },
+) {
+  return sql!`
+    insert into visit_log (env, path, referrer, country, city, device, visitor, browser, lang, fetch_meta, js, webdriver)
+    values (${process.env.VERCEL_ENV ?? 'development'}, ${path}, ${referrer},
+      ${header(request, 'x-vercel-ip-country')}, ${header(request, 'x-vercel-ip-city')}, ${device(ua)}, ${visitor},
+      ${browserLabel(ua)}, ${firstLanguage(request)}, ${request.headers.has('sec-fetch-mode')},
+      ${ran ? true : null}, ${ran ? ran.webdriver : null})
+  `;
+}
+
 export function recordVisit(request: NextRequest, event: NextFetchEvent) {
   if (!sql || request.method !== 'GET') return;
   const h = request.headers;
-  // 링크에 마우스를 올리거나 화면에 보일 때 Next가 미리 불러오는 요청. 실제로 연 페이지가 아니다
-  if (h.get('next-router-prefetch') || h.get('purpose') === 'prefetch' || h.get('sec-purpose')?.includes('prefetch')) return;
+  // 문서를 통째로 여는 요청만 방문으로 센다. 링크가 화면에 보일 때 Next가 미리 불러오는 요청(prefetch)과
+  // 사이트 안에서 옮겨 다니는 요청은 fetch로 가서 Sec-Fetch-Dest가 empty다. Next는 middleware를 부르기 전에
+  // RSC·Next-Router-Prefetch 헤더와 _rsc 쿼리를 지우므로 그 값으로는 가릴 수 없다.
+  // 이 헤더를 보내지 않는 오래된 브라우저와 수집 프로그램은 그대로 남긴다. 봇인지는 관리자 화면이 가늠한다.
+  // 사이트 안에서 옮겨 다닌 방문은 화면 실행 신호가 대신 남긴다(confirmVisit)
+  const dest = h.get('sec-fetch-dest');
+  if (dest && dest !== 'document') return;
+  // 브라우저가 다음에 열 페이지를 미리 받아 두는 요청. 실제로 연 페이지가 아니다
+  if (h.get('purpose') === 'prefetch' || h.get('sec-purpose')?.includes('prefetch')) return;
   if (isOwner(request)) return;
   const ua = h.get('user-agent') ?? '';
   if (!ua || BOT.test(ua)) return;
 
   const write = visitorId(clientIp(request), ua)
-    .then(
-      (visitor) => sql`
-        insert into visit_log (env, path, referrer, country, city, device, visitor, browser, lang, fetch_meta)
-        values (${process.env.VERCEL_ENV ?? 'development'}, ${request.nextUrl.pathname}, ${source(request)},
-          ${header(request, 'x-vercel-ip-country')}, ${header(request, 'x-vercel-ip-city')}, ${device(ua)}, ${visitor},
-          ${browserLabel(ua)}, ${firstLanguage(request)}, ${h.has('sec-fetch-mode')})
-      `,
-    )
+    .then((visitor) => insertVisit(request, request.nextUrl.pathname, source(request), visitor, ua))
     .then(
       () => undefined,
       (error) => console.warn('[visit] 방문 기록 실패', error instanceof Error ? error.message : error),
@@ -163,10 +181,19 @@ export function recordVisit(request: NextRequest, event: NextFetchEvent) {
  * 화면이 브라우저에서 실제로 실행됐다는 신호(app/components/VisitBeacon.tsx → /api/visit).
  * 같은 방문자 값과 경로로 방금 남긴 방문 한 건에 js = true와 webdriver 값을 채운다. 쿠키 없이 묶으려고 방문자 값을 다시 계산한다.
  * 맞는 방문이 없으면(주인의 방문, 봇으로 걸러진 요청, 10분이 지난 화면) 아무것도 하지 않는다.
+ *
+ * navigated는 사이트 안에서 링크를 눌러 옮겨 온 화면이라는 뜻이다. 이 이동은 middleware가 방문으로 세지 않으므로
+ * (recordVisit) 여기서 방문 한 줄을 새로 남긴다. 화면이 실행된 뒤에 온 신호라 js는 처음부터 true다.
  */
-export async function confirmVisit(request: NextRequest, path: string, webdriver: boolean) {
+export async function confirmVisit(request: NextRequest, path: string, webdriver: boolean, navigated: boolean) {
   if (!sql || isOwner(request)) return;
-  const visitor = await visitorId(clientIp(request), request.headers.get('user-agent') ?? '');
+  const ua = request.headers.get('user-agent') ?? '';
+  const visitor = await visitorId(clientIp(request), ua);
+  if (navigated) {
+    if (!ua || BOT.test(ua)) return;
+    await insertVisit(request, path, null, visitor, ua, { webdriver });
+    return;
+  }
   await sql`
     update visit_log set js = true, webdriver = ${webdriver}
     where id = (
