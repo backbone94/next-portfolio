@@ -204,3 +204,26 @@ export async function confirmVisit(request: NextRequest, path: string, webdriver
     )
   `;
 }
+
+/** 머문 시간의 상한(초). 탭을 열어 두고 잊어버린 화면이 평균을 끌어올리지 않게 자른다 */
+const MAX_DURATION = 6 * 60 * 60;
+
+/**
+ * 화면을 보고 있던 시간(app/components/VisitBeacon.tsx → /api/visit). 탭이 가려져 있던 시간은 빠져 있다.
+ * 화면을 떠나거나 탭을 옮길 때마다 지금까지의 합이 오므로, 같은 방문자 값과 경로로 실행 표시가 된(js = true)
+ * 가장 최근 방문 한 건을 더 큰 값으로만 늘린다. 신호가 순서를 바꿔 도착해도 줄어들지 않는다.
+ */
+export async function recordDuration(request: NextRequest, path: string, seconds: number) {
+  if (!sql || isOwner(request)) return;
+  const visitor = await visitorId(clientIp(request), request.headers.get('user-agent') ?? '');
+  const value = Math.min(Math.round(seconds), MAX_DURATION);
+  await sql`
+    update visit_log set duration = greatest(coalesce(duration, 0), ${value})
+    where id = (
+      select id from visit_log
+      where env = ${process.env.VERCEL_ENV ?? 'development'} and visitor = ${visitor} and path = ${path}
+        and js and created_at > now() - interval '6 hours 10 minutes'
+      order by created_at desc limit 1
+    )
+  `;
+}

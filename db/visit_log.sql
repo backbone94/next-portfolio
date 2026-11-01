@@ -35,3 +35,6 @@ alter table visit_log add column if not exists fetch_meta boolean;
 alter table visit_log add column if not exists js boolean;
 -- 자동화 도구가 조종하는 브라우저인지(navigator.webdriver). js와 같이 채워진다
 alter table visit_log add column if not exists webdriver boolean;
+-- 화면을 보고 있던 시간(초). 탭이 가려져 있던 시간은 빼고 센다. 화면을 떠나거나 다른 탭으로 옮길 때마다
+-- /api/visit가 지금까지의 합으로 늘린다. 1초 안에 떠난 화면, 화면을 실행하지 않은 봇, 이 칸을 더하기 전의 방문은 null이다
+alter table visit_log add column if not exists duration integer;
