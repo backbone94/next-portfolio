@@ -38,3 +38,9 @@ alter table visit_log add column if not exists webdriver boolean;
 -- 화면을 보고 있던 시간(초). 탭이 가려져 있던 시간은 빼고 센다. 화면을 떠나거나 다른 탭으로 옮길 때마다
 -- /api/visit가 지금까지의 합으로 늘린다. 1초 안에 떠난 화면, 화면을 실행하지 않은 봇, 이 칸을 더하기 전의 방문은 null이다
 alter table visit_log add column if not exists duration integer;
+-- 접속한 네트워크(AS)의 번호와 이름 (16509 · AMAZON-02). IP 원문 대신 남긴다. 기록할 때 IP로 ip_asn 표(db/ip_asn.sql)를 찾아 적는다.
+-- 데이터센터에서 온 방문은 거의 봇이고, 회사망에서 왔다면 회사 이름이 보이기도 한다. 집·휴대폰이면 통신사 이름이다
+alter table visit_log add column if not exists asn bigint;
+-- 처음에 integer로 만들었던 칸. 32비트 AS 번호는 21억을 넘을 수 있어 bigint로 넓힌다. 이미 bigint면 아무 일도 하지 않는다
+alter table visit_log alter column asn type bigint;
+alter table visit_log add column if not exists network text;

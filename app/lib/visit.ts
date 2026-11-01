@@ -9,6 +9,7 @@ import type { NextFetchEvent, NextRequest } from 'next/server';
  *   기록이 느리거나 실패해도 방문자는 기다리지 않는다(app/lib/ask/store.ts와 같다).
  * - IP·쿠키·User-Agent 원문은 남기지 않는다. 같은 날 같은 사람을 묶는 데만 IP와 User-Agent를 해시해 쓰고 버린다.
  *   해시에 그날 날짜를 섞어서 날이 바뀌면 같은 사람도 다른 값이 된다. 며칠에 걸쳐 한 사람을 따라갈 수 없다.
+ *   IP로는 그 IP가 속한 네트워크 이름(AMAZON-02, KIXS-AS-KR Korea Telecom)만 찾아 남긴다(db/ip_asn.sql).
  * - 봇·크롤러, 링크 미리 불러오기(prefetch), 접속 주소가 없을 때는 남기지 않는다.
  * - 이름을 밝히지 않는 봇도 많아서 봇인지 가늠할 정보를 같이 남긴다. 브라우저 종류, 언어, 브라우저가 붙이는 헤더가
  *   있었는지, 그리고 화면이 실제로 실행됐는지(confirmVisit)를 기록한다. 판단은 관리자 화면이 한다.
@@ -143,13 +144,32 @@ function insertVisit(
   ua: string,
   ran?: { webdriver: boolean },
 ) {
+  // 네트워크는 같은 쿼리 안에서 ip_asn 표로 찾는다. 시작 주소가 IP 이하인 대역 중 가장 뒤의 것을 고르고, 그 대역이 IP까지 닿을 때만 쓴다.
+  // IP는 찾는 데만 쓰고 저장하지 않는다. 주소가 없거나 이상하면 null이라 아무것도 찾지 않는다
+  const ip = lookupIp(clientIp(request));
   return sql!`
-    insert into visit_log (env, path, referrer, country, city, device, visitor, browser, lang, fetch_meta, js, webdriver)
+    with net as (
+      select asn, name from (
+        select asn, name, range_end from ip_asn where range_start <= ${ip}::inet order by range_start desc limit 1
+      ) nearest where range_end >= ${ip}::inet
+    )
+    insert into visit_log (env, path, referrer, country, city, device, visitor, browser, lang, fetch_meta, js, webdriver, asn, network)
     values (${process.env.VERCEL_ENV ?? 'development'}, ${path}, ${referrer},
       ${header(request, 'x-vercel-ip-country')}, ${header(request, 'x-vercel-ip-city')}, ${device(ua)}, ${visitor},
       ${browserLabel(ua)}, ${firstLanguage(request)}, ${request.headers.has('sec-fetch-mode')},
-      ${ran ? true : null}, ${ran ? ran.webdriver : null})
+      ${ran ? true : null}, ${ran ? ran.webdriver : null}, (select asn from net), (select name from net))
   `;
+}
+
+/**
+ * ip_asn 표에서 찾을 주소. inet으로 바꿀 수 없는 값을 넘기면 쿼리 전체가 실패해 방문이 남지 않으므로 모양을 먼저 본다.
+ * IPv4를 IPv6 꼴로 적은 주소(::ffff:1.2.3.4)는 표가 IPv4로 갖고 있으니 IPv4로 바꾼다
+ */
+function lookupIp(ip: string) {
+  const plain = ip.replace(/^::ffff:(?=\d+\.\d+\.\d+\.\d+$)/i, '');
+  if (/^\d{1,3}(\.\d{1,3}){3}$/.test(plain) && plain.split('.').every((part) => Number(part) <= 255)) return plain;
+  if (/^[0-9a-f:]{2,39}$/i.test(plain) && plain.includes(':')) return plain;
+  return null;
 }
 
 export function recordVisit(request: NextRequest, event: NextFetchEvent) {

@@ -1,4 +1,4 @@
-// ask_log·visit_log 표를 만든다. 접속 주소는 출력하지 않는다.
+// ask_log·visit_log·ip_asn 표를 만든다. ip_asn의 내용은 db/load-asn.mjs가 채운다. 접속 주소는 출력하지 않는다.
 // 실행: node --env-file=.env.local db/init.mjs
 import { neon } from '@neondatabase/serverless';
 import { readFileSync } from 'node:fs';
@@ -10,7 +10,7 @@ if (!url) {
 }
 
 const sql = neon(url);
-for (const file of ['ask_log.sql', 'visit_log.sql']) {
+for (const file of ['ask_log.sql', 'visit_log.sql', 'ip_asn.sql']) {
   const statements = readFileSync(new URL(`./${file}`, import.meta.url), 'utf8')
     .replace(/--.*$/gm, '')
     .split(';')

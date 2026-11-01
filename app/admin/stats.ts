@@ -18,15 +18,23 @@ const kst = (column: string) => `(${column} at time zone 'Asia/Seoul')`;
 
 /** Visit 한 건을 읽는 칼럼 */
 const VISIT_COLUMNS = `to_char(${kst('created_at')}, 'YYYY-MM-DD HH24:MI:SS') as at, path, referrer, country, city, device,
-  left(visitor, 6) as visitor, browser, lang, fetch_meta as "fetchMeta", js, webdriver, duration,
+  left(visitor, 6) as visitor, browser, lang, fetch_meta as "fetchMeta", js, webdriver, duration, asn, network,
   created_at > now() - interval '1 minute' as fresh`;
+
+/**
+ * 데이터센터·클라우드 네트워크 이름에 들어가는 말. 사람은 집·회사·휴대폰 망에서 들어오므로, 이런 망에서 온 방문은 거의 봇이다.
+ * 네트워크 이름은 ip_asn 표(db/ip_asn.sql)의 AS 이름이다 (AMAZON-02, GOOGLE-CLOUD-PLATFORM, DIGITALOCEAN-ASN).
+ * SQL(~*)과 자바스크립트(RegExp) 양쪽에서 그대로 쓰므로 두 문법에 공통인 |와 ^·$만 쓴다
+ */
+export const HOSTING =
+  'amazon|google-cloud|^google$|microsoft|digitalocean|ovh|hetzner|linode|akamai|choopa|vultr|oracle|alibaba|tencent|huawei-cloud|contabo|leaseweb|m247|datacamp|scaleway|ionos|hostinger|naver cloud|nbp';
 
 /**
  * 봇 의심 조건. 관리자 화면의 botReasons(app/admin/ui.tsx)와 같은 기준이다. 한쪽을 바꾸면 다른 쪽도 바꾼다.
  * 판별 정보(browser)가 없는 예전 방문은 어느 쪽에도 넣지 않는다
  */
 const SUSPECT = `browser is not null and (webdriver is true or (js is not true and created_at <= now() - interval '1 minute')
-  or lang is null or fetch_meta is false or browser like '기타%')`;
+  or lang is null or fetch_meta is false or browser like '기타%' or coalesce(network, '') ~* '${HOSTING}')`;
 const HUMAN = `browser is not null and not (${SUSPECT})`;
 
 export const KINDS = ['all', 'human', 'suspect'] as const;
@@ -53,6 +61,12 @@ export type Visit = {
   webdriver: boolean | null;
   /** 화면을 보고 있던 시간(초). 1초 안에 떠났거나 이 칸을 더하기 전의 방문은 null이다 */
   duration: number | null;
+  /**
+   * 접속한 네트워크(AS) 번호와 이름. 표(ip_asn)에 없는 주소이거나 이 칸을 더하기 전의 방문은 null이다.
+   * 번호는 bigint라 Neon 드라이버가 문자열로 돌려준다
+   */
+  asn: string | null;
+  network: string | null;
   /** 1분 안에 남은 방문. 화면 실행 신호가 아직 오지 않았을 수 있다 */
   fresh: boolean;
 };
@@ -71,6 +85,13 @@ export type Stats = {
   countries: Count[];
   cities: { country: string | null; city: string | null; count: number }[];
   devices: Count[];
+  /** 많이 들어온 네트워크. 순방문 기준 */
+  networks: (Count & { asn: string | null })[];
+  /**
+   * 네트워크 표(ip_asn)를 마지막으로 갱신한 시각(ISO). 갱신하면 db/asn.mjs가 표 설명에 적는다.
+   * 표가 없으면 'missing', 설명이 없는 예전 방식으로 채웠으면 null이다
+   */
+  networkRefreshedAt: string | 'missing' | null;
   /** 최근 방문 몇 건. 전체는 방문 기록 화면(loadVisits)에서 본다 */
   recent: Visit[];
   questions: { question: string; asked: number; last: string }[];
@@ -83,7 +104,7 @@ export async function loadStats(env: Env, days: number): Promise<Stats | null> {
   const sql = neon(process.env.DATABASE_URL);
   const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
 
-  const [totals, daily, pages, referrers, countries, cities, devices, recent, askTotals, questions, claudeAnswers, claudeDaily] =
+  const [totals, daily, pages, referrers, countries, cities, devices, networks, networkTable, recent, askTotals, questions, claudeAnswers, claudeDaily] =
     await Promise.all([
       // visitor 값은 날마다 바뀌므로 서로 다른 값의 수가 곧 "날짜별 순방문 수의 합"이다
       sql.query(
@@ -118,6 +139,10 @@ export async function loadStats(env: Env, days: number): Promise<Stats | null> {
       sql`select device as label, count(distinct visitor)::int as count
           from visit_log where env = ${env} and created_at > ${since}
           group by device order by count desc`,
+      sql`select network as label, min(asn) as asn, count(distinct visitor)::int as count
+          from visit_log where env = ${env} and created_at > ${since} and network is not null
+          group by network order by count desc limit 15`,
+      sql`select to_regclass('ip_asn') is not null as exists, obj_description(to_regclass('ip_asn'), 'pg_class') as note`,
       sql.query(`select ${VISIT_COLUMNS} from visit_log where env = $1 and created_at > $2 order by created_at desc limit ${RECENT}`, [
         env,
         since,
@@ -159,6 +184,10 @@ export async function loadStats(env: Env, days: number): Promise<Stats | null> {
     countries: countries as Count[],
     cities: cities as Stats['cities'],
     devices: devices as Count[],
+    networks: networks as Stats['networks'],
+    networkRefreshedAt: !networkTable[0]?.exists
+      ? 'missing'
+      : (/^refreshed (\S+)$/.exec(networkTable[0]?.note ?? '')?.[1] ?? null),
     recent: recent as Visit[],
     questions: questions as Stats['questions'],
     claudeAnswers: claudeAnswers as Stats['claudeAnswers'],
