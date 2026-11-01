@@ -1,4 +1,5 @@
 -- 페이지 방문 기록. middleware.ts가 첫 화면과 프로젝트 상세를 열 때마다 한 줄을 쓴다(app/lib/visit.ts).
+-- 사이트 안에서 링크를 눌러 옮겨 간 방문은 화면이 실행된 뒤 /api/visit가 쓴다. 링크 미리 불러오기는 남기지 않는다.
 -- IP·쿠키·User-Agent 원문은 남기지 않는다. 처음 한 번 Neon SQL Editor에서 실행하거나 `node --env-file=.env.local db/init.mjs`로 만든다.
 
 create table if not exists visit_log (

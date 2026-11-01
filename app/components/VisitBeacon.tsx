@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 /** 방문으로 기록하는 경로. middleware.ts의 matcher와 같다(관리자 화면 제외) */
 const RECORDED = /^\/($|projects\/[^/]+$)/;
@@ -13,14 +13,21 @@ const RECORDED = /^\/($|projects\/[^/]+$)/;
  */
 export default function VisitBeacon() {
   const pathname = usePathname();
+  // 바로 전에 본 경로. 레이아웃에 붙어 있어 사이트 안에서 옮겨 다녀도 그대로 남는다.
+  // 개발 모드에서 효과가 두 번 실행돼도 같은 경로라 옮겨 온 것으로 세지 않는다
+  const previous = useRef<string | null>(null);
 
   useEffect(() => {
+    // 처음 연 화면은 middleware가 이미 방문을 남겼으니 그 줄에 실행 표시만 한다.
+    // 링크를 눌러 옮겨 온 화면은 middleware가 세지 않으므로 서버가 방문을 새로 남긴다(app/lib/visit.ts)
+    const navigated = previous.current != null && previous.current !== pathname;
+    previous.current = pathname;
     if (!RECORDED.test(pathname)) return;
     const timer = setTimeout(() => {
       fetch('/api/visit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ path: pathname, webdriver: navigator.webdriver === true }),
+        body: JSON.stringify({ path: pathname, webdriver: navigator.webdriver === true, navigated }),
         keepalive: true,
       }).catch(() => {
         // 기록용이라 실패해도 방문자에게 알릴 일이 없다
