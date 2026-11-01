@@ -8,13 +8,14 @@ import { loadAsn } from '@/db/asn.mjs';
  *
  * - 비밀번호는 middleware.ts가 /admin 아래를 모두 묻는다.
  * - 브라우저는 저장해 둔 관리자 비밀번호를 다른 사이트가 보낸 폼에도 붙여 보낸다. 그래서 이 사이트에서 보낸 요청인지(Origin) 한 번 더 본다.
- * - 1분 안팎 걸린다. 도중에 끊겨도 쓰던 표는 그대로라 방문 기록은 계속 네트워크를 찾는다.
+ * - 수십 초 걸린다. 도중에 끊겨도 쓰던 표는 그대로라 방문 기록은 계속 네트워크를 찾는다.
  * - 끝나면 관리자 화면으로 돌아가며 ?network=ok 또는 fail을 붙인다.
  */
 
 export const dynamic = 'force-dynamic';
-// 기본 시간 제한으로는 모자랄 수 있다. 요금제가 허용하는 만큼까지 늘어난다
-export const maxDuration = 300;
+// 기본 시간 제한(10초)으로는 모자라 늘린다. 이 프로젝트의 요금제(Hobby, Fluid Compute 꺼짐)가 허용하는 최대가 60초다.
+// 더 큰 값을 적으면 빌드는 되지만 배포 단계에서 실패한다(2026-11-01, 300으로 적었다가 배포가 실패했다)
+export const maxDuration = 60;
 
 /** 돌아갈 관리자 화면 주소. 폼이 보낸 값이 /admin으로 시작할 때만 믿는다 */
 function back(value: FormDataEntryValue | null, result: 'ok' | 'fail') {
