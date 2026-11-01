@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { projects } from '@/app/content/projects';
-import type { Env, Kind, Visit } from './stats';
+import { HOSTING, type Env, type Kind, type Visit } from './stats';
 
 /**
  * 관리자 화면 두 곳(대시보드 app/admin/page.tsx, 방문 기록 app/admin/visits/page.tsx)이 같이 쓰는 표와 이름 풀이.
@@ -59,6 +59,17 @@ export function sourceName(referrer: string | null) {
   return REF[ref] ? `${REF[ref]} (?ref=${ref})` : `?ref=${ref}`;
 }
 
+/**
+ * 네트워크 이름. AS 이름은 "KIXS-AS-KR Korea Telecom"처럼 대문자 별칭 뒤에 회사 이름이 붙으니 회사 이름만 보여 준다.
+ * 별칭만 있으면(AMAZON-02) 그대로 둔다
+ */
+export function networkName(name: string | null) {
+  if (!name) return '';
+  return name.match(/^[A-Z0-9-]+\s+(.+)$/)?.[1] ?? name;
+}
+
+const hosting = new RegExp(HOSTING, 'i');
+
 export const DEVICE: Record<string, string> = { mobile: '휴대폰', tablet: '태블릿', desktop: '컴퓨터' };
 
 /**
@@ -75,6 +86,7 @@ function botReasons(v: Visit): string[] | null {
   if (!v.lang) reasons.push('언어 정보 없음');
   if (v.fetchMeta === false) reasons.push('브라우저 헤더 없음');
   if (v.browser.startsWith('기타')) reasons.push('알 수 없는 브라우저');
+  if (v.network && hosting.test(v.network)) reasons.push('데이터센터 접속');
   return reasons;
 }
 
@@ -96,7 +108,7 @@ function Verdict({ visit }: { visit: Visit }) {
 export function VisitTable({ visits, env, days }: { visits: Visit[]; env: Env; days: number }) {
   if (visits.length === 0) return <Empty />;
   return (
-    <Table head={['시각', '페이지', '머문 시간', '유입 경로', '위치', '기기', '언어', '판별', '방문자']} numeric={[2]}>
+    <Table head={['시각', '페이지', '머문 시간', '유입 경로', '위치·네트워크', '기기', '언어', '판별', '방문자']} numeric={[2]}>
       {visits.map((v, i) => (
         <tr key={i} className="border-t align-top">
           <td className="whitespace-nowrap py-2 pr-4" data-numeric>
@@ -107,7 +119,14 @@ export function VisitTable({ visits, env, days }: { visits: Visit[]; env: Env; d
             {durationText(v.duration)}
           </td>
           <td className="py-2 pr-4 text-muted">{sourceName(v.referrer)}</td>
-          <td className="py-2 pr-4 text-muted">{v.city ? `${v.city} · ${countryName(v.country)}` : countryName(v.country)}</td>
+          <td className="py-2 pr-4 text-muted">
+            {v.city ? `${v.city} · ${countryName(v.country)}` : countryName(v.country)}
+            {v.network && (
+              <span className="block text-xs" title={`AS${v.asn} ${v.network}`}>
+                {networkName(v.network)}
+              </span>
+            )}
+          </td>
           <td className="whitespace-nowrap py-2 pr-4 text-muted">
             {DEVICE[v.device ?? ''] ?? v.device}
             {v.browser && <span className="block text-xs">{v.browser}</span>}

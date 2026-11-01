@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import NetworkRefresh from './NetworkRefresh';
 import type { Metadata } from 'next';
 import { ENVS, PERIODS, RECENT, loadStats, type Env, type Stats } from './stats';
-import { Block, Choices, CountTable, DEVICE, Empty, Table, VisitTable, adminHref, countryName, durationText, number, pageName, sourceName } from './ui';
+import { Block, Choices, CountTable, DEVICE, Empty, Table, VisitTable, adminHref, countryName, durationText, networkName, number, pageName, sourceName } from './ui';
 
 /**
  * 관리자 화면. 방문 기록(visit_log)과 질문 기록(ask_log)을 한눈에 본다.
@@ -19,7 +20,10 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-type Props = { searchParams: { env?: string; days?: string } };
+type Props = { searchParams: { env?: string; days?: string; network?: string } };
+
+/** 네트워크 표를 이 날수보다 오래 갱신하지 않으면 경고한다. 대역 주인은 천천히 바뀌어 한두 달은 괜찮다 */
+const NETWORK_STALE_DAYS = 60;
 
 export default async function AdminPage({ searchParams }: Props) {
   if (!process.env.ADMIN_PASSWORD) notFound();
@@ -28,6 +32,8 @@ export default async function AdminPage({ searchParams }: Props) {
   const days = PERIODS.find((d) => String(d) === searchParams.days) ?? 30;
   const stats = await loadStats(env, days);
   const href = (next: { env?: Env; days?: number }) => adminHref('/admin', { env: next.env ?? env, days: next.days ?? days });
+  // 네트워크 표 갱신 버튼(app/admin/network/route.ts)이 끝나고 돌려준 결과
+  const network = searchParams.network === 'ok' || searchParams.network === 'fail' ? searchParams.network : null;
 
   return (
     <div className="mx-auto max-w-shell px-5 pb-24 pt-14 md:px-8">
@@ -45,12 +51,25 @@ export default async function AdminPage({ searchParams }: Props) {
         <Choices label="환경" items={ENVS.map((e) => ({ key: e, text: e, href: href({ env: e }), on: e === env }))} />
       </nav>
 
-      {stats ? <Dashboard stats={stats} env={env} days={days} /> : <p className="mt-12 text-muted">DATABASE_URL이 없어 기록을 읽을 수 없습니다.</p>}
+      {stats ? <Dashboard stats={stats} env={env} days={days} network={network} back={href({})} /> : <p className="mt-12 text-muted">DATABASE_URL이 없어 기록을 읽을 수 없습니다.</p>}
     </div>
   );
 }
 
-function Dashboard({ stats, env, days }: { stats: Stats; env: Env; days: number }) {
+function Dashboard({
+  stats,
+  env,
+  days,
+  network,
+  back,
+}: {
+  stats: Stats;
+  env: Env;
+  days: number;
+  network: 'ok' | 'fail' | null;
+  /** 갱신 버튼이 끝나고 돌아올 지금 화면 주소 */
+  back: string;
+}) {
   const maxDaily = Math.max(1, ...stats.daily.map((d) => d.visits));
   return (
     <>
@@ -116,6 +135,13 @@ function Dashboard({ stats, env, days }: { stats: Stats; env: Env; days: number 
             <CountTable head={['기기', '순방문']} rows={stats.devices.map((d) => [DEVICE[d.label ?? ''] ?? d.label ?? '', d.count])} />
           </div>
         </Block>
+        <Block title="네트워크" note="접속한 망의 주인. 통신사면 집·휴대폰, 회사 이름이면 그 회사망, 클라우드면 대개 봇입니다">
+          <CountTable
+            head={['네트워크', '순방문']}
+            rows={stats.networks.map((n) => [`${networkName(n.label)} (AS${n.asn})`, n.count])}
+          />
+          <NetworkData refreshedAt={stats.networkRefreshedAt} result={network} back={back} />
+        </Block>
       </div>
 
       <Block
@@ -174,5 +200,32 @@ function Dashboard({ stats, env, days }: { stats: Stats; env: Env; days: number 
         )}
       </Block>
     </>
+  );
+}
+
+/**
+ * 네트워크 표(ip_asn)를 언제 갱신했는지와 갱신 버튼. 오래됐거나 날짜를 모르면 경고한다.
+ * 갱신 날짜는 db/asn.mjs가 표 설명에 적는다. 명령줄(db/load-asn.mjs)로 갱신해도 똑같이 적힌다.
+ */
+function NetworkData({ refreshedAt, result, back }: { refreshedAt: Stats['networkRefreshedAt']; result: 'ok' | 'fail' | null; back: string }) {
+  let status: string;
+  let stale = true;
+  if (refreshedAt === 'missing') {
+    status = '네트워크 표가 없습니다. 지금 갱신을 누르거나 db/init.mjs를 실행해 주세요.';
+  } else if (refreshedAt == null) {
+    status = '네트워크 데이터를 언제 갱신했는지 기록이 없습니다. 한 번 갱신하면 날짜가 남습니다.';
+  } else {
+    const age = Math.floor((Date.now() - new Date(refreshedAt).getTime()) / (24 * 60 * 60 * 1000));
+    const day = new Date(new Date(refreshedAt).getTime() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    stale = age > NETWORK_STALE_DAYS;
+    status = `네트워크 데이터: ${day} 갱신 (${age === 0 ? '오늘' : `${age}일 전`})${stale ? `. ${NETWORK_STALE_DAYS}일이 넘었으니 갱신해 주세요.` : ''}`;
+  }
+  return (
+    <div className="mt-6 space-y-3">
+      {result === 'ok' && <p className="text-sm font-medium text-accent">네트워크 데이터를 갱신했습니다.</p>}
+      {result === 'fail' && <p className="text-sm font-medium">갱신하지 못했습니다. 쓰던 데이터는 그대로입니다. 잠시 뒤 다시 눌러 주세요.</p>}
+      <p className={stale ? 'text-sm font-medium' : 'text-sm text-muted'}>{status}</p>
+      <NetworkRefresh back={back} />
+    </div>
   );
 }
