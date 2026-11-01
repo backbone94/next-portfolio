@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { projects } from '@/app/content/projects';
-import { HOSTING, type Env, type Kind, type Visit } from './stats';
+import { HOSTING, type Env, type Kind, type Question, type Visit } from './stats';
 
 /**
  * 관리자 화면 두 곳(대시보드 app/admin/page.tsx, 방문 기록 app/admin/visits/page.tsx)이 같이 쓰는 표와 이름 풀이.
@@ -136,14 +136,48 @@ export function VisitTable({ visits, env, days }: { visits: Visit[]; env: Env; d
             <Verdict visit={v} />
           </td>
           <td className="whitespace-nowrap py-2 font-mono text-xs">
-            <Link
-              href={adminHref('/admin/visits', { env, days, visitor: v.visitor })}
-              title="이 방문자의 방문만 보기"
-              className="text-muted underline-offset-4 transition-colors hover:text-accent hover:underline"
-            >
-              {v.visitor}
-            </Link>
+            <VisitorLink visitor={v.visitor} env={env} days={days} />
           </td>
+        </tr>
+      ))}
+    </Table>
+  );
+}
+
+/** 방문자 값. 누르면 방문 기록 화면에서 그 방문자의 방문과 질문을 모아 본다 */
+function VisitorLink({ visitor, env, days }: { visitor: string; env: Env; days: number }) {
+  return (
+    <Link
+      href={adminHref('/admin/visits', { env, days, visitor })}
+      title="이 방문자의 방문과 질문 보기"
+      className="text-muted underline-offset-4 transition-colors hover:text-accent hover:underline"
+    >
+      {visitor}
+    </Link>
+  );
+}
+
+const ANSWERED_BY: Record<string, string> = { prepared: '미리 쓴 답', claude: 'Claude', notice: '안내' };
+
+/** 질문 한 건씩. 방문자 값이 있으면 눌러서 그 방문자가 어떤 페이지를 보고 물었는지 따라간다 */
+export function QuestionTable({ questions, env, days, showVisitor = true }: { questions: Question[]; env: Env; days: number; showVisitor?: boolean }) {
+  if (questions.length === 0) return <Empty />;
+  const head = ['시각', '질문', '어디서', '답'];
+  return (
+    <Table head={showVisitor ? [...head, '방문자'] : head}>
+      {questions.map((q, i) => (
+        <tr key={i} className="border-t align-top">
+          <td className="whitespace-nowrap py-2 pr-4" data-numeric>
+            <time>{q.at}</time>
+          </td>
+          <td className="py-2 pr-4">{q.question}</td>
+          <td className="py-2 pr-4 text-muted">{q.page ? pageName(`/projects/${q.page}`) : '첫 화면'}</td>
+          <td className="whitespace-nowrap py-2 pr-4 text-muted">{ANSWERED_BY[q.answeredBy] ?? q.answeredBy}</td>
+          {showVisitor && (
+            <td className="whitespace-nowrap py-2 font-mono text-xs">
+              {q.visitor ? <VisitorLink visitor={q.visitor} env={env} days={days} /> : <span className="text-muted">없음</span>}
+            </td>
+          )}
         </tr>
       ))}
     </Table>

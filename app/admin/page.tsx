@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import NetworkRefresh from './NetworkRefresh';
 import type { Metadata } from 'next';
 import { ENVS, PERIODS, RECENT, loadStats, type Env, type Stats } from './stats';
-import { Block, Choices, CountTable, DEVICE, Empty, Table, VisitTable, adminHref, countryName, durationText, networkName, number, pageName, sourceName } from './ui';
+import { Block, Choices, CountTable, DEVICE, Empty, QuestionTable, Table, VisitTable,adminHref, countryName, durationText, networkName, number, pageName, sourceName } from './ui';
 
 /**
  * 관리자 화면. 방문 기록(visit_log)과 질문 기록(ask_log)을 한눈에 본다.
@@ -154,6 +154,13 @@ function Dashboard({
         }
       >
         <VisitTable visits={stats.recent} env={env} days={days} />
+      </Block>
+
+      <Block
+        title="최근 질문"
+        note={`한국 시간 기준, 최근 ${RECENT}건. 방문자 값을 누르면 그 방문자가 어떤 페이지를 보고 물었는지 함께 봅니다. 방문자를 남기기 전의 질문은 없음으로 나옵니다`}
+      >
+        <QuestionTable questions={stats.recentQuestions} env={env} days={days} />
       </Block>
 
       <Block title="많이 들어온 질문">

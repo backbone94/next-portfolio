@@ -8,7 +8,7 @@ import { NONE, ROUTES, starterAnswer } from '@/app/lib/ask/prepared';
 import { findProjects, routeQuestion, routeWithKeywords, type RouteDecision } from '@/app/lib/ask/router';
 import { recordAsk, type Usage } from '@/app/lib/ask/store';
 import type { AskAnswer, AskStreamEvent } from '@/app/lib/ask/types';
-import { isOwner } from '@/app/lib/visit';
+import { isOwner, requestVisitor } from '@/app/lib/visit';
 
 /** 답이 정해지면 부른다. Vercel 로그에 한 줄 찍고 질문 기록(ask_log)에도 남긴다. usage는 Claude가 답했을 때만 온다. */
 type Log = (answer: AskAnswer, usage?: Usage) => void;
@@ -95,8 +95,13 @@ export async function POST(request: NextRequest) {
     return Response.json(notice('질문이 조금 많았습니다. 잠시 뒤에 다시 물어봐 주세요.'), { status: 429 });
   }
 
-  // 사이트 주인(관리자 화면에 로그인한 브라우저·EXCLUDED_IPS)이 한 질문은 답은 하되 기록하지 않는다
-  const record: typeof recordAsk = isOwner(request) ? () => {} : recordAsk;
+  // 사이트 주인(관리자 화면에 로그인한 브라우저·EXCLUDED_IPS)이 한 질문은 답은 하되 기록하지 않는다.
+  // 다른 질문에는 방문 기록과 같은 방문자 값을 붙여, 관리자 화면에서 어떤 페이지를 보고 무엇을 물었는지 이어 본다
+  let record: typeof recordAsk = () => {};
+  if (!isOwner(request)) {
+    const visitor = await requestVisitor(request);
+    record = (entry) => recordAsk({ ...entry, visitor });
+  }
 
   if (project) return answerInPanel(asked, project, ip, request.signal, record);
 

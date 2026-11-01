@@ -71,6 +71,21 @@ export type Visit = {
   fresh: boolean;
 };
 
+/** 질문 한 건. 방문자 값은 Visit과 같이 앞 6자리만 낸다. 질문 기록에 방문자를 남기기 전의 질문은 null이다 */
+export type Question = {
+  at: string;
+  /** 상세 페이지 옆 대화창이면 그 프로젝트 slug, 첫 화면이면 null */
+  page: string | null;
+  question: string;
+  /** prepared · claude · notice */
+  answeredBy: string;
+  visitor: string | null;
+};
+
+/** Question 한 건을 읽는 칼럼 */
+const QUESTION_COLUMNS = `to_char(${kst('created_at')}, 'YYYY-MM-DD HH24:MI:SS') as at, page, question,
+  answered_by as "answeredBy", left(visitor, 6) as visitor`;
+
 export type Stats = {
   visits: number;
   visitors: number;
@@ -94,7 +109,9 @@ export type Stats = {
   networkRefreshedAt: string | 'missing' | null;
   /** 최근 방문 몇 건. 전체는 방문 기록 화면(loadVisits)에서 본다 */
   recent: Visit[];
-  questions: { question: string; asked: number; last: string }[];
+  /** 최근 질문 몇 건. 누가 물었는지 방문 기록과 이어 본다 */
+  recentQuestions: Question[];
+  questions:{ question: string; asked: number; last: string }[];
   claudeAnswers: { at: string; page: string | null; question: string; route: string | null; confidence: number | null }[];
   claudeDaily: { day: string; calls: number; input: number; cacheWrite: number; cacheRead: number; output: number }[];
 };
@@ -104,7 +121,7 @@ export async function loadStats(env: Env, days: number): Promise<Stats | null> {
   const sql = neon(process.env.DATABASE_URL);
   const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
 
-  const [totals, daily, pages, referrers, countries, cities, devices, networks, networkTable, recent, askTotals, questions, claudeAnswers, claudeDaily] =
+  const [totals, daily, pages, referrers, countries, cities, devices, networks, networkTable, recent, askTotals, recentQuestions, questions, claudeAnswers, claudeDaily] =
     await Promise.all([
       // visitor 값은 날마다 바뀌므로 서로 다른 값의 수가 곧 "날짜별 순방문 수의 합"이다
       sql.query(
@@ -149,6 +166,10 @@ export async function loadStats(env: Env, days: number): Promise<Stats | null> {
       ]),
       sql`select count(*)::int as asks, count(*) filter (where answered_by = 'claude')::int as claude
           from ask_log where env = ${env} and created_at > ${since}`,
+      sql.query(`select ${QUESTION_COLUMNS} from ask_log where env = $1 and created_at > $2 order by created_at desc limit ${RECENT}`, [
+        env,
+        since,
+      ]),
       sql.query(
         `select question, count(*)::int as asked, to_char(max(${kst('created_at')}), 'MM-DD HH24:MI') as last
          from ask_log where env = $1 and created_at > $2
@@ -189,6 +210,7 @@ export async function loadStats(env: Env, days: number): Promise<Stats | null> {
       ? 'missing'
       : (/^refreshed (\S+)$/.exec(networkTable[0]?.note ?? '')?.[1] ?? null),
     recent: recent as Visit[],
+    recentQuestions: recentQuestions as Question[],
     questions: questions as Stats['questions'],
     claudeAnswers: claudeAnswers as Stats['claudeAnswers'],
     claudeDaily: claudeDaily as Stats['claudeDaily'],
@@ -225,4 +247,17 @@ export async function loadVisits(
     sql.query(`select count(*)::int as total from visit_log where ${where}`, params),
   ]);
   return { visits: visits as Visit[], total: totals[0]?.total ?? 0 };
+}
+
+/** 방문자 한 명이 이 기간에 한 질문 전부. 방문 기록 화면에서 방문자 값으로 거를 때 함께 보여 준다. 오래된 것부터 낸다 */
+export async function loadVisitorQuestions(env: Env, days: number, visitor: string): Promise<Question[]> {
+  if (!process.env.DATABASE_URL) return [];
+  const sql = neon(process.env.DATABASE_URL);
+  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+  const rows = await sql.query(
+    `select ${QUESTION_COLUMNS} from ask_log
+     where env = $1 and created_at > $2 and left(visitor, 6) = $3 order by created_at`,
+    [env, since, visitor],
+  );
+  return rows as Question[];
 }
