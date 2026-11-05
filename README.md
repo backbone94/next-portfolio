@@ -14,7 +14,7 @@
 
 포트폴리오 사이트는 Vercel를 통해 배포되었으며, 다음 URL에서 확인할 수 있습니다:
 
-**[https://next-portfolio-orcin-nu.vercel.app/](https://next-portfolio-orcin-nu.vercel.app/)**
+**[https://leejj.dev](https://leejj.dev)**
 
 ## 📚 기술 스택
 
