@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { projects } from '@/app/content/projects';
-import type { Env, Question, Visit } from './stats';
+import type { Question, Visit } from './stats';
 
 /**
  * 관리자 화면 두 곳(대시보드 app/admin/page.tsx, 방문 기록 app/admin/visits/page.tsx)이 같이 쓰는 표와 이름 풀이.
@@ -10,15 +10,13 @@ export const number = (n: number) => n.toLocaleString('ko-KR');
 const regions = new Intl.DisplayNames(['ko'], { type: 'region' });
 const titles = new Map(projects.map((p) => [`/projects/${p.slug}`, p.title]));
 
-/** 관리자 화면 주소. 기간과 환경은 화면을 옮겨 다녀도 그대로 이어 간다 */
-export function adminHref(
-  base: '/admin' | '/admin/visits',
-  query: { env: Env; days: number; visitor?: string | null; page?: number },
-) {
-  const params = new URLSearchParams({ env: query.env, days: String(query.days) });
+/** 관리자 화면 주소. 방문자와 쪽 번호만 붙인다 */
+export function adminHref(base: '/admin' | '/admin/visits', query: { visitor?: string | null; page?: number } = {}) {
+  const params = new URLSearchParams();
   if (query.visitor) params.set('visitor', query.visitor);
   if (query.page && query.page > 1) params.set('page', String(query.page));
-  return `${base}?${params}`;
+  const search = params.toString();
+  return search ? `${base}?${search}` : base;
 }
 
 export function countryName(code: string | null) {
@@ -70,7 +68,7 @@ export function networkName(name: string | null) {
 export const DEVICE: Record<string, string> = { mobile: '휴대폰', tablet: '태블릿', desktop: '컴퓨터' };
 
 /** 방문 한 건씩. 방문자 값을 누르면 그 방문자의 방문만 모아 본다 */
-export function VisitTable({ visits, env, days }: { visits: Visit[]; env: Env; days: number }) {
+export function VisitTable({ visits }: { visits: Visit[] }) {
   if (visits.length === 0) return <Empty />;
   return (
     <Table head={['시각', '페이지', '머문 시간', '유입 경로', '위치·네트워크', '기기', '언어', '방문자']} numeric={[2]}>
@@ -98,7 +96,7 @@ export function VisitTable({ visits, env, days }: { visits: Visit[]; env: Env; d
           </td>
           <td className="whitespace-nowrap py-2 pr-4 text-muted">{v.lang ?? (v.browser ? '없음' : '')}</td>
           <td className="whitespace-nowrap py-2 font-mono text-xs">
-            <VisitorLink visitor={v.visitor} env={env} days={days} />
+            <VisitorLink visitor={v.visitor} />
           </td>
         </tr>
       ))}
@@ -107,10 +105,10 @@ export function VisitTable({ visits, env, days }: { visits: Visit[]; env: Env; d
 }
 
 /** 방문자 값. 누르면 방문 기록 화면에서 그 방문자의 방문과 질문을 모아 본다 */
-function VisitorLink({ visitor, env, days }: { visitor: string; env: Env; days: number }) {
+function VisitorLink({ visitor }: { visitor: string }) {
   return (
     <Link
-      href={adminHref('/admin/visits', { env, days, visitor })}
+      href={adminHref('/admin/visits', { visitor })}
       title="이 방문자의 방문과 질문 보기"
       className="text-muted underline-offset-4 transition-colors hover:text-accent hover:underline"
     >
@@ -122,7 +120,7 @@ function VisitorLink({ visitor, env, days }: { visitor: string; env: Env; days: 
 const ANSWERED_BY: Record<string, string> = { prepared: '미리 쓴 답', claude: 'Claude', notice: '안내' };
 
 /** 질문 한 건씩. 방문자 값이 있으면 눌러서 그 방문자가 어떤 페이지를 보고 물었는지 따라간다 */
-export function QuestionTable({ questions, env, days, showVisitor = true }: { questions: Question[]; env: Env; days: number; showVisitor?: boolean }) {
+export function QuestionTable({ questions, showVisitor = true }: { questions: Question[]; showVisitor?: boolean }) {
   if (questions.length === 0) return <Empty />;
   const head = ['시각', '질문', '어디서', '답'];
   return (
@@ -137,34 +135,12 @@ export function QuestionTable({ questions, env, days, showVisitor = true }: { qu
           <td className="whitespace-nowrap py-2 pr-4 text-muted">{ANSWERED_BY[q.answeredBy] ?? q.answeredBy}</td>
           {showVisitor && (
             <td className="whitespace-nowrap py-2 font-mono text-xs">
-              {q.visitor ? <VisitorLink visitor={q.visitor} env={env} days={days} /> : <span className="text-muted">없음</span>}
+              {q.visitor ? <VisitorLink visitor={q.visitor} /> : <span className="text-muted">없음</span>}
             </td>
           )}
         </tr>
       ))}
     </Table>
-  );
-}
-
-export function Choices({ label, items }: { label: string; items: { key: string; text: string; href: string; on: boolean }[] }) {
-  return (
-    <div className="flex items-center gap-2">
-      <span className="mr-1 text-muted">{label}</span>
-      {items.map((item) => (
-        <Link
-          key={item.key}
-          href={item.href}
-          aria-current={item.on ? 'page' : undefined}
-          className={
-            item.on
-              ? 'rounded-md bg-accent px-3 py-1.5 font-medium text-accent-ink'
-              : 'rounded-md bg-surface-2 px-3 py-1.5 font-medium transition-colors hover:text-accent'
-          }
-        >
-          {item.text}
-        </Link>
-      ))}
-    </div>
   );
 }
 

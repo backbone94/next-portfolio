@@ -3,12 +3,13 @@ import { neon } from '@neondatabase/serverless';
 /**
  * 관리자 화면이 보여 주는 숫자. visit_log(db/visit_log.sql)와 ask_log(db/ask_log.sql)를 읽기만 한다.
  * 방문은 확실히 사람인 것(HUMAN)만 읽는다. 봇이거나 봇으로 의심되는 방문은 기록에는 남지만 관리자 화면에는 나오지 않는다.
- * 날짜는 한국 시간으로 자른다.
+ * 실제 사이트(production)의 기록만 읽는다. 미리보기 배포와 로컬 개발에서 남은 기록은 보지 않는다. 날짜는 한국 시간으로 자른다.
  */
 
-export const ENVS = ['production', 'preview', 'development'] as const;
-export type Env = (typeof ENVS)[number];
-export const PERIODS = [7, 30, 90] as const;
+/** 관리자 화면이 읽는 기록의 환경. 기록할 때 VERCEL_ENV 값으로 남긴다(app/lib/visit.ts) */
+const ENV = 'production';
+/** 날짜별 Claude 호출과 토큰 표에 보여 주는 날수 */
+const CLAUDE_DAYS = 30;
 
 /** 대시보드에 보여 주는 최근 방문 수 */
 export const RECENT = 10;
@@ -82,7 +83,7 @@ const QUESTION_COLUMNS = `to_char(${kst('created_at')}, 'YYYY-MM-DD HH24:MI:SS')
   answered_by as "answeredBy", left(visitor, 6) as visitor`;
 
 export type Stats = {
-  /** 이 기간 사람의 방문 수. 방문 기록 화면으로 가는 링크에 쓴다 */
+  /** 사람의 방문 수 전체. 방문 기록 화면으로 가는 링크에 쓴다 */
   visits: number;
   /** 최근 방문 몇 건. 전체는 방문 기록 화면(loadVisits)에서 본다 */
   recent: Visit[];
@@ -92,21 +93,20 @@ export type Stats = {
   claudeDaily: { day: string; calls: number; input: number; cacheWrite: number; cacheRead: number; output: number }[];
 };
 
-export async function loadStats(env: Env, days: number): Promise<Stats | null> {
+export async function loadStats(): Promise<Stats | null> {
   if (!process.env.DATABASE_URL) return null;
   const sql = neon(process.env.DATABASE_URL);
-  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
   // 방문은 사람의 방문만 읽는다
-  const visits = `env = $1 and created_at > $2 and ${HUMAN}`;
-  const params = [env, since];
+  const visits = `env = $1 and ${HUMAN}`;
+  const params = [ENV];
 
   const [totals, recent, recentQuestions, claudeAnswers, claudeDaily] = await Promise.all([
     sql.query(`select count(*)::int as visits from visit_log where ${visits}`, params),
     sql.query(`select ${VISIT_COLUMNS} from visit_log where ${visits} order by created_at desc limit ${RECENT}`, params),
-    sql.query(`select ${QUESTION_COLUMNS} from ask_log where env = $1 and created_at > $2 order by created_at desc limit ${RECENT}`, params),
+    sql.query(`select ${QUESTION_COLUMNS} from ask_log where env = $1 order by created_at desc limit ${RECENT}`, params),
     sql.query(
       `select to_char(${kst('created_at')}, 'MM-DD HH24:MI') as at, page, question, route, confidence
-       from ask_log where env = $1 and created_at > $2 and answered_by = 'claude'
+       from ask_log where env = $1 and answered_by = 'claude'
        order by created_at desc limit 30`,
       params,
     ),
@@ -114,7 +114,8 @@ export async function loadStats(env: Env, days: number): Promise<Stats | null> {
       `select ${kst('created_at')}::date::text as day, count(*)::int as calls,
               coalesce(sum(input_tokens), 0)::int as input, coalesce(sum(cache_write), 0)::int as "cacheWrite",
               coalesce(sum(cache_read), 0)::int as "cacheRead", coalesce(sum(output_tokens), 0)::int as output
-       from ask_log where env = $1 and created_at > $2 and answered_by = 'claude'
+       from ask_log where env = $1 and answered_by = 'claude'
+         and created_at > now() - interval '${CLAUDE_DAYS} days'
        group by day order by day desc`,
       params,
     ),
@@ -133,16 +134,11 @@ export async function loadStats(env: Env, days: number): Promise<Stats | null> {
  * 방문 기록 화면(app/admin/visits/page.tsx)의 한 쪽. 최신순으로 PAGE_SIZE건씩 끊는다.
  * visitor는 화면에 보이는 앞 6자리다. 주면 그 방문자의 방문만 고른다. 사람의 방문만 낸다.
  */
-export async function loadVisits(
-  env: Env,
-  days: number,
-  { page, visitor }: { page: number; visitor: string | null },
-): Promise<{ visits: Visit[]; total: number } | null> {
+export async function loadVisits({ page, visitor }: { page: number; visitor: string | null }): Promise<{ visits: Visit[]; total: number } | null> {
   if (!process.env.DATABASE_URL) return null;
   const sql = neon(process.env.DATABASE_URL);
-  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
-  const params: unknown[] = [env, since];
-  let where = `env = $1 and created_at > $2 and ${HUMAN}`;
+  const params: unknown[] = [ENV];
+  let where = `env = $1 and ${HUMAN}`;
   if (visitor) {
     params.push(visitor);
     where += ` and left(visitor, 6) = $${params.length}`;
@@ -159,15 +155,14 @@ export async function loadVisits(
   return { visits: visits as Visit[], total: totals[0]?.total ?? 0 };
 }
 
-/** 방문자 한 명이 이 기간에 한 질문 전부. 방문 기록 화면에서 방문자 값으로 거를 때 함께 보여 준다. 오래된 것부터 낸다 */
-export async function loadVisitorQuestions(env: Env, days: number, visitor: string): Promise<Question[]> {
+/** 방문자 한 명이 한 질문 전부. 방문 기록 화면에서 방문자 값으로 거를 때 함께 보여 준다. 오래된 것부터 낸다 */
+export async function loadVisitorQuestions(visitor: string): Promise<Question[]> {
   if (!process.env.DATABASE_URL) return [];
   const sql = neon(process.env.DATABASE_URL);
-  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
   const rows = await sql.query(
     `select ${QUESTION_COLUMNS} from ask_log
-     where env = $1 and created_at > $2 and left(visitor, 6) = $3 order by created_at`,
-    [env, since, visitor],
+     where env = $1 and left(visitor, 6) = $2 order by created_at`,
+    [ENV, visitor],
   );
   return rows as Question[];
 }
