@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { ENVS, PAGE_SIZE, PERIODS, loadVisitorQuestions, loadVisits, type Env } from '../stats';
-import { Block, Choices, QuestionTable, VisitTable, adminHref, number } from '../ui';
+import { PAGE_SIZE, loadVisitorQuestions, loadVisits } from '../stats';
+import { Block, QuestionTable, VisitTable, adminHref, number } from '../ui';
 
 /**
  * 방문 기록 전체. 대시보드(app/admin/page.tsx)는 최근 몇 건만 보여 주고, 여기서 최신순으로 쪽을 나눠 본다.
@@ -19,44 +19,35 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-type Props = { searchParams: { env?: string; days?: string; visitor?: string; page?: string } };
+type Props = { searchParams: { visitor?: string; page?: string } };
 
 
 export default async function VisitsPage({ searchParams }: Props) {
   if (!process.env.ADMIN_PASSWORD) notFound();
 
-  const env: Env = ENVS.find((e) => e === searchParams.env) ?? 'production';
-  const days = PERIODS.find((d) => String(d) === searchParams.days) ?? 30;
   // 화면에 보이는 앞 6자리만 받는다(app/admin/stats.ts의 Visit)
   const visitor = /^[0-9a-f]{6}$/.test(searchParams.visitor ?? '') ? searchParams.visitor! : null;
   const page = Math.max(1, Math.floor(Number(searchParams.page)) || 1);
 
   const [result, questions] = await Promise.all([
-    loadVisits(env, days, { page, visitor }),
-    visitor ? loadVisitorQuestions(env, days, visitor) : null,
+    loadVisits({ page, visitor }),
+    visitor ? loadVisitorQuestions(visitor) : null,
   ]);
-  const href = (next: { env?: Env; days?: number; visitor?: string | null; page?: number }) =>
+  const href = (next: { visitor?: string | null; page?: number }) =>
     adminHref('/admin/visits', {
-      env: next.env ?? env,
-      days: next.days ?? days,
       visitor: next.visitor === undefined ? visitor : next.visitor,
       page: next.page,
     });
 
   return (
     <div className="mx-auto max-w-shell px-5 pb-24 pt-14 md:px-8">
-      <Link href={adminHref('/admin', { env, days })} className="text-sm font-medium text-accent underline-offset-4 hover:underline">
+      <Link href={adminHref('/admin')} className="text-sm font-medium text-accent underline-offset-4 hover:underline">
         ← 대시보드
       </Link>
       <h1 className="mt-3 text-[clamp(2rem,5vw,3rem)] font-black leading-[1.05] tracking-[-0.03em]">방문 기록</h1>
       <p className="mt-4 max-w-prose text-muted">
         한국 시간 기준 최신순입니다. 방문자 값이 같으면 같은 날 같은 기기입니다. 방문자 값을 누르면 그 방문자의 방문만 모아 봅니다.
       </p>
-
-      <nav aria-label="기간과 환경" className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-sm">
-        <Choices label="기간" items={PERIODS.map((d) => ({ key: String(d), text: `${d}일`, href: href({ days: d }), on: d === days }))} />
-        <Choices label="환경" items={ENVS.map((e) => ({ key: e, text: e, href: href({ env: e }), on: e === env }))} />
-      </nav>
 
       {visitor && (
         <p className="mt-6 text-sm">
@@ -68,14 +59,14 @@ export default async function VisitsPage({ searchParams }: Props) {
       )}
 
       {questions && (
-        <Block title={`질문 ${number(questions.length)}건`} note="이 방문자가 이 기간에 한 질문입니다. 오래된 것부터 보여 줍니다">
-          <QuestionTable questions={questions} env={env} days={days} showVisitor={false} />
+        <Block title={`질문 ${number(questions.length)}건`} note="이 방문자가 한 질문입니다. 오래된 것부터 보여 줍니다">
+          <QuestionTable questions={questions} showVisitor={false} />
         </Block>
       )}
 
       {result ? (
         <Block title={`${number(result.total)}건`} note={range(page, result.total)}>
-          <VisitTable visits={result.visits} env={env} days={days} />
+          <VisitTable visits={result.visits} />
           <Pager page={page} total={result.total} href={(p) => href({ page: p })} />
         </Block>
       ) : (
