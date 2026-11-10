@@ -1,6 +1,6 @@
 // IP 대역별 네트워크 표(ip_asn, db/ip_asn.sql)를 iptoasn.com의 최신 데이터로 채운다. 접속 주소는 출력하지 않는다.
 // 실행: node --env-file=.env.local db/load-asn.mjs   (--dry-run을 붙이면 DB를 건드리지 않고 받은 데이터만 확인한다)
-// 관리자 화면의 "지금 갱신" 버튼도 같은 일을 한다. 실제 일은 db/asn.mjs가 한다.
+// 실제 일은 db/asn.mjs가 한다.
 import { neon } from '@neondatabase/serverless';
 import { fetchRanges, loadAsn } from './asn.mjs';
 

@@ -2,7 +2,8 @@ import { neon } from '@neondatabase/serverless';
 
 /**
  * 관리자 화면이 보여 주는 숫자. visit_log(db/visit_log.sql)와 ask_log(db/ask_log.sql)를 읽기만 한다.
- * ask_log 쪽 쿼리는 db/queries.sql의 1·2·4번과 같다. 날짜는 한국 시간으로 자른다.
+ * 방문은 확실히 사람인 것(HUMAN)만 읽는다. 봇이거나 봇으로 의심되는 방문은 기록에는 남지만 관리자 화면에는 나오지 않는다.
+ * 날짜는 한국 시간으로 자른다.
  */
 
 export const ENVS = ['production', 'preview', 'development'] as const;
@@ -18,31 +19,27 @@ const kst = (column: string) => `(${column} at time zone 'Asia/Seoul')`;
 
 /** Visit 한 건을 읽는 칼럼 */
 const VISIT_COLUMNS = `to_char(${kst('created_at')}, 'YYYY-MM-DD HH24:MI:SS') as at, path, referrer, country, city, device,
-  left(visitor, 6) as visitor, browser, lang, fetch_meta as "fetchMeta", js, webdriver, duration, asn, network,
-  created_at > now() - interval '1 minute' as fresh`;
+  left(visitor, 6) as visitor, browser, lang, fetch_meta as "fetchMeta", js, webdriver, duration, asn, network`;
 
 /**
  * 데이터센터·클라우드 네트워크 이름에 들어가는 말. 사람은 집·회사·휴대폰 망에서 들어오므로, 이런 망에서 온 방문은 거의 봇이다.
  * 네트워크 이름은 ip_asn 표(db/ip_asn.sql)의 AS 이름이다 (AMAZON-02, GOOGLE-CLOUD-PLATFORM, DIGITALOCEAN-ASN).
  * SQL(~*)과 자바스크립트(RegExp) 양쪽에서 그대로 쓰므로 두 문법에 공통인 |와 ^·$만 쓴다
  */
-export const HOSTING =
+const HOSTING =
   'amazon|google-cloud|^google$|microsoft|digitalocean|ovh|hetzner|linode|akamai|choopa|vultr|oracle|alibaba|tencent|huawei-cloud|contabo|leaseweb|m247|datacamp|scaleway|ionos|hostinger|naver cloud|nbp';
 
 /**
- * 봇 의심 조건. 관리자 화면의 botReasons(app/admin/ui.tsx)와 같은 기준이다. 한쪽을 바꾸면 다른 쪽도 바꾼다.
- * 판별 정보(browser)가 없는 예전 방문은 어느 쪽에도 넣지 않는다
+ * 봇 의심 조건. 자동화 브라우저, 화면 실행 안 됨, 언어 정보 없음, 브라우저 헤더 없음, 알 수 없는 브라우저, 데이터센터 접속 중
+ * 하나라도 해당하면 봇으로 의심한다
  */
 const SUSPECT = `browser is not null and (webdriver is true or (js is not true and created_at <= now() - interval '1 minute')
   or lang is null or fetch_meta is false or browser like '기타%' or coalesce(network, '') ~* '${HOSTING}')`;
-const HUMAN = `browser is not null and not (${SUSPECT})`;
-
-export const KINDS = ['all', 'human', 'suspect'] as const;
-export type Kind = (typeof KINDS)[number];
-
-type Count = { label: string | null; count: number; visitors?: number };
-/** 많이 본 페이지. 평균 머문 시간(초)은 시간이 적힌 방문만으로 낸다. 하나도 없으면 null이다 */
-type PageCount = Count & { duration: number | null };
+/**
+ * 확실히 사람인 방문. 봇 의심 이유가 하나도 없고, 화면이 브라우저에서 실제로 실행된 것(js)까지 확인된 방문만 넣는다.
+ * 방금 들어와 실행 신호를 기다리는 방문은 신호가 올 때까지 빠진다. 판별 정보(browser)가 없는 예전 방문도 빠진다
+ */
+const HUMAN = `browser is not null and js is true and not (${SUSPECT})`;
 
 /** 방문 한 건. 시각은 한국 시간으로 초까지, 방문자 값은 같은 날 같은 사람인지 알아볼 만큼 앞 6자리만 낸다 */
 export type Visit = {
@@ -67,8 +64,6 @@ export type Visit = {
    */
   asn: string | null;
   network: string | null;
-  /** 1분 안에 남은 방문. 화면 실행 신호가 아직 오지 않았을 수 있다 */
-  fresh: boolean;
 };
 
 /** 질문 한 건. 방문자 값은 Visit과 같이 앞 6자리만 낸다. 질문 기록에 방문자를 남기기 전의 질문은 null이다 */
@@ -87,31 +82,12 @@ const QUESTION_COLUMNS = `to_char(${kst('created_at')}, 'YYYY-MM-DD HH24:MI:SS')
   answered_by as "answeredBy", left(visitor, 6) as visitor`;
 
 export type Stats = {
+  /** 이 기간 사람의 방문 수. 방문 기록 화면으로 가는 링크에 쓴다 */
   visits: number;
-  visitors: number;
-  /** 봇 판별 정보가 있는 방문 수와 그중 봇 의심 수 (기간 전체) */
-  judged: number;
-  suspects: number;
-  asks: number;
-  claudeCalls: number;
-  daily: { day: string; visits: number; visitors: number }[];
-  pages: PageCount[];
-  referrers: Count[];
-  countries: Count[];
-  cities: { country: string | null; city: string | null; count: number }[];
-  devices: Count[];
-  /** 많이 들어온 네트워크. 순방문 기준 */
-  networks: (Count & { asn: string | null })[];
-  /**
-   * 네트워크 표(ip_asn)를 마지막으로 갱신한 시각(ISO). 갱신하면 db/asn.mjs가 표 설명에 적는다.
-   * 표가 없으면 'missing', 설명이 없는 예전 방식으로 채웠으면 null이다
-   */
-  networkRefreshedAt: string | 'missing' | null;
   /** 최근 방문 몇 건. 전체는 방문 기록 화면(loadVisits)에서 본다 */
   recent: Visit[];
   /** 최근 질문 몇 건. 누가 물었는지 방문 기록과 이어 본다 */
   recentQuestions: Question[];
-  questions:{ question: string; asked: number; last: string }[];
   claudeAnswers: { at: string; page: string | null; question: string; route: string | null; confidence: number | null }[];
   claudeDaily: { day: string; calls: number; input: number; cacheWrite: number; cacheRead: number; output: number }[];
 };
@@ -120,98 +96,34 @@ export async function loadStats(env: Env, days: number): Promise<Stats | null> {
   if (!process.env.DATABASE_URL) return null;
   const sql = neon(process.env.DATABASE_URL);
   const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+  // 방문은 사람의 방문만 읽는다
+  const visits = `env = $1 and created_at > $2 and ${HUMAN}`;
+  const params = [env, since];
 
-  const [totals, daily, pages, referrers, countries, cities, devices, networks, networkTable, recent, askTotals, recentQuestions, questions, claudeAnswers, claudeDaily] =
-    await Promise.all([
-      // visitor 값은 날마다 바뀌므로 서로 다른 값의 수가 곧 "날짜별 순방문 수의 합"이다
-      sql.query(
-        `select count(*)::int as visits, count(distinct visitor)::int as visitors,
-                count(*) filter (where browser is not null)::int as judged,
-                count(*) filter (where ${SUSPECT})::int as suspects
-         from visit_log where env = $1 and created_at > $2`,
-        [env, since],
-      ),
-      sql.query(
-        `select ${kst('created_at')}::date::text as day, count(*)::int as visits, count(distinct visitor)::int as visitors
-         from visit_log where env = $1 and created_at > $2
-         group by day order by day desc`,
-        [env, since],
-      ),
-      sql`select path as label, count(*)::int as count, count(distinct visitor)::int as visitors,
-                round(avg(duration))::int as duration
-          from visit_log where env = ${env} and created_at > ${since}
-          group by path order by count desc limit 20`,
-      // 방문자마다 그날 처음 연 페이지의 유입 경로만 센다. 사이트 안에서 옮겨 다닌 기록은 referrer가 null이라
-      // 전부 세면 "출처 없음"이 부풀어 오른다
-      sql`select referrer as label, count(*)::int as count
-          from (select distinct on (visitor) referrer from visit_log
-                where env = ${env} and created_at > ${since} order by visitor, created_at) first_visit
-          group by referrer order by count desc limit 15`,
-      sql`select country as label, count(distinct visitor)::int as count
-          from visit_log where env = ${env} and created_at > ${since}
-          group by country order by count desc limit 15`,
-      sql`select country, city, count(distinct visitor)::int as count
-          from visit_log where env = ${env} and created_at > ${since} and city is not null
-          group by country, city order by count desc limit 10`,
-      sql`select device as label, count(distinct visitor)::int as count
-          from visit_log where env = ${env} and created_at > ${since}
-          group by device order by count desc`,
-      sql`select network as label, min(asn) as asn, count(distinct visitor)::int as count
-          from visit_log where env = ${env} and created_at > ${since} and network is not null
-          group by network order by count desc limit 15`,
-      sql`select to_regclass('ip_asn') is not null as exists, obj_description(to_regclass('ip_asn'), 'pg_class') as note`,
-      sql.query(`select ${VISIT_COLUMNS} from visit_log where env = $1 and created_at > $2 order by created_at desc limit ${RECENT}`, [
-        env,
-        since,
-      ]),
-      sql`select count(*)::int as asks, count(*) filter (where answered_by = 'claude')::int as claude
-          from ask_log where env = ${env} and created_at > ${since}`,
-      sql.query(`select ${QUESTION_COLUMNS} from ask_log where env = $1 and created_at > $2 order by created_at desc limit ${RECENT}`, [
-        env,
-        since,
-      ]),
-      sql.query(
-        `select question, count(*)::int as asked, to_char(max(${kst('created_at')}), 'MM-DD HH24:MI') as last
-         from ask_log where env = $1 and created_at > $2
-         group by question order by asked desc, max(created_at) desc limit 20`,
-        [env, since],
-      ),
-      sql.query(
-        `select to_char(${kst('created_at')}, 'MM-DD HH24:MI') as at, page, question, route, confidence
-         from ask_log where env = $1 and created_at > $2 and answered_by = 'claude'
-         order by created_at desc limit 30`,
-        [env, since],
-      ),
-      sql.query(
-        `select ${kst('created_at')}::date::text as day, count(*)::int as calls,
-                coalesce(sum(input_tokens), 0)::int as input, coalesce(sum(cache_write), 0)::int as "cacheWrite",
-                coalesce(sum(cache_read), 0)::int as "cacheRead", coalesce(sum(output_tokens), 0)::int as output
-         from ask_log where env = $1 and created_at > $2 and answered_by = 'claude'
-         group by day order by day desc`,
-        [env, since],
-      ),
-    ]);
+  const [totals, recent, recentQuestions, claudeAnswers, claudeDaily] = await Promise.all([
+    sql.query(`select count(*)::int as visits from visit_log where ${visits}`, params),
+    sql.query(`select ${VISIT_COLUMNS} from visit_log where ${visits} order by created_at desc limit ${RECENT}`, params),
+    sql.query(`select ${QUESTION_COLUMNS} from ask_log where env = $1 and created_at > $2 order by created_at desc limit ${RECENT}`, params),
+    sql.query(
+      `select to_char(${kst('created_at')}, 'MM-DD HH24:MI') as at, page, question, route, confidence
+       from ask_log where env = $1 and created_at > $2 and answered_by = 'claude'
+       order by created_at desc limit 30`,
+      params,
+    ),
+    sql.query(
+      `select ${kst('created_at')}::date::text as day, count(*)::int as calls,
+              coalesce(sum(input_tokens), 0)::int as input, coalesce(sum(cache_write), 0)::int as "cacheWrite",
+              coalesce(sum(cache_read), 0)::int as "cacheRead", coalesce(sum(output_tokens), 0)::int as output
+       from ask_log where env = $1 and created_at > $2 and answered_by = 'claude'
+       group by day order by day desc`,
+      params,
+    ),
+  ]);
 
   return {
     visits: totals[0]?.visits ?? 0,
-    visitors: totals[0]?.visitors ?? 0,
-    judged: totals[0]?.judged ?? 0,
-    suspects: totals[0]?.suspects ?? 0,
-    asks: askTotals[0]?.asks ?? 0,
-    claudeCalls: askTotals[0]?.claude ?? 0,
-    daily: daily as Stats['daily'],
-    pages: pages as PageCount[],
-    referrers: referrers as Count[],
-    countries: countries as Count[],
-    cities: cities as Stats['cities'],
-    devices: devices as Count[],
-    networks: networks as Stats['networks'],
-    networkRefreshedAt: !networkTable[0]?.exists
-      ? 'missing'
-      : (/^refreshed (\S+)$/.exec(networkTable[0]?.note ?? '')?.[1] ?? null),
     recent: recent as Visit[],
     recentQuestions: recentQuestions as Question[],
-    questions: questions as Stats['questions'],
     claudeAnswers: claudeAnswers as Stats['claudeAnswers'],
     claudeDaily: claudeDaily as Stats['claudeDaily'],
   };
@@ -219,24 +131,22 @@ export async function loadStats(env: Env, days: number): Promise<Stats | null> {
 
 /**
  * 방문 기록 화면(app/admin/visits/page.tsx)의 한 쪽. 최신순으로 PAGE_SIZE건씩 끊는다.
- * visitor는 화면에 보이는 앞 6자리다. 주면 그 방문자의 방문만, kind를 주면 사람이나 봇 의심만 고른다.
+ * visitor는 화면에 보이는 앞 6자리다. 주면 그 방문자의 방문만 고른다. 사람의 방문만 낸다.
  */
 export async function loadVisits(
   env: Env,
   days: number,
-  { page, visitor, kind }: { page: number; visitor: string | null; kind: Kind },
+  { page, visitor }: { page: number; visitor: string | null },
 ): Promise<{ visits: Visit[]; total: number } | null> {
   if (!process.env.DATABASE_URL) return null;
   const sql = neon(process.env.DATABASE_URL);
   const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
   const params: unknown[] = [env, since];
-  let where = 'env = $1 and created_at > $2';
+  let where = `env = $1 and created_at > $2 and ${HUMAN}`;
   if (visitor) {
     params.push(visitor);
     where += ` and left(visitor, 6) = $${params.length}`;
   }
-  if (kind === 'human') where += ` and ${HUMAN}`;
-  if (kind === 'suspect') where += ` and ${SUSPECT}`;
 
   const [visits, totals] = await Promise.all([
     sql.query(
