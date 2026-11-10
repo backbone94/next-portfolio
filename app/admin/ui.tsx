@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { projects } from '@/app/content/projects';
-import { HOSTING, type Env, type Kind, type Question, type Visit } from './stats';
+import type { Env, Question, Visit } from './stats';
 
 /**
  * 관리자 화면 두 곳(대시보드 app/admin/page.tsx, 방문 기록 app/admin/visits/page.tsx)이 같이 쓰는 표와 이름 풀이.
@@ -13,11 +13,10 @@ const titles = new Map(projects.map((p) => [`/projects/${p.slug}`, p.title]));
 /** 관리자 화면 주소. 기간과 환경은 화면을 옮겨 다녀도 그대로 이어 간다 */
 export function adminHref(
   base: '/admin' | '/admin/visits',
-  query: { env: Env; days: number; visitor?: string | null; kind?: Kind; page?: number },
+  query: { env: Env; days: number; visitor?: string | null; page?: number },
 ) {
   const params = new URLSearchParams({ env: query.env, days: String(query.days) });
   if (query.visitor) params.set('visitor', query.visitor);
-  if (query.kind && query.kind !== 'all') params.set('kind', query.kind);
   if (query.page && query.page > 1) params.set('page', String(query.page));
   return `${base}?${params}`;
 }
@@ -68,47 +67,13 @@ export function networkName(name: string | null) {
   return name.match(/^[A-Z0-9-]+\s+(.+)$/)?.[1] ?? name;
 }
 
-const hosting = new RegExp(HOSTING, 'i');
-
 export const DEVICE: Record<string, string> = { mobile: '휴대폰', tablet: '태블릿', desktop: '컴퓨터' };
-
-/**
- * 봇으로 의심할 이유. 하나라도 있으면 봇 의심이다. 이 정보를 남기기 전의 방문은 null을 낸다.
- * 화면 실행이 가장 확실한 신호다. HTML만 받아 가는 봇은 화면을 실행하지 않는다.
- * 브라우저를 통째로 조종하는 봇은 화면을 실행하므로, 자동화 표시·언어·헤더로 한 번 더 거른다.
- * 기간 전체를 세거나 고를 때 쓰는 SQL 조건(app/admin/stats.ts의 SUSPECT)과 같은 기준이다. 한쪽을 바꾸면 다른 쪽도 바꾼다.
- */
-function botReasons(v: Visit): string[] | null {
-  if (v.browser == null) return null;
-  const reasons: string[] = [];
-  if (v.webdriver) reasons.push('자동화 브라우저');
-  if (!v.js && !v.fresh) reasons.push('화면 실행 안 됨');
-  if (!v.lang) reasons.push('언어 정보 없음');
-  if (v.fetchMeta === false) reasons.push('브라우저 헤더 없음');
-  if (v.browser.startsWith('기타')) reasons.push('알 수 없는 브라우저');
-  if (v.network && hosting.test(v.network)) reasons.push('데이터센터 접속');
-  return reasons;
-}
-
-function Verdict({ visit }: { visit: Visit }) {
-  const reasons = botReasons(visit);
-  if (reasons == null) return <span className="text-muted">정보 없음</span>;
-  if (reasons.length > 0) {
-    return (
-      <span className="whitespace-nowrap">
-        <span className="font-medium">봇 의심</span>
-        <span className="block text-xs text-muted">{reasons.join(', ')}</span>
-      </span>
-    );
-  }
-  return <span className="whitespace-nowrap text-muted">{visit.js ? '사람' : '확인 중'}</span>;
-}
 
 /** 방문 한 건씩. 방문자 값을 누르면 그 방문자의 방문만 모아 본다 */
 export function VisitTable({ visits, env, days }: { visits: Visit[]; env: Env; days: number }) {
   if (visits.length === 0) return <Empty />;
   return (
-    <Table head={['시각', '페이지', '머문 시간', '유입 경로', '위치·네트워크', '기기', '언어', '판별', '방문자']} numeric={[2]}>
+    <Table head={['시각', '페이지', '머문 시간', '유입 경로', '위치·네트워크', '기기', '언어', '방문자']} numeric={[2]}>
       {visits.map((v, i) => (
         <tr key={i} className="border-t align-top">
           <td className="whitespace-nowrap py-2 pr-4" data-numeric>
@@ -132,9 +97,6 @@ export function VisitTable({ visits, env, days }: { visits: Visit[]; env: Env; d
             {v.browser && <span className="block text-xs">{v.browser}</span>}
           </td>
           <td className="whitespace-nowrap py-2 pr-4 text-muted">{v.lang ?? (v.browser ? '없음' : '')}</td>
-          <td className="py-2 pr-4">
-            <Verdict visit={v} />
-          </td>
           <td className="whitespace-nowrap py-2 font-mono text-xs">
             <VisitorLink visitor={v.visitor} env={env} days={days} />
           </td>
@@ -244,24 +206,6 @@ export function Table({ head, numeric = [], children }: { head: string[]; numeri
       </thead>
       <tbody>{children}</tbody>
     </table>
-  );
-}
-
-/** 첫 칸은 이름, 나머지는 숫자인 표. 숫자 칸은 오른쪽으로 붙인다 */
-export function CountTable({ head, rows }: { head: string[]; rows: (string | number)[][] }) {
-  if (rows.length === 0) return <Empty />;
-  return (
-    <Table head={head} numeric={head.map((_, i) => i).filter((i) => i > 0)}>
-      {rows.map((row, r) => (
-        <tr key={r} className="border-t align-top">
-          {row.map((cell, i) => (
-            <td key={i} className={i ? 'whitespace-nowrap py-2 pl-4 text-right' : 'py-2'} data-numeric={i ? '' : undefined}>
-              {typeof cell === 'number' ? number(cell) : cell}
-            </td>
-          ))}
-        </tr>
-      ))}
-    </Table>
   );
 }
 

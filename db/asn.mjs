@@ -1,13 +1,13 @@
 // IP 대역별 네트워크 표(ip_asn, db/ip_asn.sql)를 iptoasn.com의 최신 데이터로 다시 채운다.
-// 명령줄(db/load-asn.mjs)과 관리자 화면의 "지금 갱신" 버튼(app/admin/network/route.ts)이 같이 쓴다.
+// 명령줄(db/load-asn.mjs)이 쓴다. 관리자 화면에서 봇을 가려낼 때 데이터센터 접속을 알아보는 데 이 표가 필요하므로 한두 달에 한 번 갱신한다.
 //
 // 새 표(ip_asn_new)를 다 채운 뒤에 한 번에 바꿔 끼우므로, 도는 동안에도 방문 기록은 예전 표로 네트워크를 찾는다.
 // 중간에 끊겨도 예전 표는 그대로다. 내려받은 파일은 디스크에 남기지 않는다.
-// 다 바꿔 끼우면 표 설명(comment)에 갱신 시각을 적는다. 관리자 화면이 이 값으로 마지막 갱신 날짜를 보여 준다.
+// 다 바꿔 끼우면 표 설명(comment)에 갱신 시각을 적는다.
 import { gunzipSync } from 'node:zlib';
 
 const SOURCE = 'https://iptoasn.com/data/ip2asn-combined.tsv.gz';
-// 한 번에 보내는 대역 수. 관리자 화면 버튼은 60초 안에 끝나야 해서(app/admin/network/route.ts) DB 왕복을 20번 안쪽으로 줄인다
+// 한 번에 보내는 대역 수. DB 왕복을 20번 안쪽으로 줄인다
 const BATCH = 25000;
 
 /** 받은 파일을 대역 목록으로 정리한다. DB는 건드리지 않는다 */
