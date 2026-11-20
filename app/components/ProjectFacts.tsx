@@ -13,11 +13,12 @@ const list = (text: string) =>
     .map((item) => item.trim())
     .filter(Boolean);
 
-/** "40% (소셜 로그인, …)"를 숫자와 맡은 일로 나눈다. 모양이 다르면 글 그대로 보여 준다. */
+/** "약 60% (백엔드 개발, …)"에서 표시할 비율, 막대 너비, 맡은 일을 나눈다. */
 function parseContribution(text: string) {
-  const match = text.match(/^(\d{1,3})%\s*(?:\((.*)\))?$/);
+  const match = text.match(/^((?:약\s+)?(\d{1,3})%)\s*(?:\((.*)\))?$/);
   if (!match) return null;
-  return { percent: Number(match[1]), parts: match[2] ? list(match[2]) : [] };
+  const [, display, percent, parts] = match;
+  return { display, percent: Number(percent), parts: parts ? list(parts) : [] };
 }
 
 const label = 'text-[0.8125rem] font-medium text-muted';
@@ -42,7 +43,7 @@ export default function ProjectFacts({ project }: { project: Project }) {
                 // 막대는 한 줄 끝까지 늘여 프로젝트마다 비율 차이가 또렷하게 보이게 한다. 긴 선이 가늘어 보이지 않게 조금 두껍게 둔다.
                 <>
                   <div className="flex items-center gap-4">
-                    <span className="text-[1.75rem] font-black leading-none tracking-[-0.02em]">{contribution.percent}%</span>
+                    <span className="text-[1.75rem] font-black leading-none tracking-[-0.02em]">{contribution.display}</span>
                     {/* 숫자를 막대로도 보여 준다. 글자는 옆에 있으니 화면 낭독기에는 감춘다. */}
                     <span aria-hidden className="h-2 flex-1 overflow-hidden rounded-full bg-surface-2">
                       <span className="block h-full rounded-full bg-accent" style={{ width: `${contribution.percent}%` }} />

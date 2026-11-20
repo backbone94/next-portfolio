@@ -1,0 +1,33 @@
+.arrow:global(.swiper-button-prev),
+.arrow:global(.swiper-button-next) {
+  --swiper-navigation-size: 18px;
+
+  width: 44px;
+  height: 44px;
+  margin-top: -22px;
+  border: 1px solid #fff;
+  border-radius: 50%;
+  background-color: #0f172a;
+  color: #fff;
+  box-shadow: 0 2px 8px rgb(15 23 42 / 0.28);
+}
+
+.arrow:global(.swiper-button-prev)::after,
+.arrow:global(.swiper-button-next)::after {
+  font-weight: 700;
+}
+
+.arrow:hover:not(:disabled) {
+  background-color: #334155;
+}
+
+.arrow:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px #0f172a;
+}
+
+.arrow:global(.swiper-button-disabled):disabled {
+  color: #94a3b8;
+  opacity: 1;
+}

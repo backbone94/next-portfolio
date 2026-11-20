@@ -8,6 +8,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import type { MediaItem } from '../content/projects';
+import styles from './ProjectMedia.module.css';
 
 type Props = {
   media: MediaItem[];
@@ -69,7 +70,6 @@ export default function ProjectMedia({ media, priority = false }: Props) {
           '--swiper-theme-color': 'rgb(var(--accent))',
           '--swiper-pagination-color': 'rgb(var(--accent))',
           '--swiper-pagination-bullet-inactive-color': 'rgb(var(--text))',
-          '--swiper-navigation-size': '24px',
         } as React.CSSProperties
       }
     >
@@ -138,8 +138,8 @@ export default function ProjectMedia({ media, priority = false }: Props) {
 
         {media.length > 1 && (
           <>
-            <div className="swiper-button-prev" />
-            <div className="swiper-button-next" />
+            <button type="button" className={`swiper-button-prev ${styles.arrow}`} aria-label="이전 화면" />
+            <button type="button" className={`swiper-button-next ${styles.arrow}`} aria-label="다음 화면" />
             <div className="swiper-pagination" />
           </>
         )}
