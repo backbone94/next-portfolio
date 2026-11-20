@@ -51,8 +51,8 @@ export const projects: Project[] = [
     media: [
       {
         type: 'image',
-        src: '/images/bgneye-jamsil/overview.jpg',
-        alt: '밝은눈안과 잠실점 리뉴얼 홈페이지 첫 화면',
+        src: '/images/bgneye-jamsil/overview.png',
+        alt: '상단 메뉴와 지구 그래픽이 보이는 밝은눈안과 잠실점 홈페이지 첫 화면',
       },
     ],
     features: '온라인 상담·예약, 이벤트 신청, 다국어 홈페이지, 관리자 접수 관리, 접수 확인 메일',
