@@ -140,6 +140,7 @@ export function findProjects(question: string) {
     const names = [
       ...pieces,
       p.slug,
+      ...(p.aliases ?? []).map((alias) => alias.toLowerCase()),
       ...words.map((w) => w[0]),
       ...words.flatMap((w) => w.slice(1).map((word, i) => `${w[i]} ${word}`)).filter((pair) => pair.length >= 5),
     ];

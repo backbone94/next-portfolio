@@ -61,7 +61,13 @@ const projectDocs: KnowledgeDoc[] = projects.map((project) => ({
     // 항목 이름:값 형식으로 두면 Claude가 그 형식째 인용해 답 문장이 깨진다. 문장으로 적는다.
     // 제목이 영어로 끝나기도 해서 제목 바로 뒤에 조사를 붙이지 않는다
     `${project.title} 프로젝트는 ${summaryPhrase(project)}입니다. ${project.highlight}`,
-    `${project.tags[0]} 프로젝트로 ${project.duration}에 진행했습니다. 팀 인원은 ${project.teamSize}입니다. 정준 님이 맡은 역할은 ${project.role}이고, 기여도는 ${project.contribution}입니다.`,
+    [
+      `${project.tags[0]} 프로젝트로 ${project.duration}에 진행했습니다.`,
+      project.teamSize && `팀 인원은 ${project.teamSize}입니다.`,
+      project.contribution
+        ? `정준 님이 맡은 역할은 ${project.role}이고, 기여도는 ${project.contribution}입니다.`
+        : `정준 님이 맡은 역할은 ${project.role}입니다.`,
+    ].filter(Boolean).join(' '),
     `주요 기능은 ${project.features}입니다. 사용한 기술은 ${project.stack}입니다.`,
     ...htmlToSections(project.description),
   ],
