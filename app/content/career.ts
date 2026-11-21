@@ -39,8 +39,8 @@ export const experiences: Job[] = [
         name: '밝은눈안과 잠실점 홈페이지 리뉴얼',
         stack: ['Next.js', 'NestJS', 'Prisma', 'PostgreSQL', 'AWS'],
         tasks: [
-          '레거시 회원·상담·게시글과 첨부 파일 이관 스크립트 작성 및 이관 결과 검증',
-          '관리자 상담·이벤트 접수 개선 — 언어·기간 필터, 재문의 확인, 동시 수정 방지, 선택 항목 엑셀 내보내기',
+          '레거시 회원, 상담, 게시글과 첨부 파일 이관 스크립트 작성 및 이관 결과 검증',
+          '관리자 상담 및 이벤트 접수 개선 — 언어와 기간 필터, 재문의 확인, 동시 수정 방지, 선택 항목 엑셀 내보내기',
           '해외 예약 자체 신청서 구현 — 관리자 예약 저장, 신청자와 병원에 접수 확인 메일 발송',
           '운영 배포 리허설과 오픈 절차 정리, 도메인 전환 뒤 404 로그를 확인해 레거시 주소 보완',
         ],
@@ -49,12 +49,12 @@ export const experiences: Job[] = [
         name: '더원서울안과 홈페이지 리뉴얼',
         stack: ['Next.js', 'React', 'NestJS', 'Prisma', 'PostgreSQL'],
         tasks: [
-          '사용자·관리자 화면·백엔드 API 연동 전반 참여',
-          '회원가입·로그인·계정 찾기 인증 흐름 구축 및 네이버·카카오 소셜 로그인 연동',
-          '인증·권한 취약점 보완 — 아이디 열거 방지, 로그인 시도 제한, 관리자 화면 접근 제어',
-          '의료진 소개·학술발표·유튜브·메인 팝업을 관리자 화면에서 직접 운영하도록 연동',
+          '사용자, 관리자 화면, 백엔드 API 연동 전반 참여',
+          '회원가입, 로그인, 계정 찾기 인증 흐름 구축 및 네이버와 카카오 소셜 로그인 연동',
+          '인증 및 권한 취약점 보완 — 아이디 열거 방지, 로그인 시도 제한, 관리자 화면 접근 제어',
+          '의료진 소개, 학술발표, 유튜브, 메인 팝업을 관리자 화면에서 직접 운영하도록 연동',
           '웹 접근성 향상 — 시각장애 사용자를 위한 캡차에 음성 듣기 추가',
-          '신규 서버 이관 — DB·업로드 파일 옮기고 SSL 인증서 발급·자동 갱신 구성 후 도메인 전환',
+          '신규 서버 이관 — DB와 업로드 파일 옮기고 SSL 인증서 발급과 자동 갱신 구성 후 도메인 전환',
           'SEO 강화 — 검색 결과 노출을 위한 구조화 데이터(JSON-LD) 적용 및 SEO 관리자 설정 화면 정리',
         ],
       },
@@ -136,7 +136,7 @@ type SkillCategory = { label: string; skills: { label: string }[] };
 
 export const skillCategories: SkillCategory[] = [
   { label: '프론트엔드', skills: [{ label: 'TypeScript' }, { label: 'React' }, { label: 'Vue.js' }, { label: 'Angular' }, { label: 'Next.js' }] },
-  { label: '백엔드 · 데이터베이스', skills: [{ label: 'Spring Boot' }, { label: 'Oracle' }, { label: 'NestJS' }, { label: 'Prisma' }] },
-  { label: '인프라 · 운영', skills: [{ label: 'AWS' }, { label: 'Docker' }, { label: 'Nginx' }, { label: 'GitHub Actions' }] },
+  { label: '백엔드와 데이터베이스', skills: [{ label: 'Spring Boot' }, { label: 'Oracle' }, { label: 'NestJS' }, { label: 'Prisma' }] },
+  { label: '인프라와 운영', skills: [{ label: 'AWS' }, { label: 'Docker' }, { label: 'Nginx' }, { label: 'GitHub Actions' }] },
   { label: 'AI', skills: [{ label: 'OpenAI' }, { label: 'Perplexity' }] },
 ];

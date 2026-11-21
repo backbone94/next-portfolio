@@ -7,6 +7,7 @@ import ScrollToTop from './components/ScrollToTop';
 import HideOnAskHome from './components/HideOnAskHome';
 import VisitBeacon from './components/VisitBeacon';
 import { SITE_URL } from './content/site';
+import { THEME_SCRIPT } from './lib/theme';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -46,7 +47,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body>
         <a
           href="#main"

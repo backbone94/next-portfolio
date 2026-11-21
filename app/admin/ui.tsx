@@ -71,7 +71,7 @@ export const DEVICE: Record<string, string> = { mobile: '휴대폰', tablet: '�
 export function VisitTable({ visits }: { visits: Visit[] }) {
   if (visits.length === 0) return <Empty />;
   return (
-    <Table head={['시각', '페이지', '머문 시간', '유입 경로', '위치·네트워크', '기기', '언어', '방문자']} numeric={[2]}>
+    <Table head={['시각', '페이지', '머문 시간', '유입 경로', '위치 및 네트워크', '기기', '언어', '방문자']} numeric={[2]}>
       {visits.map((v, i) => (
         <tr key={i} className="border-t align-top">
           <td className="whitespace-nowrap py-2 pr-4" data-numeric>
@@ -83,7 +83,7 @@ export function VisitTable({ visits }: { visits: Visit[] }) {
           </td>
           <td className="py-2 pr-4 text-muted">{sourceName(v.referrer)}</td>
           <td className="py-2 pr-4 text-muted">
-            {v.city ? `${v.city} · ${countryName(v.country)}` : countryName(v.country)}
+            {v.city ? `${v.city}, ${countryName(v.country)}` : countryName(v.country)}
             {v.network && (
               <span className="block text-xs" title={`AS${v.asn} ${v.network}`}>
                 {networkName(v.network)}
@@ -92,7 +92,7 @@ export function VisitTable({ visits }: { visits: Visit[] }) {
           </td>
           <td className="whitespace-nowrap py-2 pr-4 text-muted">
             {DEVICE[v.device ?? ''] ?? v.device}
-            {v.browser && <span className="block text-xs">{v.browser}</span>}
+            {v.browser && <span className="block text-xs">{v.browser.replace(/\s*\u00b7\s*/g, ', ')}</span>}
           </td>
           <td className="whitespace-nowrap py-2 pr-4 text-muted">{v.lang ?? (v.browser ? '없음' : '')}</td>
           <td className="whitespace-nowrap py-2 font-mono text-xs">

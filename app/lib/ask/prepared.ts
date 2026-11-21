@@ -226,7 +226,7 @@ export const ROUTES: Record<string, Route> = {
             experiences.map(
               // 회사 이름에 "(WACUS)"처럼 괄호가 있어 기간까지 괄호로 묶으면 괄호가 겹친다. 가운뎃점으로 나눈다.
               (job) =>
-                `${[job.company, job.duration, job.role].filter(Boolean).join(' · ')}: ${job.projects.map((p) => p.name).join(', ')}`,
+                `${[job.company, job.duration, job.role].filter(Boolean).join(', ')}: ${job.projects.map((p) => p.name).join(', ')}`,
             ),
           ),
           '맡은 일과 성과는 이력서 PDF에 더 자세히 적어 두었습니다.',
@@ -307,7 +307,7 @@ export const ROUTES: Record<string, Route> = {
       prepared(
         doc(
           `주로 쓰는 기술은 ${skillCategories.length}갈래로 나뉩니다.`,
-          list(skillCategories.map((c) => `${c.label.replace(' · ', '와 ')}: ${c.skills.map((s) => s.label).join(', ')}`)),
+          list(skillCategories.map((c) => `${c.label}: ${c.skills.map((s) => s.label).join(', ')}`)),
         ),
         { kind: '기술 스택', follow: ['React 써 보셨어요?', 'Kotlin 할 줄 아세요?', ASK.projects] },
       ),

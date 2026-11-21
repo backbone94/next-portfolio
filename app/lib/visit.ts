@@ -87,7 +87,7 @@ function browserLabel(ua: string) {
   const found = BROWSERS.find(([, re]) => re.test(ua));
   const major = found ? ua.match(found[1])?.[1]?.split('.')[0] : undefined;
   const browser = found ? (major ? `${found[0]} ${major}` : found[0]) : '기타';
-  return os ? `${browser} · ${os}` : browser;
+  return os ? `${browser}, ${os}` : browser;
 }
 
 /** Accept-Language의 첫 번째 언어 (ko-KR,ko;q=0.9 → ko-KR) */

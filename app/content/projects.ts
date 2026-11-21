@@ -43,39 +43,40 @@ export const projects: Project[] = [
     title: '밝은눈안과 잠실점 홈페이지 리뉴얼',
     slug: 'bgneye-jamsil',
     aliases: ['밝은눈', '잠실', 'BGN 잠실', 'BGN Jamsil'],
-    summary: '기존 PHP 홈페이지를 개편하고 상담·예약 데이터와 운영 업무를 새 사이트로 옮긴 프로젝트',
-    highlight: '레거시 데이터와 첨부 파일 이관을 검증하고 운영 배포 리허설을 4차까지 진행해 11월 18일 오픈에 참여했습니다.',
-    role: '백엔드 개발, 데이터 이관 및 운영 전환',
+    summary: '기존 PHP 웹사이트를 Next.js 및 Nest.js 로 리뉴얼',
+    highlight: '레거시 데이터와 파일을 이관하고 백엔드 API를 구현하여 11월 18일 밝은눈안과 잠실점 리뉴얼 홈페이지를 오픈하였습니다.',
+    role: '백엔드 개발, 데이터 이관, AWS 운영 인프라 구축 및 전환',
     tags: ['실무', 'Next.js', 'NestJS', 'Prisma', 'PostgreSQL', 'AWS'],
     featured: true,
     media: [
       {
         type: 'image',
         src: '/images/bgneye-jamsil/overview.png',
-        alt: '상단 메뉴와 지구 그래픽이 보이는 밝은눈안과 잠실점 홈페이지 첫 화면',
+        alt: '밝은눈안과 잠실점 홈페이지 첫 화면',
       },
     ],
-    features: '온라인 상담·예약, 이벤트 신청, 다국어 홈페이지, 관리자 접수 관리, 접수 확인 메일',
-    stack: 'Next.js, React, NestJS, Prisma, PostgreSQL, Nginx, Docker, GitHub Actions, AWS',
+    features: '온라인 상담 및 예약, 다국어 홈페이지, 관리자 페이지 관리, 접수 확인 메일',
+    stack: 'Next.js, React, NestJS, Prisma, PostgreSQL, Nginx, Docker Compose, GitHub Actions, AWS Lightsail',
     reference: 'https://www.bgneye.com/',
     duration: '2026.09–2026.11',
-    teamSize: '',
-    contribution: '약 60% (백엔드 개발, 레거시 데이터 이관, 관리자 접수 개선, 해외 예약 연동, 운영 전환)',
-    description: `와커스에서 기존 PHP 기반의 <strong>밝은눈안과 잠실점 홈페이지를 리뉴얼</strong>한 프로젝트입니다. 저는 새 사이트의 백엔드와 관리자 기능을 개발하고, 옛 사이트에서 쌓인 데이터를 옮겨 운영을 전환하는 일을 맡았습니다.
-    <h3>게시글과 첨부 파일을 함께 옮기기</h3>
-    회원·상담·게시글 데이터를 새 DB 구조에 맞춰 옮기는 스크립트를 작성했습니다. 이관 뒤에는 옛 DB와 새 DB의 건수를 비교하고, 게시글이 가리키는 파일이 실제로 존재하는지 대조했습니다. 누락된 이미지 중에는 DB에 원본 파일명이 남았지만 서버에는 다른 이름으로 저장된 경우가 있었습니다. 저장 이름을 기준으로 파일을 다시 연결하고, 상담 처리 상태와 담당자 메모처럼 운영에 필요한 정보도 이관 대상에 반영했습니다.
-    <h3>상담과 이벤트 접수를 관리자 화면에서 이어받기</h3>
-    상담 목록에서 접수 언어와 희망 상담일을 기준으로 찾아볼 수 있게 하고, 같은 연락처로 다시 들어온 문의도 확인할 수 있게 했습니다. 여러 담당자가 같은 신청을 동시에 수정할 때 한 사람의 변경이 덮어써지는 문제를 막았습니다. 이벤트 신청 내역은 기간을 좁혀 조회하거나 선택한 건만 엑셀로 내려받을 수 있게 만들었습니다.
-    <h3>해외 예약을 병원 접수 흐름에 연결하기</h3>
-    외부 예약 서비스에서 받던 해외 신청을 사이트 안의 신청서로 옮겼습니다. 기존 문진 항목을 옮기고, 접수 내역을 관리자의 온라인 예약 목록에 저장했습니다. 신청이 들어오면 예약자와 병원에 확인 메일을 보내도록 연결해, 병원에서 새 접수를 바로 확인할 수 있게 했습니다.
-    <h3>오픈 전에 전환을 연습하고 오픈 뒤에 확인하기</h3>
-    AWS 운영 환경에서 배포와 데이터 이관 절차를 여러 차례 검증했습니다. 도메인을 넘기는 순서와 오픈 직후 확인할 항목을 문서로 정리했습니다. 기존 링크로 들어온 방문자가 새 주소에 도착할 수 있도록 리디렉션을 정비하고, 오픈 뒤에는 404 기록을 확인해 빠진 옛 주소를 추가했습니다.`,
+    teamSize: '5명',
+    contribution: '약 60% (백엔드 개발, 레거시 데이터 이관 및 마이그레이션, 관리자 페이지 개선, 해외 예약 연동, AWS 운영 인프라 구축 및 전환)',
+    description: `기존 PHP 기반의 <strong>밝은눈안과 잠실점 홈페이지를 리뉴얼</strong>한 프로젝트입니다. 백엔드와 관리자 기능을 개발하고, AWS 운영 환경 구축과 기존 데이터 이관, 새 사이트 오픈까지 맡았습니다.
+    <h3>게시글 및 첨부 파일 이관</h3>
+    회원, 상담, 게시글 데이터를 새 DB 구조에 맞춰 옮기는 스크립트를 작성했습니다. 이관 뒤에는 옛 DB와 새 DB의 건수를 비교하고, 게시글이 가리키는 파일이 실제로 존재하는지 대조했습니다. 상담 처리 상태와 담당자 메모처럼 운영에 필요한 정보도 이관 대상에 반영했습니다.
+    <h3>온라인 예약 및 메일 자동 발송</h3>
+    외부 예약 서비스에서 받던 해외 신청을 홈페이지 내의 온라인 예약 메뉴로 옮겼습니다. 기존 문진 항목을 옮기고, 접수 내역을 관리자의 온라인 예약 목록에서 확인할 수 있도록 구현했습니다. 예약 신청이 들어오면 예약자와 병원에 확인 메일을 보내도록 연결해, 병원에서 새 접수를 바로 확인할 수 있게 했습니다.
+    <h3>AWS 운영 환경 구축</h3>
+    AWS Lightsail에 스테이징 환경과 운영 서버 두 대를 직접 구성했습니다. 운영 서버 앞에 로드밸런서를 두고, 각 서버에서는 Docker Compose로 홈페이지, 관리자 화면, API 서버를 띄워 Nginx로 요청을 나눴습니다. 어느 서버에 연결돼도 같은 데이터와 첨부 파일을 볼 수 있도록 두 서버가 관리형 PostgreSQL과 비공개 스토리지 버킷을 공유하게 했습니다.<br><br>
+    GitHub Actions로 <strong>블루/그린 배포</strong>를 구성했습니다. 운영 서버를 한 대씩 업데이트하고, 각 서버에서 새 컨테이너의 헬스체크가 통과하면 Nginx가 새 컨테이너로 요청을 보내도록 했습니다.
+    <h3>오픈 전 운영 배포 리허설</h3>
+    AWS 운영 환경에서 배포와 데이터 이관 절차를 네 차례 검증했습니다. DNS 관리를 아이네임즈에서 Lightsail로 옮기고 로드밸런서에 HTTPS 인증서를 연결했습니다. 전환 전에 DB와 서버의 스냅샷을 남기는 순서와, 문제가 생겼을 때 DNS를 되돌리는 절차도 정리했습니다. 기존 링크로 들어온 방문자가 새 주소에 도착할 수 있도록 리다이렉션을 정비하고, 오픈 뒤에는 404 기록을 확인해 빠진 옛 주소를 추가했습니다.`,
   },
   {
     title: '더원서울안과 홈페이지 리뉴얼',
     slug: 'the1seoul',
-    summary: '안과 홈페이지의 SEO 강화를 위한 리뉴얼 프로젝트',
-    highlight: '서버 이관을 처음으로 경험하게 된 값진 프로젝트였습니다.',
+    summary: 'SEO 강화를 위한 리뉴얼 프로젝트',
+    highlight: '서버 및 데이터 이관을 처음으로 진행한 Next.js 리뉴얼 프로젝트입니다.',
     // 아래 둘은 저장소 커밋에서 뽑았다. 참여 기간(2026.07.21—08.01) 커밋 169건 중
     // 72건으로 기여자 중 1위였고, 그 43%를 40%로 내려 적었다. 커밋 수가 곧 기여는
     // 아니므로 본인 확인 후 고칠 것.
@@ -87,7 +88,7 @@ export const projects: Project[] = [
       {
         type: 'image',
         src: '/images/the1seoul/overview.jpg',
-        alt: '더원서울안과 홈페이지 메인 화면. 상단 진료과 내비게이션과 "서울대학교 병원, 교수들이 만든 더원서울안과" 문구',
+        alt: '더원서울안과 홈페이지 메인 화면.',
       },
     ],
     featured: true,
@@ -96,27 +97,27 @@ export const projects: Project[] = [
     stack: 'Next.js, React, NestJS, Prisma, PostgreSQL, Nginx, Docker, GitHub Actions, AWS Lightsail',
     reference: 'https://the1seoul.com',
     duration: '2026.07–2026.08',
-    description: `와커스에 이직 후 처음으로 맡은 <strong>홈페이지 전면 리뉴얼 프로젝트</strong>입니다. 지금 <a href="https://the1seoul.com" target="_blank">the1seoul.com</a>에서 운영 중이며, 아래는 그중 제가 맡은 부분입니다.<h3>백엔드 API를 프론트엔드와 연동</h3>
+    description: `와커스 입사 후 처음으로 맡은 <strong>홈페이지 전면 리뉴얼 프로젝트</strong>입니다. 지금 <a href="https://the1seoul.com" target="_blank">the1seoul.com</a>에서 운영 중이며, 아래는 그중 제가 맡은 부분입니다.<h3>백엔드 API를 프론트엔드와 연동</h3>
     제가 프로젝트에 투입되기 전에는 사이트에서 보이고 있던 모든 값들이 코드상에 하드코딩되어 있었습니다. 하드코딩을 모두 걷어내고, 팀원이 이미 구현해두었던 <strong>백엔드 API를 프론트엔드와 연동하였습니다.</strong><br>
     <h3>회원 인증을 처음부터 끝까지</h3>
-    회원가입 · 로그인 · 아이디/비밀번호 찾기 · 마이페이지 · 회원탈퇴에 이르는 <strong>인증 흐름 전반을 맡았고</strong> 네이버와 카카오 소셜 로그인까지 구현하였습니다.<br><br>
+    회원가입, 로그인, 아이디/비밀번호 찾기, 마이페이지, 회원탈퇴에 이르는 <strong>인증 흐름 전반을 맡았고</strong> 네이버와 카카오 소셜 로그인까지 구현하였습니다.<br><br>
     비밀번호 찾기는 원래 임시 비밀번호를 메일로 보내는 방식이었습니다. 하지만 사용자 입장에서 임시 비밀번호를 메일함에서 확인하고, 다시 사이트로 돌아와 로그인 후 비밀번호를 변경해야 한다는 번거로움이 있었습니다. <strong>사용자 경험은 사이트 개발에 있어서 무엇보다 가장 중요한 부분이라고 생각합니다.</strong> 따라서 본인 확인 후 비밀번호를 즉시 재설정하는 방식으로 바꿔 임시 비밀번호에 의한 비밀번호 찾기 과정의 번거로운 구간을 없앴습니다.<h3>공개된 사이트라서 더 신경 쓴 것</h3>
     병원 홈페이지는 누구나 들어올 수 있고 데이터에는 환자의 정보들이 섞여 있습니다. 기능을 붙이면서 허술해 보이는 부분들을 견고히 하기 위해 노력하였습니다.<br><br>
     기존에는 존재하지 않는 아이디로 로그인 시도를 할 때, "존재하지 않는 아이디입니다."와 같이 경고 문구가 보이고 있었습니다. 이와 같은 문구는 <strong>공격자의 아이디 무차별 대입</strong>으로, 어떤 아이디가 존재하거나 존재하지 않는지 알아낼 수 있는 보안상의 허점이었습니다. 따라서 로그인 시도에는 횟수 제한을 걸어 무차별 대입을 어렵게 했습니다. 또한 관리자 화면과 게시판 대시보드에서 <strong>접근 제어가 아예 빠진 경로</strong>들을 찾아서 아무나 접근하지 못하도록 보안에 신경을 썼습니다. 또한 파일을 업로드할 수 있는 기능이 존재하였는데, 파일의 크기가 어떻든 항상 업로드가 가능했던 문제가 있었습니다. 이는 파일이 업로드되는 동안 사용자에게 아무런 응답이 가지 않는 문제의 원인이었습니다. 따라서 <strong>파일의 업로드 크기를 제한</strong>하여 사용자 경험을 개선하였습니다.<h3>캡차를 활용한 웹 접근성 향상</h3>
-    아이디 · 비밀번호 찾기에는 캡차가 있는데, 눈으로 읽어야만 통과할 수 있었습니다. 하지만 안과 홈페이지에서 시력이 나쁜 사람이 계정을 못 찾는 상황이 될 수 있어 캡차의 <strong>음성 듣기</strong> 기능을 추가하여 접근성을 향상시켰습니다.<br><br>
+    아이디와 비밀번호 찾기에는 캡차가 있는데, 눈으로 읽어야만 통과할 수 있었습니다. 하지만 안과 홈페이지에서 시력이 나쁜 사람이 계정을 못 찾는 상황이 될 수 있어 캡차의 <strong>음성 듣기</strong> 기능을 추가하여 접근성을 향상시켰습니다.<br><br>
     이전 회사인 이파피루스에서 PDF 뷰어에 스크린리더 대응을 넣었던 웹 접근성 향상 경험이 여기서 다시 쓰였습니다. 접근성은 기능을 다 만든 뒤 덧붙이는 부가 기능이 아니라, 사용자 모두를 위해서 꼭 필요한 부분이라고 생각합니다.<h3>옛 서버에서 새 서버로 옮기기</h3>
     리뉴얼은 코드를 새로 쓰는 것으로 끝나지 않았으며 실제로 운영 중인 사이트의 <strong>인프라를 옮기는 일</strong>까지 맡았습니다.<br><br>
-    새 서버는 Nginx · 프론트엔드(사용자 · 관리자 화면) · 백엔드 · Redis를 각각 컨테이너로 분리하고, <strong>Docker Compose</strong>로 정의한 전용 브리지 네트워크에 묶어 Nginx가 컨테이너 이름으로 각 서비스에 라우팅하도록 리버스 프록시를 구성했습니다. 블루-그린 배포로 새 컨테이너를 띄울 때도 같은 네트워크에 붙이기만 하면 됐고, 이 구조 위에서 <strong>무중단 배포</strong>도 자연스럽게 붙일 수 있었습니다. Kubernetes와 같은 인프라를 선택하기엔 리뉴얼 프로젝트의 스케일이 단일 서버에 머물렀기 때문에 <strong>오버엔지니어링을 피하기 위해</strong> AWS의 Lightsail 서비스를 선택하였습니다.<br><br>
+    새 서버는 Nginx, 프론트엔드(사용자 화면과 관리자 화면), 백엔드, Redis를 각각 컨테이너로 분리하고, <strong>Docker Compose</strong>로 정의한 전용 브리지 네트워크에 묶어 Nginx가 컨테이너 이름으로 각 서비스에 라우팅하도록 리버스 프록시를 구성했습니다. 블루-그린 배포로 새 컨테이너를 띄울 때도 같은 네트워크에 붙이기만 하면 됐고, 이 구조 위에서 <strong>무중단 배포</strong>도 자연스럽게 붙일 수 있었습니다. Kubernetes와 같은 인프라를 선택하기엔 리뉴얼 프로젝트의 스케일이 단일 서버에 머물렀기 때문에 <strong>오버엔지니어링을 피하기 위해</strong> AWS의 Lightsail 서비스를 선택하였습니다.<br><br>
     게시판 글과 팝업 이미지는 레거시 서버에 쌓여 있었습니다. 업로드 파일 또한 레거시 서버의 컨테이너 볼륨에 존재하고 있었던 상태라 그 파일들을 레거시 서버에 그대로 두면 리뉴얼 홈페이지에서는 글은 보이는데 이미지만 찾지 못하는 상황이었습니다. 레거시 서버의 데이터와 실제 파일들을 새 서버의 DB와 도커 볼륨으로 옮기는 <strong>DB/파일 이관</strong> 과정까지 담당하였습니다.<br><br>
     SSL 인증서는 <strong>Let's Encrypt 인증 기관</strong>을 통해 발급받은 뒤 만료 전에 스스로 갱신되도록 스크립트를 만들어 두었습니다. SSL 인증서 발급 과정은 작업의 순서가 중요하였습니다. 인증서를 미리 준비해 두지 않고 도메인부터 넘기면 그 사이 방문자는 HTTPS에 대한 보안 경고 화면을 보게 됩니다. DB/파일 이관, 그리고 SSL 인증서 작업에서 <strong>되돌리기 어려운 일일수록 먼저 확인하고 진행해야 한다는 점을 배웠습니다.</strong><h3>SEO 강화</h3>
-    검색엔진은 페이지를 읽어도 어디가 병원 이름이고 어디가 주소인지 스스로 알지 못합니다. 병원 정보 · 진료 페이지 탐색경로 · 질환 정보 콘텐츠에 <strong>구조화 데이터(JSON-LD)</strong>를 붙여 이를 검색엔진이 알아볼 수 있게 명시하였습니다.<br><br>
+    검색엔진은 페이지를 읽어도 어디가 병원 이름이고 어디가 주소인지 스스로 알지 못합니다. 병원 정보, 진료 페이지 탐색경로, 질환 정보 콘텐츠에 <strong>구조화 데이터(JSON-LD)</strong>를 붙여 이를 검색엔진이 알아볼 수 있게 명시하였습니다.<br><br>
     질환 정보 페이지에는 저자 표시가 필요했는데, 개별 의료진이 건별로 검수했다는 근거가 없는 상태에서 "OOO 원장 감수"처럼 특정인을 지목하면 허위 표시가 됩니다. 대신 <strong>병원이라는 기관 단위</strong>로 저작 주체를 명시하여 사실과 다른 신호를 보내지 않도록 하였습니다.<br><br>
-    관리자가 이 정보를 직접 다루는 SEO 설정 화면도 정비하였습니다. 화면 두 개에 걸쳐 있던 SEO 관련 설정을 한 곳으로 모으고, 실제로는 적용되지 않던 입력칸(코드가 참조하지 않거나 보안 위험이 있어 백엔드가 의도적으로 무시하던 값)을 걷어냈습니다. 정리 도중 <strong>일본어·중국어 SEO 설정이 실제 사이트가 쓰는 언어 코드와 달라</strong> 등록해도 반영되지 않던 버그도 함께 발견하여 수정하였습니다.`,
+    관리자가 이 정보를 직접 다루는 SEO 설정 화면도 정비하였습니다. 화면 두 개에 걸쳐 있던 SEO 관련 설정을 한 곳으로 모으고, 실제로는 적용되지 않던 입력칸(코드가 참조하지 않거나 보안 위험이 있어 백엔드가 의도적으로 무시하던 값)을 걷어냈습니다. 정리 도중 <strong>일본어와 중국어 SEO 설정이 실제 사이트가 쓰는 언어 코드와 달라</strong> 등록해도 반영되지 않던 버그도 함께 발견하여 수정하였습니다.`,
   },
   {
     title: '슬기로운 아이티센 생활 | 셔틀 서비스',
     slug: 'shuttle',
-    summary: '셔틀이 지금 어디쯤인지 확인하고 QR로 탑승하는 사내 모바일 서비스',
+    summary: '셔틀의 실시간 위치를 확인하고 QR 탑승을 지원하는 사내 모바일 웹앱',
     highlight: '신입 교육 11개 팀 가운데 유일하게 본사 상용화 검토까지 갔습니다.',
     role: '프론트엔드 단독 (5인 팀)',
     tags: ['실무', 'React', 'Spring Boot', 'WebSocket', 'AI/LLM', 'PWA'],
@@ -153,14 +154,14 @@ export const projects: Project[] = [
       {
         type: 'image',
         src: '/images/figma-plugin/main.png',
-        alt: '플러그인 메인 화면. 서울시청 일대 지도 위에 주차장 도면 레이어가 회전된 채 얹혀 있고, 상단에 파일 업로드·JSON 다운로드·위경도 좌표 다운로드·피그마로 보내기 버튼과 위치 검색창',
+        alt: '플러그인 메인 화면. 서울시청 일대 지도 위에 주차장 도면 레이어가 회전된 채 얹혀 있고, 상단에 파일 업로드, JSON 다운로드, 위경도 좌표 다운로드, 피그마로 보내기 버튼과 위치 검색창',
       },
       { type: 'video', src: '/videos/figma-plugin/import.mp4', alt: 'Figma 레이어를 플러그인으로 불러와 지도 위에 배치하는 과정 영상' },
       { type: 'video', src: '/videos/figma-plugin/export.mp4', alt: '지도에서 편집한 레이어를 다시 Figma로 내보내는 과정 영상' },
       {
         type: 'image',
         src: '/images/figma-plugin/json.png',
-        alt: '내보낸 JSON 결과. 레이어 id·이름·위치·크기와 위경도 POLYGON 좌표, SVG 문자열이 담겨 있다',
+        alt: '내보낸 JSON 결과. 레이어 id, 이름, 위치, 크기와 위경도 POLYGON 좌표, SVG 문자열이 담겨 있다',
       },
       { type: 'image', src: '/images/figma-plugin/csv.png', alt: '레이어별 위경도 좌표를 정리해 내보낸 CSV 결과' },
     ],
@@ -174,7 +175,7 @@ export const projects: Project[] = [
 Figma 플러그인의 기본 뼈대는 Figma Plugin API의 <a href="https://www.figma.com/plugin-docs/" target="_blank" class="text-blue-500">공식 문서</a>를 참고해 구성하였고, 코드 유지보수성 때문에 React를, 타입 안전성 때문에 TypeScript를 도입하였습니다.<br><br>
 다만 Figma 플러그인 환경에서 React와 TypeScript를 함께 쓰려면 Webpack 번들러의 복잡한 설정이 필요했습니다. 그래서 <strong>Figma + Webpack + TypeScript + React</strong> 조합이 미리 구성된 <a href="https://github.com/hseoy/figma-plugin-react-boilerplate" target="_blank" class="text-blue-500">보일러플레이트</a>를 가져다 써서 환경 설정 없이 개발에 집중하였습니다.<br>
 UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Material UI)</strong>로 React 컴포넌트와 일관된 스타일로 구성하였습니다.<h3>Leaflet에서 OpenLayers로 바꾼 이유</h3>
-지도 구현에는 초기에 Leaflet을 사용하였으나 Polygon 드래그·회전·리사이즈 등 커스텀 인터랙션에 한계가 있었습니다. 사수와 논의해 커스텀 기능을 더 많이 지원하는 <strong>OpenLayers</strong>로 교체하였고, 필요한 인터랙션을 모두 구현하였습니다.<br>
+지도 구현에는 초기에 Leaflet을 사용하였으나 Polygon 드래그, 회전, 리사이즈 등 커스텀 인터랙션에 한계가 있었습니다. 사수와 논의해 커스텀 기능을 더 많이 지원하는 <strong>OpenLayers</strong>로 교체하였고, 필요한 인터랙션을 모두 구현하였습니다.<br>
 지도를 직접 드래그하며 원하는 지역을 찾는 방식은 비효율적이라고 판단해, OpenStreetMap 기반의 지오코딩 API인 <strong>Nominatim</strong>을 연동해 주소 검색 기능을 추가하였습니다.<h3>좌표계에서 막혔던 지점</h3>
 이 플러그인의 핵심인 위경도 좌표 변환을 구현하면서, OpenLayers가 내부적으로 쓰는 <strong>EPSG:3857(Web Mercator)</strong> 좌표계와 위경도 표현에 쓰이는 <strong>EPSG:4326(WGS84)</strong> 좌표계의 차이를 처음에는 몰라 변환 오류를 겪었습니다. 이를 계기로 두 좌표계의 개념과 변환 방식을 직접 공부해 해결하였습니다.<br>
 지도 라이브러리와 좌표계라는 생소한 개념을 실무에서 직접 부딪히며 익힌 프로젝트였습니다.`,
@@ -182,7 +183,7 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
   {
     title: 'Music Diary',
     slug: 'music-diary',
-    summary: '그날 쓴 일기를 읽고 어울리는 음악을 골라 주는 서비스',
+    summary: '그날 쓴 일기의 내용과 어울리는 음악을 추천해 주는 서비스',
     highlight: '단순 일기 어플이 아닌, 사용자의 감정을 분석해주는 기능에 집중하였습니다.',
     role: '단독 개발',
     tags: ['사이드', 'Next.js', 'React', 'AI/LLM', 'Prisma'],
@@ -191,7 +192,7 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
       {
         type: 'image',
         src: '/images/music-diary/list.png',
-        alt: '일기 목록 화면. 제목과 본문 미리보기가 카드로 쌓여 있고 상단에 일기 쓰기·감정 히스토리 버튼',
+        alt: '일기 목록 화면. 제목과 본문 미리보기가 카드로 쌓여 있고 상단에 일기 쓰기와 감정 히스토리 버튼',
       },
       { type: 'video', src: '/videos/diary_new_delete.mp4', alt: '일기를 새로 쓰고 삭제하는 과정 영상' },
       { type: 'video', src: '/videos/diary_detail.mp4', alt: '일기 상세 화면에서 감정 분석 결과와 추천 음악을 보여주는 영상' },
@@ -207,14 +208,14 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
     웹 개발자로서 쓸 수 있는 기술 스택을 넓히고 싶었고, <strong>SSR로 SEO를 챙기면서</strong> 백엔드 서버를 따로 두지 않아도 된다는 점, 이미지를 비롯한 각종 최적화를 좋은 개발자 경험(DX)과 함께 얻는다는 점이 컸습니다.<br>
     데이터 저장에는 ORM 중 하나인 Prisma를 써서 JS 코드에서 MySQL 데이터베이스에 쉽고 효율적으로 접근하였고, NextAuth.js로 <strong>소셜 로그인</strong>을 아주 간편하게 구현하였습니다.<br>
     비동기 작업에는 Next.js의 새 기능인 Server Actions를 써 봤고, 최신 데이터를 자동으로 받아 오는 <strong>React Query</strong> 덕분에 클라이언트의 다이나믹한 상태를 훨씬 쉽게 다룬다는 것도 알게 되었습니다.<h3>감정 분석에서 막혔던 부분</h3>
-    일기 내용에서 감정을 분석하려고 <strong>Naver CLOVA API</strong>를 썼지만, 이 API는 감정을 긍정·부정·중립 세 단계로만 나눴습니다. 그래서 일기에 자주 나오는 단어에 가중치를 준 뒤 나열해, 그 내용과 비슷한 가사의 음악을 추천하는 방식을 시도했습니다. 하지만 단어 개수만으로 고르다 보니 뜬금없는 음악이 나왔습니다. 비용이 들더라도 <strong>OpenAI의 API</strong>가 가장 적합하겠다 싶어, OpenAI API로 음악 추천과 <strong>약 일주일 치 일기를 장문으로 정리해 주는 기능</strong>을 추가하였습니다. 첨언하자면 일주일 치 일기는 생각보다 글자가 많아 한 번 호출에 0.15달러 넘게 나갔고, 그걸 보고 이 어플리케이션은 상업성이 없다고 판단했습니다.<h3>앱으로 내보내려던 시도</h3>
+    일기 내용에서 감정을 분석하려고 <strong>Naver CLOVA API</strong>를 썼지만, 이 API는 감정을 긍정, 부정, 중립 세 단계로만 나눴습니다. 그래서 일기에 자주 나오는 단어에 가중치를 준 뒤 나열해, 그 내용과 비슷한 가사의 음악을 추천하는 방식을 시도했습니다. 하지만 단어 개수만으로 고르다 보니 뜬금없는 음악이 나왔습니다. 비용이 들더라도 <strong>OpenAI의 API</strong>가 가장 적합하겠다 싶어, OpenAI API로 음악 추천과 <strong>약 일주일 치 일기를 장문으로 정리해 주는 기능</strong>을 추가하였습니다. 첨언하자면 일주일 치 일기는 생각보다 글자가 많아 한 번 호출에 0.15달러 넘게 나갔고, 그걸 보고 이 어플리케이션은 상업성이 없다고 판단했습니다.<h3>앱으로 내보내려던 시도</h3>
     Tailwind CSS 유틸리티 클래스로 <strong>반응형 디자인</strong>을 이미 맞춰 둔 상태라, <a href="https://github.com/backbone94/music-recommendation-mobile" target="_blank" class="text-blue-500">React Native의 WebView</a>를 쓰면 웹을 그대로 스마트폰 앱으로 배포할 수 있다는 걸 알게 되어 실제로 시도했습니다. 그런데 구글 플레이스토어의 개발자 계정 심사가 생각보다 까다로웠습니다. 심사를 마치면 다시 한 번 앱 배포를 시도해 보려고 합니다.
     `,
   },
   {
     title: '살롱 | SSALON',
     slug: 'ssalon',
-    summary: '한 번 모이고 끝나는 일회성 모임을 3D 증표로 남겨 두는 서비스',
+    summary: '한 번 모이고 끝나는 일회성 모임을 3D 증표로 남겨 둘 수 있는 모임 앱',
     highlight: '프론트엔드 실무 경력이 있었음에도 백엔드 개발을 도전하게 된 프로젝트입니다.',
     role: '백엔드 주도 (5인 팀)',
     tags: ['졸업작품', 'Angular', 'Spring Boot', 'Three.js', 'AWS', 'AI/LLM'],
@@ -223,12 +224,12 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
       {
         type: 'image',
         src: '/images/ssalon/ticket.png',
-        alt: '왼쪽은 Google·Kakao·Naver 로그인 화면, 오른쪽은 스티커로 꾸민 검은 모임 증표를 3D로 기울여 보여주는 화면',
+        alt: '왼쪽은 Google, Kakao, Naver 로그인 화면, 오른쪽은 스티커로 꾸민 검은 모임 증표를 3D로 기울여 보여주는 화면',
       },
       {
         type: 'image',
         src: '/images/ssalon/overview.png',
-        alt: '시스템 구성도. 사용자·모임 개최자·광고주·관리자가 Angular 사용자 페이지와 React 관리자 페이지로 나뉘어 접속하고, AWS Route53·ELB·EC2 위의 서버가 MySQL·Redis·MongoDB Atlas와 OpenAI 임베딩·카카오 로그인·결제 API에 연결된다',
+        alt: '시스템 구성도. 사용자, 모임 개최자, 광고주, 관리자가 Angular 사용자 페이지와 React 관리자 페이지로 나뉘어 접속하고, AWS Route53, ELB, EC2 위의 서버가 MySQL, Redis, MongoDB Atlas와 OpenAI 임베딩, 카카오 로그인, 결제 API에 연결된다',
       },
       { type: 'video', src: '/videos/login.mp4', alt: '소셜 계정으로 로그인해 서비스에 진입하는 과정 영상' },
       { type: 'video', src: '/videos/chat.mp4', alt: '모임 참가자끼리 실시간으로 대화하는 채팅 기능 영상' },
@@ -255,7 +256,7 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
   {
     title: '웹 PDF 뷰어 솔루션',
     slug: 'pdf-viewer',
-    summary: '브라우저에서의 실시간 전자문서(PDF) 뷰어 솔루션',
+    summary: '브라우저 기반의 전자문서(PDF) 뷰어 솔루션',
     highlight: '프론트엔드로써 첫 실무 경력을 쌓았습니다.',
     role: '기능 개발 전담',
     tags: ['실무', 'Angular', 'SCSS', '웹접근성'],
@@ -266,7 +267,7 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
       {
         type: 'image',
         src: '/images/company/invisible_tracer_desc.png',
-        alt: '비가시 추적코드 설명 도식. 왼쪽 기존 워터마크는 문서 내용과 겹쳐 읽기 불편한 반면, 오른쪽 비가시 추적코드는 화면에 보이지 않으면서도 촬영 시 열람 일시·파일명·열람자를 확인할 수 있다',
+        alt: '비가시 추적코드 설명 도식. 왼쪽 기존 워터마크는 문서 내용과 겹쳐 읽기 불편한 반면, 오른쪽 비가시 추적코드는 화면에 보이지 않으면서도 촬영 시 열람 일시, 파일명, 열람자를 확인할 수 있다',
       },
       { type: 'video', src: '/videos/company/invisible_tracer.mp4', alt: '문서에 삽입된 비가시 추적코드를 스마트폰으로 스캔해 열람 정보를 확인하는 영상' },
       {
@@ -292,7 +293,7 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
   {
     title: 'Movie Search',
     slug: 'movie-search',
-    summary: '영화를 찾아보고 한 줄 리뷰를 남기고 개봉 알림도 받는 사이트',
+    summary: '영화 검색 및 리뷰 등록이 가능한 웹앱',
     highlight: 'Redux Saga의 장황함에 지쳐 Redux Toolkit으로 옮겼더니 코드가 절반으로 줄었습니다.',
     role: '단독 개발',
     tags: ['사이드', 'React', 'Redux', 'TypeScript', 'Express'],
@@ -301,9 +302,9 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
       {
         type: 'image',
         src: '/images/movie-search/home_picture.png',
-        alt: 'MovieTalk 홈 화면. 가운데 영화 검색창이 있고 아래로 인기작·현재 상영작·개봉 예정작 포스터가 세 줄로 나열되어 있다',
+        alt: 'MovieTalk 홈 화면. 가운데 영화 검색창이 있고 아래로 인기작, 현재 상영작, 개봉 예정작 포스터가 세 줄로 나열되어 있다',
       },
-      { type: 'animation', src: '/images/movie-search/home.mp4', alt: '홈에서 인기작·상영작 목록을 무한스크롤로 넘겨 보는 화면' },
+      { type: 'animation', src: '/images/movie-search/home.mp4', alt: '홈에서 인기작, 상영작 목록을 무한스크롤로 넘겨 보는 화면' },
       { type: 'animation', src: '/images/movie-search/search.mp4', alt: '영화 제목을 입력해 검색 결과를 받아오는 화면' },
       { type: 'animation', src: '/images/movie-search/detail_page.mp4', alt: '영화 상세 화면에서 정보와 한 줄 리뷰를 확인하고 좋아요를 누르는 모습' },
       { type: 'animation', src: '/images/movie-search/alarm.mp4', alt: '개봉 예정작에 알림을 설정하는 화면' },
@@ -334,7 +335,7 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
       {
         type: 'image',
         src: '/images/blog/home.png',
-        alt: '블로그 홈 화면. 상단에 Home·Language·Framework 카테고리와 검색·프로필이 있고 본문에 유튜브 영상이 embed되어 있다',
+        alt: '블로그 홈 화면. 상단에 Home, Language, Framework 카테고리와 검색, 프로필이 있고 본문에 유튜브 영상이 embed되어 있다',
       },
       { type: 'animation', src: '/images/blog/darkmode.mp4', alt: '우측 상단 아이콘으로 다크모드와 라이트모드를 전환하는 화면' },
       { type: 'animation', src: '/images/blog/category.mp4', alt: '새 카테고리를 추가하고 상단 메뉴에 반영되는 화면' },
@@ -359,7 +360,7 @@ UI는 구글의 Material Design 가이드라인을 따르는 <strong>MUI(Materia
   {
     title: 'RC Car',
     slug: 'rc-car',
-    summary: '휴대폰으로 조종하고 초음파 센서로 자율주행을 하는 아두이노 RC카',
+    summary: '휴대폰 원격 조종 및 초음파 센서를 통한 자율주행 RC카',
     highlight: '웹 개발자로 진로를 정하기 전에 납땜과 회로, 그리고 프로그래밍을 처음으로 하게 된 계기의 프로젝트입니다.',
     role: '단독 개발',
     tags: ['기타', 'Arduino', 'Android'],

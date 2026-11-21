@@ -10,6 +10,7 @@ import { say, type GuideCue } from '../lib/guide';
 import CopyEmailButton from './CopyEmailButton';
 import ProjectMedia from './ProjectMedia';
 import RobotGuide, { GUIDE_NAME, RobotAvatar } from './RobotGuide';
+import ThemeToggle from './ThemeToggle';
 
 /**
  * 첫 화면 전체. 요즘 AI 채팅 화면의 문법을 따른다.
@@ -835,6 +836,7 @@ export default function AskBox({ initial, askOnLoad }: Props) {
     // 아래 여백으로 바닥의 바로가기 줄 자리를 비워 둔다. 세로가 짧은 화면에서는 묶음이 그 줄과 겹치지 않고 페이지가 조금 길어진다.
     return (
       <section className="relative mx-auto flex min-h-[100svh] max-w-intro flex-col justify-center px-5 pb-24 pt-6 sm:pb-[24svh] sm:pt-0 lg:px-0">
+        <ThemeToggle className="absolute right-5 top-4 z-10 lg:right-0" />
         <div className="animate-rise">
           {/* 휴대폰에서는 줄인다. 질문 버튼이 여러 줄로 늘어나 세로 자리가 모자라다. */}
           {/* 왼쪽 끝(흔드는 손과 그림자)을 인사말 첫 글자에 맞춘다 */}
@@ -870,12 +872,13 @@ export default function AskBox({ initial, askOnLoad }: Props) {
   return (
     <section className="mx-auto max-w-chat px-5 xl:px-0">
       {/* 대화 중에도 누구의 사이트인지, 이력서와 연락처가 어디인지 보이게 한다 */}
-      <div className="flex h-16 items-center justify-between gap-4 text-sm">
+      <div className="flex h-16 items-center justify-between gap-3 text-sm">
         <button type="button" onClick={reset} className="font-bold tracking-tight transition-colors hover:text-accent">
           leejj.dev
         </button>
-        <div className="flex gap-4" {...guideHover}>
+        <div className="flex items-center gap-2 sm:gap-4" {...guideHover}>
           {quickLinks}
+          <ThemeToggle />
         </div>
       </div>
 

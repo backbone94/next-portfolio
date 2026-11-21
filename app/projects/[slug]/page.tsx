@@ -56,24 +56,15 @@ export default function ProjectDetailPage({ params }: Props) {
       {/* 상세는 대화에서 새 탭으로 열린다. 목록으로 돌아가는 길은 탭을 닫는 것이라 따로 두지 않는다. */}
       <header>
         <h1 className="text-[clamp(2rem,5vw,3rem)] font-black leading-[1.2] tracking-[-0.03em]">{project.title}</h1>
-        {/* 한 줄 소개는 "…프로젝트"로 끝나는 명사구라 본문 문장처럼 두면 아래 문장과 같은 말을 되풀이하는 것처럼 읽힌다. 제목에 붙은 부제로 둔다. */}
-        <p className="mt-2 text-lg font-medium text-muted">{project.summary}</p>
 
         {/* 예전에는 오른쪽 정보 상자에 나눠 담았다. 한 줄로 모아 제목 아래에 둔다. */}
-        <p className="mt-4 text-[0.9375rem] text-muted">
-          {facts.map((fact, i) => (
-            <span key={fact}>
-              {i > 0 && (
-                <span aria-hidden className="mx-2 text-border">
-                  ·
-                </span>
-              )}
-              {fact}
-            </span>
+        <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-[0.9375rem] text-muted">
+          {facts.map((fact) => (
+            <li key={fact}>{fact}</li>
           ))}
-        </p>
+        </ul>
 
-        <p className="mt-6 max-w-prose font-semibold leading-[1.75]">{project.highlight}</p>
+        <p className="mt-6 font-semibold leading-[1.75] md:max-lg:text-[0.9rem]">{project.highlight}</p>
       </header>
 
       {/* 화면이 먼저다 */}
@@ -100,7 +91,7 @@ export default function ProjectDetailPage({ params }: Props) {
       */}
           <section aria-labelledby="how">
             <h2 id="how" className="text-xl font-bold tracking-[-0.01em]">
-              이렇게 만들었습니다
+              개요
             </h2>
             <div
               className="mt-5 max-w-prose leading-[1.75] text-text/90 [&_a]:text-accent [&_a]:underline [&_a]:underline-offset-4 [&_h3]:mb-2 [&_h3]:mt-9 [&_h3]:text-[1.0625rem] [&_h3]:font-bold [&_h3]:leading-snug [&_h3]:text-text [&_p+p]:mt-4 [&_strong]:font-semibold [&_strong]:text-text"

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { GUIDE_EVENT, GUIDE_LINES, type GuideCue, type GuideMessage } from '../lib/guide';
+import styles from './RobotGuide.module.css';
 
 /**
  * 손을 흔드는 안내 로봇. 지금 상황에 맞는 말을 오른쪽 말풍선에 띄운다.
@@ -10,7 +11,7 @@ import { GUIDE_EVENT, GUIDE_LINES, type GuideCue, type GuideMessage } from '../l
  * - 몸통: 위아래로 떠다니고, 발밑을 축으로 좌우로 살짝 기운다. 바닥 그림자는 떠오를 때 작아진다.
  * - 손: 손목 띠 바로 위에서 잘라 낸 손을 띠 윗변 가운데를 축으로 흔든다. 평소에는 가만히 있고, 로봇을 누를 때만 흔든다.
  *   몸통 층에서는 손을 지우고 띠는 남겨 두었다.
- * - 눈: 따로 떼어 낸 눈을 세로로 납작하게 눌러 깜빡인다. 몸통 층의 눈 자리는 고글 색으로 메워 두었다.
+ * - 눈: 몸통과 분리한 눈을 세로로 납작하게 눌러 깜빡인다.
  *
  * 몸통과 손은 바탕이 투명한 그림이다. 처음에는 흰 바탕 그림에 곱하기 혼합을 걸었는데, 움직이는 층에서는
  * 브라우저가 혼합을 풀어 버려 손을 흔들 때마다 흰 직사각형이 같이 움직였다.
@@ -18,13 +19,6 @@ import { GUIDE_EVENT, GUIDE_LINES, type GuideCue, type GuideMessage } from '../l
 
 /** 손이 도는 축(손목 띠 윗변 가운데). 그림 틀 폭·높이에 대한 %다. 그림을 다시 자르면 다시 잰다. */
 const WRIST = '16.34% 46.15%';
-
-/** 떼어 낸 눈 그림의 자리와 크기(그림 틀 폭·높이에 대한 %) */
-const EYES = [
-  { name: 'left', left: '39.01%', top: '21.49%' },
-  { name: 'right', left: '63.27%', top: '25.17%' },
-];
-const EYE_SIZE = { width: '12.67%', height: '10.96%' };
 
 /** 안내 로봇의 이름. 대화 화면의 프로필과 말풍선 자기소개에 같이 쓴다. */
 export const GUIDE_NAME = 'Jun';
@@ -116,28 +110,19 @@ export default function RobotGuide({ cue, className = '' }: { cue: GuideCue; cla
 
   return (
     // 자리 잡기(absolute 등)와 폭은 바깥 틀이 받는다. 그림자는 그 안의 relative 틀을, 말풍선은 기울기 틀을 기준으로 붙는다.
-    <div aria-hidden className={`select-none ${className}`}>
+    <div aria-hidden className={`select-none ${styles.artwork} ${className}`}>
       {/* 아래 여백은 그림자 자리다. 로봇이 떠오르면 발과 그림자 사이가 벌어진다. */}
       <div className="relative pb-[7%]">
-        <span className="absolute bottom-[2%] left-[24%] h-[5%] w-[50%] animate-[guide-shadow_3.2s_ease-in-out_infinite] rounded-[50%] bg-[radial-gradient(closest-side,rgb(10_12_18/0.2),transparent)]" />
+        <span className={`absolute bottom-[1%] left-[25%] h-[6%] w-[55%] animate-[guide-shadow_3.2s_ease-in-out_infinite] rounded-[50%] ${styles.shadow}`} />
 
         {/* 떠다니는 틀. 로봇과 말풍선이 함께 오르내린다. */}
         <div className="relative animate-[guide-float_3.2s_ease-in-out_infinite]">
           <div className="animate-[guide-sway_4.8s_ease-in-out_infinite] [transform-origin:50%_100%]">
             {/* 누르면 반응하는 자리. 장식이라 화면 낭독기와 키보드 이동에서는 빠진다(바깥 틀이 aria-hidden). */}
             <div onClick={onPoke} className="relative aspect-[1010/1168] cursor-pointer touch-manipulation">
-              {/* eslint-disable-next-line @next/next/no-img-element -- 층을 정확히 겹쳐야 해서 next/image의 감싸는 요소를 피한다 */}
-              <img src="/guide/robot-body.webp" alt="" draggable={false} className="absolute inset-0 h-full w-full" />
-              {EYES.map(({ name, ...at }) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  key={name}
-                  src={`/guide/robot-eye-${name}.webp`}
-                  alt=""
-                  draggable={false}
-                  className="absolute animate-[guide-blink_4.2s_ease-in-out_infinite]"
-                  style={{ ...at, ...EYE_SIZE }}
-                />
+              <span className={`absolute inset-0 ${styles.body}`} />
+              {[styles.leftEye, styles.rightEye].map((side) => (
+                <span key={side} className={`absolute animate-[guide-blink_4.2s_ease-in-out_infinite] rounded-full ${styles.eye} ${side}`} />
               ))}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -145,7 +130,7 @@ export default function RobotGuide({ cue, className = '' }: { cue: GuideCue; cla
                 src="/guide/robot-hand.webp"
                 alt=""
                 draggable={false}
-                className="absolute inset-0 h-full w-full"
+                className={`absolute h-full w-full ${styles.hand}`}
                 style={{ transformOrigin: WRIST }}
               />
             </div>
@@ -155,7 +140,7 @@ export default function RobotGuide({ cue, className = '' }: { cue: GuideCue; cla
               말풍선 자체는 같은 주기로 반대로 돌려(guide-sway-counter) 글자가 기울지 않게 한다.
             */}
             <p
-              className={`absolute w-max animate-[guide-sway-counter_4.8s_ease-in-out_infinite] rounded-xl border border-border bg-surface px-3.5 py-2 text-sm font-medium leading-snug text-text shadow-sm ${'left-[98%] top-[7%] max-w-[calc(100vw-13rem)] sm:max-w-none sm:whitespace-nowrap'}`}
+              className="absolute left-[94%] top-[12%] w-max max-w-[calc(100vw-13rem)] animate-[guide-sway-counter_4.8s_ease-in-out_infinite] rounded-xl border border-border bg-surface px-3.5 py-2 text-sm font-medium leading-snug text-text sm:max-w-none sm:whitespace-nowrap"
             >
               <span aria-hidden className={`absolute h-2.5 w-2.5 border-border bg-surface ${TAIL}`} />
               <span key={poke ? `poke-${poke.id}` : idle ? `talk-${turn}` : current} className="relative block animate-[guide-in_0.25s_ease-out]">
@@ -177,11 +162,8 @@ export default function RobotGuide({ cue, className = '' }: { cue: GuideCue; cla
  */
 export function RobotAvatar({ busy = false, className = '' }: { busy?: boolean; className?: string }) {
   return (
-    <span aria-hidden className={`block shrink-0 overflow-hidden rounded-full bg-surface-2 ${className}`}>
-      <span className={`block h-full w-full ${busy ? 'animate-[guide-float_1.6s_ease-in-out_infinite]' : ''}`}>
-        {/* eslint-disable-next-line @next/next/no-img-element -- 작은 고정 크기라 next/image의 최적화가 필요 없다 */}
-        <img src="/guide/robot-avatar.webp" alt="" draggable={false} className="h-full w-full" />
-      </span>
+    <span aria-hidden className={`block shrink-0 overflow-hidden rounded-full bg-surface-2 ${styles.artwork} ${className}`}>
+      <span className={`block h-full w-full ${styles.avatar} ${busy ? 'animate-[guide-float_1.6s_ease-in-out_infinite]' : ''}`} />
     </span>
   );
 }
