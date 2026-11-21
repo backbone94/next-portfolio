@@ -5,20 +5,15 @@ import { GUIDE_EVENT, GUIDE_LINES, type GuideCue, type GuideMessage } from '../l
 import styles from './RobotGuide.module.css';
 
 /**
- * 손을 흔드는 안내 로봇. 지금 상황에 맞는 말을 오른쪽 말풍선에 띄운다.
+ * 안내 로봇. 지금 상황에 맞는 말을 오른쪽 말풍선에 띄운다.
  *
  * 영상 없이 그림 한 장을 층으로 나눠 CSS로 움직인다(public/guide/robot-*.webp).
  * - 몸통: 위아래로 떠다니고, 발밑을 축으로 좌우로 살짝 기운다. 바닥 그림자는 떠오를 때 작아진다.
- * - 손: 손목 띠 바로 위에서 잘라 낸 손을 띠 윗변 가운데를 축으로 흔든다. 평소에는 가만히 있고, 로봇을 누를 때만 흔든다.
- *   몸통 층에서는 손을 지우고 띠는 남겨 두었다.
+ * - 손: 손목 띠에 맞춰 몸통 위에 고정한다.
  * - 눈: 몸통과 분리한 눈을 세로로 납작하게 눌러 깜빡인다.
  *
- * 몸통과 손은 바탕이 투명한 그림이다. 처음에는 흰 바탕 그림에 곱하기 혼합을 걸었는데, 움직이는 층에서는
- * 브라우저가 혼합을 풀어 버려 손을 흔들 때마다 흰 직사각형이 같이 움직였다.
+ * 몸통과 손은 바탕이 투명한 그림이다.
  */
-
-/** 손이 도는 축(손목 띠 윗변 가운데). 그림 틀 폭·높이에 대한 %다. 그림을 다시 자르면 다시 잰다. */
-const WRIST = '16.34% 46.15%';
 
 /** 안내 로봇의 이름. 대화 화면의 프로필과 말풍선 자기소개에 같이 쓴다. */
 export const GUIDE_NAME = 'Jun';
@@ -32,16 +27,6 @@ const TALK_LINES = [GUIDE_LINES.ask, '반가워요! 👋', `저는 이 사이트
 /** 말이 저절로 바뀌는 간격. 입력창의 예시 질문(2.6초)보다 훨씬 느리게 두어 둘이 같이 깜빡거리지 않게 한다. */
 const TALK_EVERY = 6000;
 
-/** 누르면 손을 두 번 흔들고 내린다. */
-const WAVE: Keyframe[] = [
-  { transform: 'rotate(0)' },
-  { transform: 'rotate(-14deg)', offset: 0.22 },
-  { transform: 'rotate(8deg)', offset: 0.45 },
-  { transform: 'rotate(-12deg)', offset: 0.69 },
-  { transform: 'rotate(5deg)', offset: 0.87 },
-  { transform: 'rotate(0)' },
-];
-
 /** 뒤에 점이 하나씩 늘어나는(. .. ...) 상황. 듣거나 찾는 중이라 기다리는 느낌을 준다. */
 const DOTTED = new Set<GuideCue>(['typing', 'thinking']);
 
@@ -50,14 +35,13 @@ const TAIL = 'left-0 top-4 -translate-x-1/2 rotate-45 border-b border-l';
 
 /**
  * cue: 지금 상황. say()로 온 상황이 있으면 그쪽이 잠시 앞선다.
- * 말풍선은 로봇 오른쪽에 붙고, sm 이상에서 늘 한 줄로 둔다. 휴대폰은 로봇 옆 자리가 좁아 화면 끝에서 줄을 바꾼다.
+ * 말풍선은 로봇 오른쪽에 여백을 두고, 휴대폰처럼 옆 자리가 좁으면 줄을 바꾼다.
  * className: 자리와 폭(w-…)을 정한다. 그림과 움직임은 모두 이 폭에 대한 비율이라 폭만 바꾸면 된다.
  */
 export default function RobotGuide({ cue, className = '' }: { cue: GuideCue; className?: string }) {
   const [override, setOverride] = useState<GuideCue | null>(null);
   const [dots, setDots] = useState(1);
   const current = override ?? cue;
-  const handRef = useRef<HTMLImageElement>(null);
   const pokes = useRef(0);
   const [poke, setPoke] = useState<{ id: number; line: string } | null>(null);
   const [turn, setTurn] = useState(0);
@@ -82,9 +66,6 @@ export default function RobotGuide({ cue, className = '' }: { cue: GuideCue; cla
     const next = turn + 1;
     setTurn(next);
     if (!idle) setPoke({ id: pokes.current++, line: TALK_LINES[next % TALK_LINES.length] });
-    // 동작 줄이기를 켜면 말만 바꾸고 손은 흔들지 않는다
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    handRef.current?.animate(WAVE, { duration: 1300, easing: 'ease-in-out' });
   }
 
   useEffect(() => {
@@ -126,12 +107,10 @@ export default function RobotGuide({ cue, className = '' }: { cue: GuideCue; cla
               ))}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                ref={handRef}
                 src="/guide/robot-hand.webp"
                 alt=""
                 draggable={false}
                 className={`absolute h-full w-full ${styles.hand}`}
-                style={{ transformOrigin: WRIST }}
               />
             </div>
 
@@ -140,7 +119,7 @@ export default function RobotGuide({ cue, className = '' }: { cue: GuideCue; cla
               말풍선 자체는 같은 주기로 반대로 돌려(guide-sway-counter) 글자가 기울지 않게 한다.
             */}
             <p
-              className="absolute left-[94%] top-[12%] w-max max-w-[calc(100vw-13rem)] animate-[guide-sway-counter_4.8s_ease-in-out_infinite] rounded-xl border border-border bg-surface px-3.5 py-2 text-sm font-medium leading-snug text-text sm:max-w-none sm:whitespace-nowrap"
+              className="absolute left-full top-[12%] ml-5 w-max max-w-[calc(100vw-13rem)] animate-[guide-sway-counter_4.8s_ease-in-out_infinite] rounded-xl border border-border bg-surface px-3.5 py-2 text-sm font-medium leading-snug text-text sm:max-w-none sm:whitespace-nowrap"
             >
               <span aria-hidden className={`absolute h-2.5 w-2.5 border-border bg-surface ${TAIL}`} />
               <span key={poke ? `poke-${poke.id}` : idle ? `talk-${turn}` : current} className="relative block animate-[guide-in_0.25s_ease-out]">
