@@ -33,9 +33,3 @@
   color: rgb(var(--muted));
   opacity: 1;
 }
-
-.captionArrow:global(.swiper-button-prev),
-.captionArrow:global(.swiper-button-next) {
-  position: static;
-  margin: 0;
-}
