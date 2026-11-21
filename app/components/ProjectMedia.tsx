@@ -18,6 +18,18 @@ type Props = {
 
 export default function ProjectMedia({ media, priority = false }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const previousRef = useRef<HTMLButtonElement>(null);
+  const nextRef = useRef<HTMLButtonElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const activeMedia = media[activeIndex];
+  const hasCaptions = media.some((item) => item.caption);
+  const arrowClass = hasCaptions ? `${styles.arrow} ${styles.captionArrow}` : styles.arrow;
+  const arrows = media.length > 1 && (
+    <>
+      <button ref={previousRef} type="button" className={`swiper-button-prev ${arrowClass}`} aria-label="이전 화면" />
+      <button ref={nextRef} type="button" className={`swiper-button-next ${arrowClass}`} aria-label="다음 화면" />
+    </>
+  );
   /**
    * 영상은 클릭해야 로드한다. poster가 없어 자동 로드 시 검은 사각형만 보이고,
    * 일부 파일은 75MB라 첫 프레임까지 파일 전체를 받아야 한다.
@@ -46,12 +58,15 @@ export default function ProjectMedia({ media, priority = false }: Props) {
     const instance = new Swiper(el, {
       modules: [Navigation, Pagination],
       navigation: {
-        nextEl: el.querySelector<HTMLElement>('.swiper-button-next'),
-        prevEl: el.querySelector<HTMLElement>('.swiper-button-prev'),
+        nextEl: nextRef.current,
+        prevEl: previousRef.current,
       },
       pagination: {
         el: el.querySelector<HTMLElement>('.swiper-pagination'),
         clickable: true,
+      },
+      on: {
+        slideChange: (swiper) => setActiveIndex(swiper.activeIndex),
       },
     });
 
@@ -63,7 +78,7 @@ export default function ProjectMedia({ media, priority = false }: Props) {
       바깥 래퍼가 CSS 변수를 든다. .swiper에 직접 걸면 destroy(cleanStyles)가
       style 속성을 통째로 지워버려서 기본 iOS 블루로 되돌아간다.
     */
-    <div
+    <figure
       className="mx-auto max-w-4xl"
       style={
         {
@@ -136,14 +151,22 @@ export default function ProjectMedia({ media, priority = false }: Props) {
           ))}
         </div>
 
-        {media.length > 1 && (
-          <>
-            <button type="button" className={`swiper-button-prev ${styles.arrow}`} aria-label="이전 화면" />
-            <button type="button" className={`swiper-button-next ${styles.arrow}`} aria-label="다음 화면" />
-            <div className="swiper-pagination" />
-          </>
-        )}
+        {!hasCaptions && arrows}
+        {media.length > 1 && <div className="swiper-pagination" />}
       </div>
-    </div>
+      {hasCaptions && (
+        <figcaption className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2 pt-2.5 text-sm leading-relaxed text-muted">
+          <span className="min-w-[12rem] grow" aria-live="polite">{activeMedia?.caption}</span>
+          <div className="flex shrink-0 items-center gap-2">
+            {activeMedia?.caption && activeMedia.type === 'image' && (
+              <a href={activeMedia.src} target="_blank" rel="noreferrer" className="mr-2 text-accent underline underline-offset-4">
+                크게 보기<span className="sr-only"> (새 창)</span>
+              </a>
+            )}
+            {arrows}
+          </div>
+        </figcaption>
+      )}
+    </figure>
   );
 }
