@@ -861,9 +861,9 @@ export default function AskBox({ initial, askOnLoad }: Props) {
           </ul>
           <p className="mt-5 text-xs text-muted">{RECORD_NOTICE}</p>
         </div>
-        {/* 질문하지 않고 훑으려는 사람을 위한 길. 화면을 옮기지 않고 같은 대화로 연다. */}
+        {/* 대표 프로젝트부터 둘러볼 수 있게 홈으로 연결한다. */}
         <nav aria-label="질문 없이 둘러보기" className="absolute inset-x-5 bottom-8 flex flex-wrap gap-x-5 gap-y-2 text-sm lg:inset-x-0" {...guideHover}>
-          <Link href="/#projects" className={textLink}>프로젝트 둘러보기 →</Link>
+          <Link href="/" className={textLink}>프로젝트 둘러보기 →</Link>
           {quickLinks}
         </nav>
       </section>
@@ -896,9 +896,9 @@ export default function AskBox({ initial, askOnLoad }: Props) {
             <div ref={i === entries.length - 1 ? lastQuestion : undefined} className="flex scroll-mt-6 justify-end">
               <p className="max-w-[85%] rounded-lg bg-surface-2 px-4 py-2.5 leading-relaxed">{question}</p>
             </div>
-            {/* 메신저처럼 답변마다 안내 로봇의 얼굴과 이름을 붙인다. 답을 찾는 동안에는 얼굴이 떠다닌다. */}
+            {/* 답변마다 안내 로봇의 얼굴과 이름을 붙인다. */}
             <div className="mt-5 flex gap-3">
-              <RobotAvatar busy={!answer || live} className="h-8 w-8 sm:h-9 sm:w-9" />
+              <RobotAvatar active={i === entries.length - 1} className="h-8 w-10 sm:h-9 sm:w-11" />
               <div className="min-w-0 flex-1">
                 <p className="mb-1.5 text-sm font-semibold leading-8 sm:leading-9">{GUIDE_NAME}</p>
                 {answer ? <Answer question={question} answer={answer} instant={instant} live={live} onFollow={ask} disabled={pending} /> : <Thinking />}

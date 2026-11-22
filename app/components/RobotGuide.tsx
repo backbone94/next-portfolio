@@ -12,7 +12,7 @@ export const GUIDE_NAME = 'Jun';
  * 질문을 기다리는 동안 차례로 돌아가며 하는 말. 가만히 두면 TALK_EVERY마다, 로봇을 누르면 바로 다음 말로 넘어간다.
  * 첫 말은 기다리는 상황의 기본 문구(GUIDE_LINES.ask)다.
  */
-const TALK_LINES = [GUIDE_LINES.ask, '반가워요! 👋', `저는 이 사이트를 안내하는 ${GUIDE_NAME}이에요`, '궁금한 게 있으면 아래에 적어 주세요'];
+const TALK_LINES = [GUIDE_LINES.ask, '반가워요! 👋', `저는 이 사이트를 안내하는 ${GUIDE_NAME} 이에요`, '궁금한 게 있으면 아래에 적어 주세요'];
 
 /** 말이 저절로 바뀌는 간격. 입력창의 예시 질문(2.6초)보다 훨씬 느리게 두어 둘이 같이 깜빡거리지 않게 한다. */
 const TALK_EVERY = 6000;
@@ -108,14 +108,13 @@ export default function RobotGuide({ cue, className = '' }: { cue: GuideCue; cla
   );
 }
 
-/**
- * 대화 화면의 프로필. 메신저처럼 답변마다 왼쪽에 얼굴이 붙는다.
- * busy: 답을 찾는 동안 첫 화면의 로봇처럼 위아래로 떠다닌다.
- */
-export function RobotAvatar({ busy = false, className = '' }: { busy?: boolean; className?: string }) {
+/** 최신 답변에만 Three.js를 붙이고, 앞선 답변은 같은 모습의 렌더 이미지로 보여 준다. */
+export function RobotAvatar({ active, className = '' }: { active: boolean; className?: string }) {
   return (
-    <span aria-hidden className={`block shrink-0 overflow-hidden rounded-full bg-surface-2 ${styles.artwork} ${className}`}>
-      <span className={`block h-full w-full ${styles.avatar} ${busy ? 'animate-[guide-float_1.6s_ease-in-out_infinite]' : ''}`} />
+    <span aria-hidden className={`grid shrink-0 items-center ${styles.artwork} ${className}`}>
+      <span className="relative block aspect-[7/5] w-full">
+        {active ? <JunFace /> : <span className={`${styles.fallback} ${styles.avatarIdle}`} />}
+      </span>
     </span>
   );
 }

@@ -16,7 +16,6 @@ import { Block, Empty, QuestionTable, Table, VisitTable, adminHref, number, page
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: '관리자',
   robots: { index: false, follow: false },
 };
 

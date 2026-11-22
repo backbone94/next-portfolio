@@ -26,11 +26,10 @@ function resolve(searchParams: Props['searchParams']) {
 
 export function generateMetadata({ searchParams }: Props): Metadata {
   const found = resolve(searchParams);
-  if (!found?.answer) return { title: 'Jun에게 묻기', alternates: { canonical: '/ask' } };
+  if (!found?.answer) return { alternates: { canonical: '/ask' } };
   const description = found.answer.segments.map((s) => s.text).join('').replace(/\n+(- )?/g, ' ').slice(0, 150);
   return {
     description,
-    title: found.answer.kind ?? 'Jun에게 묻기',
     alternates: { canonical: null },
     openGraph: { title: `${found.answer.kind ?? found.question} | 이정준`, description },
   };
