@@ -1,8 +1,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import JsonLd from './components/JsonLd';
+import JunFace from './components/JunFace';
+import robotStyles from './components/RobotGuide.module.css';
 import { getProject, projects } from './content/projects';
-import { PROFILE } from './content/site';
+import { ASK_PATH, PROFILE } from './content/site';
 import styles from './PortfolioHome.module.css';
 
 const leadProject = getProject('bgneye-jamsil') ?? projects[0];
@@ -64,6 +66,17 @@ export default function PortfolioHome() {
             );
           })}
         </ul>
+      </section>
+
+      <section className={styles.ask} aria-labelledby="ask-title">
+        <div>
+          <h2 id="ask-title">궁금한 점이 있나요?</h2>
+          <p>경력과 기술 스택도 Jun에게 물어볼 수 있어요.</p>
+        </div>
+        {/* 커서를 따라 고개를 돌리는 Jun의 머리. 누르면 전체 대화로 간다. */}
+        <Link href={ASK_PATH} aria-label="Jun에게 묻기" title="Jun에게 묻기" className={`${styles.askJun} ${robotStyles.artwork}`}>
+          <JunFace />
+        </Link>
       </section>
     </div>
   );
