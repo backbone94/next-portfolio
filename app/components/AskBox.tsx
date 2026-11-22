@@ -838,7 +838,7 @@ export default function AskBox({ initial, askOnLoad }: Props) {
         <ThemeToggle className="self-end" />
         <div className="flex flex-1 items-center justify-center py-8 sm:pb-16">
           <div className="w-full max-w-[38rem] animate-rise">
-            <RobotGuide cue={guide} />
+            <RobotGuide cue={guide} inputRef={inputRef} />
             <div className="mt-6">{composer}</div>
             <ul className="mx-auto mt-4 grid max-w-[30rem] grid-cols-2 gap-2" aria-label="질문 예시">
               {STARTERS.map((q) => (
