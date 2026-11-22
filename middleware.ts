@@ -54,5 +54,5 @@ export function middleware(request: NextRequest, event: NextFetchEvent) {
 
 export const config = {
   // '/projects/:slug'로 적으면 상세 페이지에서 middleware가 돌지 않아 방문이 하나도 남지 않았다. :path*로 적어야 걸린다
-  matcher: ['/', '/projects/:path*', '/admin', '/admin/:path*'],
+  matcher: ['/', '/ask', '/projects/:path*', '/admin', '/admin/:path*'],
 };

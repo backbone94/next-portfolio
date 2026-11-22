@@ -14,7 +14,7 @@ export const RESUME_URL = `/resume.pdf?v=${process.env.RESUME_VERSION}`;
 
 /**
  * 자주 묻는 질문의 대표 문장. 헤더 메뉴, 첫 화면 바로가기, 옛 주소 넘기기가
- * 모두 이 문장으로 /?q=를 만든다. 직접 쓴 답변으로 이어지는 문장이어야 한다.
+ * 모두 이 문장으로 질문 링크를 만든다. 직접 쓴 답변으로 이어지는 문장이어야 한다.
  */
 export const ASK = {
   projects: '프로젝트 전부 보여 주세요',
@@ -47,7 +47,8 @@ export const STARTERS = [
 export const RECORD_NOTICE = '질문은 답변을 개선하는 데 쓰입니다.';
 
 /** 질문 하나를 주소로. 이 주소로 들어오면 그 질문과 답이 펼쳐진 채로 열린다. */
-export const askHref = (question: string) => `/?q=${encodeURIComponent(question)}`;
+export const ASK_PATH = '/ask';
+export const askHref = (question: string) => `${ASK_PATH}?q=${encodeURIComponent(question)}`;
 
 /** 이름·직함은 히어로·푸터·구조화 데이터가 함께 쓴다. 세 곳이 어긋나지 않게 여기서 낸다. */
 export const PROFILE = {

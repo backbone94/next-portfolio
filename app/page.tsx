@@ -1,75 +1,78 @@
-import AskBox from '@/app/components/AskBox';
-import JsonLd from '@/app/components/JsonLd';
-import { NONE, ROUTES } from '@/app/lib/ask/prepared';
-import { routeWithKeywords } from '@/app/lib/ask/router';
-import type { Metadata } from 'next';
+import Image from 'next/image';
+import Link from 'next/link';
+import JsonLd from './components/JsonLd';
+import { getProject, projects } from './content/projects';
+import { ASK_PATH, PROFILE } from './content/site';
+import styles from './PortfolioHome.module.css';
 
-/**
- * 첫 화면. 인사말과 검색창 하나만 둔다.
- *
- * 방문자가 사이트를 읽기 전에 먼저 말을 걸게 하는 것이 이 화면의 목적이다.
- * 포트폴리오 내용은 대화 안에서 보여 준다.
- *
- * /?q=질문 으로 들어오면 그 질문의 답이 펼쳐진 채로 열린다. 직접 쓴 답이
- * 있으면 서버에서 미리 그려서 보낸다 — 공유받은 사람은 기다리지 않고,
- * 검색엔진과 링크 미리보기도 답 내용을 읽는다. 여기서는 키워드 규칙만 쓴다.
- * 주소를 여는 것만으로 Jev나 Claude를 부르면 크롤러가 돌 때마다 돈이 든다.
- */
+const leadProject = getProject('bgneye-jamsil') ?? projects[0];
 
-type Props = { searchParams: { q?: string | string[] } };
+export default function PortfolioHome() {
+  const heroImage = leadProject.media.find(({ type }) => type === 'image');
+  const leadHref = `/projects/${leadProject.slug}`;
 
-/**
- * 한 번 덜 풀린 질문("%ED%94%84…")을 한 번 더 푼다. /projects 넘김(next.config.mjs)은 목적지를 두 번 인코딩해 두는데,
- * 로컬 개발 서버는 한 번 풀어서 보내고 Vercel은 그대로 보낸다. 그래서 배포 환경에서는 질문이 인코딩된 글자 그대로 와서,
- * 미리 써 둔 답을 못 찾고 AI 호출까지 갈 수 있었다. 사람이 직접 쓴 질문에 "%EA"처럼 퍼센트 인코딩이 들어갈 일은 거의 없다.
- */
-function decodeOnceMore(text: string) {
-  if (!/%[0-9A-Fa-f]{2}/.test(text)) return text;
-  try {
-    return decodeURIComponent(text);
-  } catch {
-    return text;
-  }
-}
-
-function resolve(searchParams: Props['searchParams']) {
-  const raw = Array.isArray(searchParams.q) ? searchParams.q[0] : searchParams.q;
-  const question = raw && decodeOnceMore(raw).trim().slice(0, 200);
-  if (!question) return null;
-  const { route } = routeWithKeywords(question);
-  const answer = route !== NONE ? ROUTES[route]?.answer(question) : null;
-  return { question, answer: answer ?? null };
-}
-
-export function generateMetadata({ searchParams }: Props): Metadata {
-  const found = resolve(searchParams);
-  // 직접 쓴 답이 있는 질문만 따로 색인한다. 나머지는 첫 화면과 같은 페이지로 본다.
-  if (!found?.answer) return { alternates: { canonical: '/' } };
-  const description = found.answer.segments.map((s) => s.text).join('').replace(/\n+(- )?/g, ' ').slice(0, 150);
-  return {
-    description,
-    /*
-      canonical을 "/?q=…"로 두고 싶지만 Next 14는 경로가 "/"인 canonical에서 쿼리를
-      떼어 버린다(next/dist/lib/metadata/resolvers/resolve-url.js). 그러면 레이아웃의
-      canonical "/"과 같아져 이 주소가 첫 화면의 중복으로 처리된다. canonical을
-      비워서 검색엔진이 이 주소를 그대로 쓰게 둔다.
-    */
-    alternates: { canonical: null },
-    openGraph: { title: `${found.answer.kind ?? found.question} | 이정준`, description },
-  };
-}
-
-export default function AskHome({ searchParams }: Props) {
-  const found = resolve(searchParams);
   return (
-    <>
+    <div className={styles.home}>
       <JsonLd />
-      <AskBox
-        // 질문이 바뀌면 대화를 새로 시작한다 (헤더 메뉴에서 다른 질문 주소로 들어온 경우)
-        key={found?.question ?? ''}
-        initial={found?.answer ? { question: found.question, answer: found.answer } : undefined}
-        askOnLoad={found && !found.answer ? found.question : undefined}
-      />
-    </>
+      <section className={styles.hero} aria-labelledby="featured-title">
+        <div className={styles.heroCopy}>
+          <p className={styles.identity}>
+            <strong>{PROFILE.name}</strong>
+            <span>{PROFILE.jobTitle}</span>
+          </p>
+          <p className={styles.eyebrow}>대표 프로젝트</p>
+          <h1 id="featured-title" className={styles.heroTitle}>{leadProject.title}</h1>
+          <p className={styles.description}>
+            기존 PHP 사이트의 데이터를 옮기고, 백엔드와 AWS 운영 환경을 구축해 새 홈페이지를 열었습니다.
+          </p>
+          <div className={styles.actions}>
+            <Link href={leadHref} className={styles.primary}>프로젝트 보기 <span aria-hidden="true">↗</span></Link>
+            <Link href="#projects" className={styles.secondary}>다른 작업 <span aria-hidden="true">↓</span></Link>
+          </div>
+        </div>
+        <figure className={styles.feature}>
+          <Link href={leadHref} className={styles.featureImage} aria-label={`${leadProject.title} 상세 보기`}>
+            {heroImage && <Image src={heroImage.src} alt={heroImage.alt} fill priority sizes="(max-width: 800px) 100vw, 62vw" />}
+          </Link>
+          <figcaption className={styles.featureCaption}>
+            <span>{leadProject.role}</span>
+            <span className={styles.duration}>{leadProject.duration}</span>
+          </figcaption>
+        </figure>
+      </section>
+
+      <section id="projects" className={styles.projects} aria-labelledby="projects-title">
+        <h2 id="projects-title">다른 프로젝트</h2>
+        <ul className={styles.list}>
+          {projects.filter(project => project.slug !== leadProject.slug).map(project => {
+            const thumbnail = project.media.find(({ type }) => type === 'image');
+            return (
+              <li key={project.slug}>
+                <Link href={`/projects/${project.slug}`} className={styles.project}>
+                  <span className={styles.thumb} aria-hidden="true">
+                    {thumbnail && <Image src={thumbnail.src} alt="" fill sizes="(max-width: 620px) 80px, 124px" />}
+                  </span>
+                  <div className={styles.projectCopy}>
+                    <h3>{project.title}</h3>
+                    <p>{project.role}</p>
+                  </div>
+                  <span className={styles.projectType}>{project.tags[0]}</span>
+                  <span className={styles.projectYear}>{project.duration.slice(0, 4)}</span>
+                  <span className={styles.arrow} aria-hidden="true">↗</span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+
+      <section className={styles.ask} aria-labelledby="ask-title">
+        <div>
+          <h2 id="ask-title">궁금한 점이 있나요?</h2>
+          <p>경력과 기술 스택도 Jun에게 물어볼 수 있어요.</p>
+        </div>
+        <Link href={ASK_PATH} className={styles.secondary}>Jun에게 묻기 <span aria-hidden="true">↗</span></Link>
+      </section>
+    </div>
   );
 }

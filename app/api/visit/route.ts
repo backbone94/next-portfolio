@@ -4,7 +4,7 @@ import { confirmVisit, recordDuration } from '@/app/lib/visit';
 
 /** 방문으로 기록하는 경로만 받는다. 사이트 안 이동은 여기서 방문 한 줄을 새로 쓰므로 아무 경로나 받지 않는다 */
 function recorded(path: string) {
-  if (path === '/') return true;
+  if (path === '/' || path === '/ask') return true;
   const slug = path.match(/^\/projects\/([^/]+)$/)?.[1];
   return slug != null && getProject(slug) != null;
 }

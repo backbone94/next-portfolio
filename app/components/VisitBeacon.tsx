@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
 /** 방문으로 기록하는 경로. middleware.ts의 matcher와 같다(관리자 화면 제외) */
-const RECORDED = /^\/($|projects\/[^/]+$)/;
+const RECORDED = /^\/(?:ask|projects\/[^/]+)?$/;
 
 function send(body: object) {
   fetch('/api/visit', {

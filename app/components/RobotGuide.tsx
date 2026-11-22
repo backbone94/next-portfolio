@@ -2,18 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { GUIDE_EVENT, GUIDE_LINES, type GuideCue, type GuideMessage } from '../lib/guide';
+import JunFace from './JunFace';
 import styles from './RobotGuide.module.css';
-
-/**
- * 안내 로봇. 지금 상황에 맞는 말을 오른쪽 말풍선에 띄운다.
- *
- * 영상 없이 그림 한 장을 층으로 나눠 CSS로 움직인다(public/guide/robot-*.webp).
- * - 몸통: 위아래로 떠다니고, 발밑을 축으로 좌우로 살짝 기운다. 바닥 그림자는 떠오를 때 작아진다.
- * - 손: 손목 띠에 맞춰 몸통 위에 고정한다.
- * - 눈: 몸통과 분리한 눈을 세로로 납작하게 눌러 깜빡인다.
- *
- * 몸통과 손은 바탕이 투명한 그림이다.
- */
 
 /** 안내 로봇의 이름. 대화 화면의 프로필과 말풍선 자기소개에 같이 쓴다. */
 export const GUIDE_NAME = 'Jun';
@@ -43,6 +33,7 @@ export default function RobotGuide({ cue, className = '' }: { cue: GuideCue; cla
   const [dots, setDots] = useState(1);
   const current = override ?? cue;
   const pokes = useRef(0);
+  const [greetingCount, setGreetingCount] = useState(0);
   const [poke, setPoke] = useState<{ id: number; line: string } | null>(null);
   const [turn, setTurn] = useState(0);
   // 질문을 기다리는 중이고 다른 반응(마우스 올리기·복사 등)이 없을 때만 말이 저절로 돈다
@@ -63,6 +54,7 @@ export default function RobotGuide({ cue, className = '' }: { cue: GuideCue; cla
   }, [poke]);
 
   function onPoke() {
+    setGreetingCount(count => count + 1);
     const next = turn + 1;
     setTurn(next);
     if (!idle) setPoke({ id: pokes.current++, line: TALK_LINES[next % TALK_LINES.length] });
@@ -90,46 +82,27 @@ export default function RobotGuide({ cue, className = '' }: { cue: GuideCue; cla
   }, [current]);
 
   return (
-    // 자리 잡기(absolute 등)와 폭은 바깥 틀이 받는다. 그림자는 그 안의 relative 틀을, 말풍선은 기울기 틀을 기준으로 붙는다.
-    <div aria-hidden className={`select-none ${styles.artwork} ${className}`}>
-      {/* 아래 여백은 그림자 자리다. 로봇이 떠오르면 발과 그림자 사이가 벌어진다. */}
+    <div className={`select-none ${styles.artwork} ${className}`}>
       <div className="relative pb-[7%]">
-        <span className={`absolute bottom-[1%] left-[25%] h-[6%] w-[55%] animate-[guide-shadow_3.2s_ease-in-out_infinite] rounded-[50%] ${styles.shadow}`} />
-
-        {/* 떠다니는 틀. 로봇과 말풍선이 함께 오르내린다. */}
-        <div className="relative animate-[guide-float_3.2s_ease-in-out_infinite]">
-          <div className="animate-[guide-sway_4.8s_ease-in-out_infinite] [transform-origin:50%_100%]">
-            {/* 누르면 반응하는 자리. 장식이라 화면 낭독기와 키보드 이동에서는 빠진다(바깥 틀이 aria-hidden). */}
-            <div onClick={onPoke} className="relative aspect-[1010/1168] cursor-pointer touch-manipulation">
-              <span className={`absolute inset-0 ${styles.body}`} />
-              {[styles.leftEye, styles.rightEye].map((side) => (
-                <span key={side} className={`absolute animate-[guide-blink_4.2s_ease-in-out_infinite] rounded-full ${styles.eye} ${side}`} />
-              ))}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/guide/robot-hand.webp"
-                alt=""
-                draggable={false}
-                className={`absolute h-full w-full ${styles.hand}`}
-              />
-            </div>
-
-            {/*
-              말풍선은 기울기 틀 안에 두어 로봇 머리와의 거리를 늘 같게 유지한다. 틀 밖에 두면 머리가 말풍선 쪽으로 기울 때 둘이 겹친다.
-              말풍선 자체는 같은 주기로 반대로 돌려(guide-sway-counter) 글자가 기울지 않게 한다.
-            */}
-            <p
-              className="absolute left-full top-[12%] ml-5 w-max max-w-[calc(100vw-13rem)] animate-[guide-sway-counter_4.8s_ease-in-out_infinite] rounded-xl border border-border bg-surface px-3.5 py-2 text-sm font-medium leading-snug text-text sm:max-w-none sm:whitespace-nowrap"
-            >
-              <span aria-hidden className={`absolute h-2.5 w-2.5 border-border bg-surface ${TAIL}`} />
-              <span key={poke ? `poke-${poke.id}` : idle ? `talk-${turn}` : current} className="relative block animate-[guide-in_0.25s_ease-out]">
-                {poke ? poke.line : idle ? TALK_LINES[turn % TALK_LINES.length] : GUIDE_LINES[current]}
-                {/* 점이 늘어날 때 말풍선 폭이 흔들리지 않게 점 세 개 자리를 잡아 둔다 */}
-                {!poke && DOTTED.has(current) && <span className="inline-block w-[1.2em] text-left">{'.'.repeat(dots)}</span>}
-              </span>
-            </p>
-          </div>
-        </div>
+        <span aria-hidden className={`pointer-events-none absolute bottom-[3%] left-[25%] h-[13%] w-[50%] motion-safe:animate-[guide-shadow_3.22s_ease-in-out_infinite] rounded-[50%] ${styles.shadow}`} />
+        <button
+          type="button"
+          aria-label="Jun에게 인사하기"
+          onClick={onPoke}
+          className="relative block aspect-[7/5] w-full cursor-pointer touch-manipulation rounded-2xl"
+        >
+          <JunFace greetingCount={greetingCount} />
+        </button>
+        <p
+          aria-hidden="true"
+          className="absolute left-full top-[35%] ml-5 w-max max-w-[calc(100vw-13rem)] rounded-xl border border-border bg-surface px-3.5 py-2 text-sm font-medium leading-snug text-text sm:max-w-none sm:whitespace-nowrap"
+        >
+          <span aria-hidden className={`absolute h-2.5 w-2.5 border-border bg-surface ${TAIL}`} />
+          <span key={poke ? `poke-${poke.id}` : idle ? `talk-${turn}` : current} className="relative block animate-[guide-in_0.25s_ease-out]">
+            {poke ? poke.line : idle ? TALK_LINES[turn % TALK_LINES.length] : GUIDE_LINES[current]}
+            {!poke && DOTTED.has(current) && <span className="inline-block w-[1.2em] text-left">{'.'.repeat(dots)}</span>}
+          </span>
+        </p>
       </div>
     </div>
   );

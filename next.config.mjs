@@ -28,11 +28,9 @@ const nextConfig = {
       // 어떻게 만들었는지는 "이 사이트는 어떻게 만들었어요?"에 직접 써 둔 답이 맡는다.
       { source: '/projects/portfolio-original', destination: '/', permanent: true },
       { source: '/projects/portfolio-nextjs', destination: '/', permanent: true },
-      {
-        source: '/projects',
-        destination: `/?q=${encodeURIComponent(encodeURIComponent('프로젝트 전부 보여 주세요'))}`,
-        permanent: true,
-      },
+      { source: '/projects', destination: '/#projects', permanent: true },
+      // 이미 공유된 질문 주소의 쿼리를 새 대화 페이지로 전달한다.
+      { source: '/', has: [{ type: 'query', key: 'q' }], destination: '/ask', permanent: true },
     ];
   },
 };

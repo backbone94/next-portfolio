@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
+import { PROJECT_QUESTIONS } from '../../content/projectQuestions';
 import { notFound } from 'next/navigation';
 import ProjectAsk from '../../components/ProjectAsk';
 import ProjectFacts from '../../components/ProjectFacts';
@@ -53,7 +55,9 @@ export default function ProjectDetailPage({ params }: Props) {
 
   return (
     <article className="mx-auto max-w-shell px-5 pb-24 pt-8 md:px-8 md:pt-12">
-      {/* 상세는 대화에서 새 탭으로 열린다. 목록으로 돌아가는 길은 탭을 닫는 것이라 따로 두지 않는다. */}
+      <Link href="/#projects" className="mb-5 inline-flex text-sm font-semibold text-muted hover:text-accent">
+        <span aria-hidden="true" className="mr-2">←</span> 프로젝트 목록
+      </Link>
       <header>
         <h1 className="text-[clamp(2rem,5vw,3rem)] font-black leading-[1.2] tracking-[-0.03em]">{project.title}</h1>
 
@@ -65,6 +69,9 @@ export default function ProjectDetailPage({ params }: Props) {
         </ul>
 
         <p className="mt-6 font-semibold leading-[1.75] md:max-lg:text-[0.9rem]">{project.highlight}</p>
+        <Link href="#project-ask" className="mt-3 inline-flex text-sm font-semibold text-accent hover:underline">
+          Jun에게 이 프로젝트 묻기 <span aria-hidden="true" className="ml-1">↓</span>
+        </Link>
       </header>
 
       {/* 화면이 먼저다 */}
@@ -104,8 +111,8 @@ export default function ProjectDetailPage({ params }: Props) {
         옆 칸은 정보 상자 대신 대화창이다. 이전·다음 프로젝트 이동도 없앴다. 다른 프로젝트가
         궁금하면 여기서 물어보면 된다. 넓은 화면에서는 본문을 따라 내려오고, 좁은 화면에서는 본문 뒤에 온다.
       */}
-        <aside data-hides-scroll-top className="lg:sticky lg:top-24 lg:self-start">
-          <ProjectAsk slug={project.slug} title={project.title} />
+        <aside id="project-ask" tabIndex={-1} data-hides-scroll-top className="scroll-mt-24 lg:sticky lg:top-24 lg:self-start">
+          <ProjectAsk slug={project.slug} title={project.title} topics={(PROJECT_QUESTIONS[project.slug] ?? []).map(topic => topic.question)} />
         </aside>
       </div>
     </article>

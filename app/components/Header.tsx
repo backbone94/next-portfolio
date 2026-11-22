@@ -1,14 +1,15 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { ASK_PATH, RESUME_URL } from '../content/site';
+import JunFace from './JunFace';
+import robotStyles from './RobotGuide.module.css';
 import ThemeToggle from './ThemeToggle';
 
-/**
- * 프로젝트 상세 같은 하위 페이지의 머리줄. 로고와 테마 전환을 둔다.
- * 프로젝트·경력·연락처는 첫 화면의 대화가 맡고, 로고를 누르면 거기로 돌아간다.
- */
 export default function Header() {
+  const isProjectDetail = /^\/projects\/[^/]+\/?$/.test(usePathname());
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -30,7 +31,23 @@ export default function Header() {
         <Link href="/" className="text-[0.95rem] font-bold tracking-tight">
           leejj.dev
         </Link>
-        <ThemeToggle />
+        <nav aria-label="포트폴리오 메뉴" className="flex shrink-0 items-center gap-3 text-xs font-semibold sm:gap-6 sm:text-sm">
+          <Link href="/#projects" className="whitespace-nowrap hover:text-accent">프로젝트</Link>
+          <a href={RESUME_URL} target="_blank" rel="noreferrer" className="whitespace-nowrap hover:text-accent">이력서</a>
+          {isProjectDetail ? (
+            <a
+              href="#project-ask"
+              aria-label="Jun에게 묻기"
+              title="Jun에게 이 프로젝트 묻기"
+              className={`relative inline-flex h-11 w-14 justify-center rounded-lg transition-colors hover:bg-surface-2 focus-visible:bg-surface-2 sm:w-16 ${robotStyles.artwork}`}
+            >
+              <JunFace />
+            </a>
+          ) : (
+            <Link href={ASK_PATH} className="whitespace-nowrap text-accent hover:underline">Jun에게 묻기</Link>
+          )}
+          <ThemeToggle />
+        </nav>
       </div>
     </header>
   );

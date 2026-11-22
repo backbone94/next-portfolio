@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     default: "Jun's Portfolio",
     template: '%s | 이정준',
   },
-  description: '이정준의 경력과 프로젝트를 검색창에 물어보세요. 모든 답은 실제 기록을 근거로 합니다.',
+  description: '이정준의 프로젝트와 맡은 역할을 둘러보고, 작업 중 궁금한 점은 Jun에게 물어보세요.',
   /*
     루트를 canonical로 못박는다. 같은 내용이 www·vercel.app 주소로도 열려
     있어 중복 문서로 잡힐 여지가 있다. 하위 페이지는 각자 alternates로 덮는다.

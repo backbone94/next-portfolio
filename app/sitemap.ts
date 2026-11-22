@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { projects } from './content/projects';
-import { ASK, SITE_URL, STARTERS, askHref } from './content/site';
+import { ASK, ASK_PATH, SITE_URL, STARTERS, askHref } from './content/site';
 
 /**
  * 프로젝트 상세는 모두 SSG로 만들어지지만 홈에서 링크를 타고 들어가는 경로
@@ -22,8 +22,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 1,
     },
-    // 옛 /portfolio·/projects 대신, 직접 쓴 답이 서버에서 그려지는 질문 주소를 알린다.
-    // 첫 화면의 예시 질문이 먼저고, 헤더 메뉴용 문장(경력·연락처·학력·전체 프로젝트)이 뒤따른다.
+    { url: `${SITE_URL}${ASK_PATH}`, changeFrequency: 'monthly', priority: 0.9 },
+    // 준비된 답이 서버에서 그려지는 질문 주소를 알린다.
     ...[...STARTERS, ...Object.values(ASK)].map((question) => ({
       url: `${SITE_URL}${askHref(question)}`,
       changeFrequency: 'monthly' as const,
