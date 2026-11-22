@@ -24,9 +24,6 @@ export default function PortfolioHome() {
           </p>
           <p className={styles.eyebrow}>대표 프로젝트</p>
           <h1 id="featured-title" className={styles.heroTitle}>{leadProject.title}</h1>
-          <p className={styles.description}>
-            기존 PHP 사이트의 데이터를 옮기고, 백엔드와 AWS 운영 환경을 구축해 새 홈페이지를 열었습니다.
-          </p>
           <div className={styles.actions}>
             <Link href={leadHref} className={styles.primary}>프로젝트 보기 <span aria-hidden="true">↗</span></Link>          </div>
         </div>

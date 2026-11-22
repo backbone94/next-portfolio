@@ -47,13 +47,6 @@
   font-weight: 860;
   text-wrap: balance;
 }
-.description {
-  margin-top: 1.3rem;
-  max-width: 34ch;
-  color: var(--color-muted);
-  font-size: clamp(.97rem, 1.35vw, 1.13rem);
-  line-height: 1.67;
-}
 .actions { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.15rem; margin-top: 1.7rem; }
 .primary {
   display: inline-flex;
@@ -154,7 +147,6 @@
   .hero { grid-template-columns: minmax(0, 1fr); row-gap: 1.65rem; }
   .heroTitle { max-width: 17ch; text-wrap: initial; }
   .identity { margin-bottom: 1.4rem; }
-  .description { max-width: 37ch; }
 }
 @media (max-width: 620px) {
   .home { width: calc(100% - 2rem); }
