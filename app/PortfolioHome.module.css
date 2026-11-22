@@ -55,7 +55,7 @@
   line-height: 1.67;
 }
 .actions { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.15rem; margin-top: 1.7rem; }
-.primary, .secondary {
+.primary {
   display: inline-flex;
   align-items: center;
   gap: .65rem;
@@ -71,9 +71,6 @@
   color: var(--color-on-accent);
 }
 .primary:hover { filter: brightness(1.1); }
-.secondary { color: var(--color-ink); text-underline-offset: .25rem; }
-.secondary:hover { text-decoration: underline; }
-.secondary span { color: var(--color-accent); }
 .feature { margin: 0; }
 .featureImage {
   display: block;

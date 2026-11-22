@@ -34,7 +34,6 @@ export default function Header() {
           leejj.dev
         </Link>
         <nav aria-label="포트폴리오 메뉴" className="flex shrink-0 items-center gap-3 text-xs font-semibold sm:gap-6 sm:text-sm">
-          <Link href="/#projects" className="whitespace-nowrap hover:text-accent">프로젝트</Link>
           <a href={RESUME_URL} target="_blank" rel="noreferrer" className="whitespace-nowrap hover:text-accent">이력서</a>
           {/* 커서를 따라 고개를 돌리는 Jun의 머리. 상세 화면에서는 그 프로젝트 대화창으로, 나머지에서는 전체 대화로 간다. */}
           {isProjectDetail ? (
