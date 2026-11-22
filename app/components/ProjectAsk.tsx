@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
-import { RECORD_NOTICE } from '../content/site';
+import { ASK_PATH, RECORD_NOTICE } from '../content/site';
 import type { AskAnswer } from '../lib/ask/types';
 import { Answer, Thinking, chip, readStream } from './AskBox';
 
@@ -29,7 +29,7 @@ const FAILED: AskAnswer = {
   follow: [],
 };
 
-export default function ProjectAsk({ slug, title }: { slug: string; title: string }) {
+export default function ProjectAsk({ slug, title, topics }: { slug: string; title: string; topics: readonly string[] }) {
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const scroller = useRef<HTMLOListElement>(null);
@@ -109,7 +109,8 @@ export default function ProjectAsk({ slug, title }: { slug: string; title: strin
     ask(value);
   }
 
-  const starters = ['가장 어려웠던 점은?', '맡은 역할은?', '결과는 어땠어요?'];
+  const starters = [...topics, '맡은 역할은?', '결과는 어땠어요?'];
+  if (!topics.length) starters.unshift('가장 어려웠던 점은?');
 
   return (
     <section
@@ -118,7 +119,7 @@ export default function ProjectAsk({ slug, title }: { slug: string; title: strin
       className="flex max-h-[min(37.5rem,calc(100svh-8rem))] flex-col rounded-xl border border-border bg-surface"
     >
       <h2 id={`${inputId}-title`} className="px-5 pt-5 text-[0.9375rem] font-bold">
-        이 프로젝트에 대해 물어보기
+        Jun에게 이 프로젝트 묻기
       </h2>
 
       <p aria-live="polite" className="sr-only">
@@ -127,13 +128,11 @@ export default function ProjectAsk({ slug, title }: { slug: string; title: strin
 
       {entries.length === 0 ? (
         <div className="px-5 pt-2">
-          {/* 이 칸이 답하는 범위를 처음부터 알린다. 다른 질문은 첫 화면에서 받는다. */}
+          {/* 이 칸이 답하는 범위를 처음부터 알린다. 다른 질문은 전체 대화(/ask)에서 받는다. */}
           <p className="text-sm leading-relaxed text-muted">
-            읽다가 궁금한 점을 바로 물어보세요. 이 대화창은 이 프로젝트에 대해서만 답합니다. 다른 프로젝트나 경력은{' '}
-            <a href="/" className="underline underline-offset-4 transition-colors hover:text-accent">
-              첫 화면
-            </a>
-            에서 물어봐 주세요.
+            더 궁금한 작업이 있으면 아래 질문을 골라보세요. 경력이나 다른 작업은{' '}
+            <a href={ASK_PATH} className="underline underline-offset-4 transition-colors hover:text-accent">전체 대화</a>
+            에서 물어볼 수 있어요.
           </p>
           <ul className="mt-4 flex flex-wrap gap-2" aria-label="질문 예시">
             {starters.map((q) => (

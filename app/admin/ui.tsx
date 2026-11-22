@@ -39,6 +39,7 @@ export function durationText(seconds: number | null) {
 
 export function pageName(path: string | null) {
   if (path === '/') return '첫 화면';
+  if (path === '/ask') return 'Jun에게 묻기';
   return (path && titles.get(path)) ?? path ?? '';
 }
 
@@ -131,7 +132,7 @@ export function QuestionTable({ questions, showVisitor = true }: { questions: Qu
             <time>{q.at}</time>
           </td>
           <td className="py-2 pr-4">{q.question}</td>
-          <td className="py-2 pr-4 text-muted">{q.page ? pageName(`/projects/${q.page}`) : '첫 화면'}</td>
+          <td className="py-2 pr-4 text-muted">{q.page ? pageName(`/projects/${q.page}`) : 'Jun에게 묻기'}</td>
           <td className="whitespace-nowrap py-2 pr-4 text-muted">{ANSWERED_BY[q.answeredBy] ?? q.answeredBy}</td>
           {showVisitor && (
             <td className="whitespace-nowrap py-2 font-mono text-xs">

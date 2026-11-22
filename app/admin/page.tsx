@@ -16,7 +16,6 @@ import { Block, Empty, QuestionTable, Table, VisitTable, adminHref, number, page
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: '관리자',
   robots: { index: false, follow: false },
 };
 
@@ -72,7 +71,7 @@ function Dashboard({ stats }: { stats: Stats }) {
                   {a.at}
                 </td>
                 <td className="py-2 pr-4">{a.question}</td>
-                <td className="py-2 pr-4 text-muted">{a.page ? pageName(`/projects/${a.page}`) : '첫 화면'}</td>
+                <td className="py-2 pr-4 text-muted">{a.page ? pageName(`/projects/${a.page}`) : 'Jun에게 묻기'}</td>
                 <td className="py-2 pr-4 text-muted">{a.route}</td>
                 <td className="py-2 text-right text-muted" data-numeric>
                   {a.confidence == null ? '' : a.confidence.toFixed(2)}

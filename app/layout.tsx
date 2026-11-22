@@ -11,17 +11,8 @@ import { THEME_SCRIPT } from './lib/theme';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  /*
-    첫 화면과 대화 화면의 탭 제목은 "Jun's Portfolio"다. title을 정하는 페이지는 프로젝트 상세뿐이라
-    상세만 "더원서울안과 홈페이지 리뉴얼 | 이정준"처럼 나온다. 예전에는 template에 %s를 빼서
-    모든 탭을 같은 제목으로 두었는데, 검색 결과에서 상세 페이지 아홉 개가 구분되지 않았다.
-    공유 카드 제목은 각 페이지의 openGraph.title이 따로 맡는다.
-  */
-  title: {
-    default: "Jun's Portfolio",
-    template: '%s | 이정준',
-  },
-  description: '이정준의 경력과 프로젝트를 검색창에 물어보세요. 모든 답은 실제 기록을 근거로 합니다.',
+  title: "Jun's Portfolio",
+  description: '이정준의 프로젝트와 맡은 역할을 둘러보고, 작업 중 궁금한 점은 Jun에게 물어보세요.',
   /*
     루트를 canonical로 못박는다. 같은 내용이 www·vercel.app 주소로도 열려
     있어 중복 문서로 잡힐 여지가 있다. 하위 페이지는 각자 alternates로 덮는다.
@@ -29,12 +20,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
   },
-  /*
-    openGraph·twitter에 title/description을 다시 적지 않는다. 여기서 못박으면
-    하위 페이지가 openGraph만 덮었을 때 twitter 쪽은 이 값에 그대로 묶여,
-    프로젝트 상세를 X에 공유해도 카드 제목이 "Jun's Portfolio"로 나간다.
-    비워 두면 각 페이지의 title·description이 그대로 따라온다.
-  */
+  // 프로젝트와 공유된 질문의 카드 제목은 각 페이지의 Open Graph 설정에서 정한다.
   openGraph: {
     type: 'website',
     url: SITE_URL,

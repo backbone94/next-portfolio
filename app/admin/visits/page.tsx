@@ -15,7 +15,6 @@ import { Block, QuestionTable, VisitTable, adminHref, number } from '../ui';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: '방문 기록',
   robots: { index: false, follow: false },
 };
 

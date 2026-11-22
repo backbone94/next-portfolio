@@ -1,58 +1,47 @@
 .artwork {
-  --jun-eye-light: #e5fcff;
-  --jun-eye-color: #a9f4ff;
-  --jun-eye-edge: #55d6fc;
-  --jun-eye-halo: 24 144 255;
+  --jun-still: url('/guide/jun-day.webp');
   --jun-shadow: 22 35 65 / 0.24;
 }
 
 :global(:root[data-theme='dark']) .artwork,
 :global(:root[data-system-dark]:not([data-theme])) .artwork {
-  /* 흰 외장은 남청색으로, 파란 스카프는 보랏빛으로 바꾼다. */
-  --jun-color-filter: brightness(0.53) hue-rotate(-140deg) sepia(0.34) hue-rotate(181deg) saturate(1.38);
-  --jun-eye-light: #dcfbff;
-  --jun-eye-color: #a4edff;
-  --jun-eye-edge: #63d0ff;
-  --jun-eye-halo: 40 155 255;
+  --jun-still: url('/guide/jun-night.webp');
   --jun-shadow: 0 0 0 / 0.48;
-}
-
-.body,
-.hand,
-.avatar {
-  filter: var(--jun-color-filter, none);
-}
-
-.body {
-  background: url('/guide/robot-body-day.webp') center / 100% 100% no-repeat;
-}
-
-.eye {
-  width: 11.2%;
-  aspect-ratio: 1;
-  background: radial-gradient(circle at 45% 40%, var(--jun-eye-light) 5%, var(--jun-eye-color) 68%, var(--jun-eye-edge));
-  box-shadow: 0 0 0.5rem rgb(var(--jun-eye-halo) / 0.82);
-}
-
-.leftEye {
-  left: 38.6%;
-  top: 21.9%;
-}
-
-.rightEye {
-  left: 62.3%;
-  top: 25.6%;
-}
-
-.hand {
-  left: 0;
-  top: 0;
 }
 
 .shadow {
   background: radial-gradient(closest-side, rgb(var(--jun-shadow)), transparent);
 }
 
-.avatar {
-  background: url('/guide/robot-avatar.webp') center / contain no-repeat;
+.threeStage,
+.fallback {
+  position: absolute;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+}
+
+.fallback {
+  background: var(--jun-still) center / contain no-repeat;
+}
+
+.threeStage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.threeStage[data-jun3d='ready'] + .fallback {
+  visibility: hidden;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .avatarIdle {
+    animation: avatar-hover 3.22s ease-in-out infinite;
+  }
+}
+
+@keyframes avatar-hover {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
 }

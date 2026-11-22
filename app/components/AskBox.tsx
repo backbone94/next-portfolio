@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useId, useLayoutEffect, useRef, useState, type FormEvent, type ReactNode, type RefObject } from 'react';
-import { ASK, CONTACT, RECORD_NOTICE, RESUME_URL, STARTERS, askHref } from '../content/site';
+import { ASK_PATH, CONTACT, RECORD_NOTICE, RESUME_URL, STARTERS, askHref } from '../content/site';
 import { answerToHtml, answerToMarkdown, applyStreamEvent, cleanSegments, toBlocks } from '../lib/ask/format';
 import type { AnswerProject, AskAnswer, AskStreamEvent } from '../lib/ask/types';
 import { say, type GuideCue } from '../lib/guide';
@@ -13,7 +13,7 @@ import RobotGuide, { GUIDE_NAME, RobotAvatar } from './RobotGuide';
 import ThemeToggle from './ThemeToggle';
 
 /**
- * 첫 화면 전체. 요즘 AI 채팅 화면의 문법을 따른다.
+ * 전체 대화 화면(/ask). 요즘 AI 채팅 화면의 문법을 따른다.
  *
  * - 질문 전: 인사말과 입력창이 화면 가운데에 있다.
  * - 질문 후: 대화가 위에서 아래로 시간순으로 흐르고, 입력창은 화면 아래에 붙는다.
@@ -21,7 +21,7 @@ import ThemeToggle from './ThemeToggle';
  * - 답변은 글자가 흘러나오듯 나타나고, 다 나온 뒤에 출처·이어서 물어보기가 붙는다.
  *
  * 옛 포트폴리오 화면으로 내보내지 않는다. 프로젝트 목록·카드·경력은 답변
- * 안에서 그린다. 마지막 질문은 주소(/?q=)에 남아서, 그 주소를 보내면 받은
+ * 안에서 그린다. 마지막 질문은 질문 주소에 남아서, 그 주소를 보내면 받은
  * 사람에게도 같은 답이 펼쳐진 채로 열린다.
  */
 
@@ -46,8 +46,11 @@ type Entry = { id: number; question: string; answer?: AskAnswer; instant?: boole
 const isExternal = (href: string) =>
   href.startsWith('http') || href.endsWith('.pdf') || href.startsWith('mailto:') || href.startsWith('/projects/');
 
-/** "/?q=질문" 링크는 페이지를 옮기지 않고 같은 대화에 질문을 잇는다 */
-const questionOf = (href: string) => (href.startsWith('/?q=') ? decodeURIComponent(href.slice(4)) : null);
+/** 질문 주소 링크는 페이지를 옮기지 않고 같은 대화에 질문을 잇는다 */
+const questionOf = (href: string) => {
+  if (!href.startsWith(`${ASK_PATH}?q=`) && !href.startsWith('/?q=')) return null;
+  return new URLSearchParams(href.slice(href.indexOf('?') + 1)).get('q');
+};
 
 /**
  * 질문 버튼. 줄바꿈을 막지 않는다. 짧은 질문은 어절 단위 줄바꿈(keep-all) 덕에 어차피 한 줄로 서고,
@@ -58,8 +61,8 @@ export const chip =
   'max-w-full rounded-md bg-surface-2 px-3.5 py-1.5 text-left text-sm font-medium text-text/80 transition-colors hover:bg-accent/10 hover:text-accent disabled:opacity-50';
 
 /**
- * inline: "/?q=" 링크를 지금 대화에 이어 묻는다. 상세 페이지 옆 칸은 그 프로젝트만 답해서,
- * 거기서는 끄고 첫 화면을 새 탭으로 연다. 옆 칸에서 다시 물으면 같은 안내만 되돌아온다.
+ * inline: 질문 링크를 지금 대화에 이어 묻는다. 상세 페이지 옆 칸은 그 프로젝트만 답해서,
+ * 거기서는 끄고 전체 대화(/ask)를 새 탭으로 연다. 옆 칸에서 다시 물으면 같은 안내만 되돌아온다.
  */
 function ChipLink({
   href,
@@ -645,7 +648,7 @@ function Composer({
 /* ── 화면 ── */
 
 type Props = {
-  /** 주소(/?q=)로 들어왔고 직접 쓴 답이 있으면 서버가 미리 찾아 넘긴다 */
+  /** 질문 주소로 들어왔고 직접 쓴 답이 있으면 서버가 미리 찾아 넘긴다 */
   initial?: { question: string; answer: AskAnswer };
   /** 주소로 들어왔지만 직접 쓴 답이 없는 질문. 화면이 뜬 뒤 평소처럼 물어본다 */
   askOnLoad?: string;
@@ -711,8 +714,8 @@ export default function AskBox({ initial, askOnLoad }: Props) {
   }, []);
 
   /*
-    공유받은 주소(/?q=)로 바로 들어온 경우. 그대로 두면 뒤로 가기가 링크를 누른
-    사이트로 가 버린다. 지금 칸을 검색창(/)으로 바꾸고 그 위에 대화 칸을 쌓아서,
+    공유받은 질문 주소로 바로 들어온 경우. 그대로 두면 뒤로 가기가 링크를 누른
+    사이트로 가 버린다. 지금 칸을 검색창(/ask)으로 바꾸고 그 위에 대화 칸을 쌓아서,
     여기서도 뒤로 가기 한 번이면 검색창이 나오게 한다.
   */
   const enteredByLink = useRef(false);
@@ -724,7 +727,7 @@ export default function AskBox({ initial, askOnLoad }: Props) {
     // 표시는 타이머 안에서 단다. 개발 모드는 효과를 한 번 지웠다 다시 돌리는데, 밖에서 달면 두 번째가 그냥 지나간다.
     const timer = setTimeout(() => {
       enteredByLink.current = true;
-      window.history.replaceState({ askChat: false }, '', '/');
+      window.history.replaceState({ askChat: false }, '', ASK_PATH);
       window.history.pushState({ askChat: true }, '', askHref(question));
       // 직접 쓴 답이 없는 질문이면 이제 물어본다. 기록 칸은 방금 쌓았다.
       if (askOnLoad) ask(askOnLoad, { stacked: true, typed: true });
@@ -830,39 +833,28 @@ export default function AskBox({ initial, askOnLoad }: Props) {
   const guideHover = { onPointerOver: onGuideTarget, onFocus: onGuideTarget, onPointerLeave: leaveGuideTarget, onBlur: leaveGuideTarget };
 
   if (!started) {
-    // 정가운데에 두면 눈이 가는 입력창이 화면 중심보다 아래에 놓여 처져 보인다. 아래 여백으로 묶음을 화면 높이의 12%만큼 올려
-    // 입력창이 위에서 44% 안팎에 오게 한다.
-    // 휴대폰(sm 미만)은 질문 버튼이 세 줄로 늘고 안내 로봇까지 위에 서서 묶음이 화면 높이에 가깝다.
-    // 아래 여백으로 바닥의 바로가기 줄 자리를 비워 둔다. 세로가 짧은 화면에서는 묶음이 그 줄과 겹치지 않고 페이지가 조금 길어진다.
     return (
-      <section className="relative mx-auto flex min-h-[100svh] max-w-intro flex-col justify-center px-5 pb-24 pt-6 sm:pb-[24svh] sm:pt-0 lg:px-0">
-        <ThemeToggle className="absolute right-5 top-4 z-10 lg:right-0" />
-        <div className="animate-rise">
-          {/* 휴대폰에서는 줄인다. 질문 버튼이 여러 줄로 늘어나 세로 자리가 모자라다. */}
-          {/* 왼쪽 끝(흔드는 손과 그림자)을 인사말 첫 글자에 맞춘다 */}
-          <RobotGuide cue={guide} className="w-[150px] sm:w-[200px]" />
-          <h1 className="text-[clamp(2rem,5vw,3rem)] font-black leading-[1.2] tracking-[-0.03em]">
-            안녕하세요, 이정준입니다.
-            <br />
-            <span className="text-accent">무엇이든 물어보세요.</span>
-          </h1>
-          <div className="mt-8">{composer}</div>
-          <ul className="mt-4 flex flex-wrap gap-2" aria-label="질문 예시">
-            {STARTERS.map((q) => (
-              <li key={q}>
-                <button type="button" onClick={() => ask(q)} className={chip}>
-                  {q}
-                </button>
-              </li>
-            ))}
-          </ul>
-          <p className="mt-5 text-xs text-muted">{RECORD_NOTICE}</p>
+      <section aria-label="Jun에게 묻기" className="mx-auto flex min-h-[100svh] max-w-intro flex-col px-5 pb-7 pt-4 lg:px-0">
+        <ThemeToggle className="self-end" />
+        <div className="flex flex-1 items-center justify-center py-8 sm:pb-16">
+          <div className="w-full max-w-[38rem] animate-rise">
+            <RobotGuide cue={guide} />
+            <div className="mt-6">{composer}</div>
+            <ul className="mx-auto mt-4 grid max-w-[30rem] grid-cols-2 gap-2" aria-label="질문 예시">
+              {STARTERS.map((q) => (
+                <li key={q} className="min-w-0">
+                  <button type="button" onClick={() => ask(q)} className={`${chip} h-full w-full !text-center`}>
+                    {q}
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-4 text-center text-xs text-muted">{RECORD_NOTICE}</p>
+          </div>
         </div>
-        {/* 질문하지 않고 훑으려는 사람을 위한 길. 화면을 옮기지 않고 같은 대화로 연다. */}
-        <nav aria-label="질문 없이 둘러보기" className="absolute inset-x-5 bottom-8 flex flex-wrap gap-x-5 gap-y-2 text-sm lg:inset-x-0" {...guideHover}>
-          <button type="button" onClick={() => ask(ASK.projects)} className={textLink}>
-            프로젝트 전체 보기 →
-          </button>
+        {/* 대표 프로젝트부터 둘러볼 수 있게 홈으로 연결한다. */}
+        <nav aria-label="질문 없이 둘러보기" className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm" {...guideHover}>
+          <Link href="/" className={textLink}>프로젝트 둘러보기 →</Link>
           {quickLinks}
         </nav>
       </section>
@@ -872,11 +864,10 @@ export default function AskBox({ initial, askOnLoad }: Props) {
   return (
     <section className="mx-auto max-w-chat px-5 xl:px-0">
       {/* 대화 중에도 누구의 사이트인지, 이력서와 연락처가 어디인지 보이게 한다 */}
-      <div className="flex h-16 items-center justify-between gap-3 text-sm">
-        <button type="button" onClick={reset} className="font-bold tracking-tight transition-colors hover:text-accent">
-          leejj.dev
-        </button>
-        <div className="flex items-center gap-2 sm:gap-4" {...guideHover}>
+      <div className="flex min-h-16 flex-wrap items-center justify-between gap-x-4 gap-y-1 py-2 text-sm">
+        <Link href="/" className="font-bold tracking-tight transition-colors hover:text-accent">leejj.dev</Link>
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4" {...guideHover}>
+          <button type="button" onClick={reset} className={textLink}>새 질문</button>
           {quickLinks}
           <ThemeToggle />
         </div>
@@ -896,9 +887,9 @@ export default function AskBox({ initial, askOnLoad }: Props) {
             <div ref={i === entries.length - 1 ? lastQuestion : undefined} className="flex scroll-mt-6 justify-end">
               <p className="max-w-[85%] rounded-lg bg-surface-2 px-4 py-2.5 leading-relaxed">{question}</p>
             </div>
-            {/* 메신저처럼 답변마다 안내 로봇의 얼굴과 이름을 붙인다. 답을 찾는 동안에는 얼굴이 떠다닌다. */}
+            {/* 답변마다 안내 로봇의 얼굴과 이름을 붙인다. */}
             <div className="mt-5 flex gap-3">
-              <RobotAvatar busy={!answer || live} className="h-8 w-8 sm:h-9 sm:w-9" />
+              <RobotAvatar active={i === entries.length - 1} className="h-8 w-10 sm:h-9 sm:w-11" />
               <div className="min-w-0 flex-1">
                 <p className="mb-1.5 text-sm font-semibold leading-8 sm:leading-9">{GUIDE_NAME}</p>
                 {answer ? <Answer question={question} answer={answer} instant={instant} live={live} onFollow={ask} disabled={pending} /> : <Thinking />}

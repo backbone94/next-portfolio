@@ -2,12 +2,9 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { RESUME_URL } from '../content/site';
 import ThemeToggle from './ThemeToggle';
 
-/**
- * 프로젝트 상세 같은 하위 페이지의 머리줄. 로고와 테마 전환을 둔다.
- * 프로젝트·경력·연락처는 첫 화면의 대화가 맡고, 로고를 누르면 거기로 돌아간다.
- */
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -30,7 +27,10 @@ export default function Header() {
         <Link href="/" className="text-[0.95rem] font-bold tracking-tight">
           leejj.dev
         </Link>
-        <ThemeToggle />
+        <nav aria-label="포트폴리오 메뉴" className="flex shrink-0 items-center gap-3 text-xs font-semibold sm:gap-6 sm:text-sm">
+          <a href={RESUME_URL} target="_blank" rel="noreferrer" className="whitespace-nowrap hover:text-accent">이력서</a>
+          <ThemeToggle />
+        </nav>
       </div>
     </header>
   );

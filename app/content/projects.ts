@@ -43,7 +43,7 @@ export const projects: Project[] = [
     title: '밝은눈안과 잠실점 홈페이지 리뉴얼',
     slug: 'bgneye-jamsil',
     aliases: ['밝은눈', '잠실', 'BGN 잠실', 'BGN Jamsil'],
-    summary: '기존 PHP 웹사이트를 Next.js 및 Nest.js 로 리뉴얼',
+    summary: 'SEO 강화를 위한 리뉴얼 프로젝트',
     highlight: '레거시 데이터와 파일을 이관하고 백엔드 API를 구현하여 11월 18일 밝은눈안과 잠실점 리뉴얼 홈페이지를 오픈하였습니다.',
     role: '백엔드 개발, 데이터 이관, AWS 운영 인프라 구축 및 전환',
     tags: ['실무', 'Next.js', 'NestJS', 'Prisma', 'PostgreSQL', 'AWS'],

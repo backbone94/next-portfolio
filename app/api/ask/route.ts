@@ -1,5 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import type { NextRequest } from 'next/server';
+import { PROJECT_QUESTIONS } from '@/app/content/projectQuestions';
 import { STARTER_QUESTIONS } from '@/app/content/projectAnswers';
 import { getProject, type Project } from '@/app/content/projects';
 import { askHref } from '@/app/content/site';
@@ -196,8 +197,18 @@ async function answerInPanel(asked: string, project: Project, ip: string, signal
     return Response.json(answer);
   };
   const here = `이 대화창은 ${shortName(project)}에 대해서만 답합니다.`;
-  // 첫 화면 링크(/?q=)는 누르면 첫 화면에서 그 질문이 바로 실행된다
-  const toHome: AskAnswer = { ...notice(`${here} 다른 질문은 첫 화면 검색창에서 물어봐 주세요.`), links: [{ label: '첫 화면에서 물어보기', href: askHref(asked) }] };
+  // 질문 링크(/ask?q=)를 누르면 전체 대화에서 그 질문이 바로 실행된다
+  const toHome: AskAnswer = { ...notice(`${here} 다른 질문은 전체 대화에서 물어봐 주세요.`), links: [{ label: 'Jun에게 묻기', href: askHref(asked) }] };
+
+  const topics = PROJECT_QUESTIONS[project.slug] ?? [];
+  const topic = topics.find(item => item.question === asked);
+  if (topic) return reply({
+    source: 'prepared',
+    segments: [{ text: topic.answer }],
+    sources: [],
+    links: [],
+    follow: [...topics.filter(item => item !== topic).map(item => item.question), STARTER_QUESTIONS.role],
+  }, 'starter:project-topic');
 
   const others = findProjects(asked).filter((p) => p.slug !== project.slug);
   if (others.length > 0) {
