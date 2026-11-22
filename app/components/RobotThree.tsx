@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type RefObject } from 'react';
 import {
   ACESFilmicToneMapping,
   HemisphereLight,
@@ -15,10 +15,13 @@ import {
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { makeJunModel } from './junModel';
 import styles from './RobotGuide.module.css';
+import { watchInputCaret } from './watchInputCaret';
 
 const NOD_DURATION = .95;
 
-export default function RobotThree({ greetingCount }: { greetingCount: number }) {
+export default function RobotThree({
+  greetingCount, inputRef,
+}: { greetingCount: number; inputRef?: RefObject<HTMLInputElement> }) {
   const host = useRef<HTMLSpanElement>(null);
   const greet = useRef<(() => void) | null>(null);
 
@@ -78,6 +81,7 @@ export default function RobotThree({ greetingCount }: { greetingCount: number })
     let nodAge = NOD_DURATION;
     let aimX = 0;
     let aimY = 0;
+    let caretAim: { x: number; y: number } | null = null;
     let lookX = 0;
     let lookY = 0;
     let showStillGreeting = false;
@@ -87,8 +91,9 @@ export default function RobotThree({ greetingCount }: { greetingCount: number })
     function draw(delta: number, still: boolean) {
       if (contextLost) return;
       const time = still ? 0 : elapsed;
-      lookX = still ? 0 : MathUtils.damp(lookX, aimX, 7, delta);
-      lookY = still ? 0 : MathUtils.damp(lookY, aimY, 7, delta);
+      const response = caretAim ? 13 : 7;
+      lookX = still ? 0 : MathUtils.damp(lookX, caretAim?.x ?? aimX, response, delta);
+      lookY = still ? 0 : MathUtils.damp(lookY, caretAim?.y ?? aimY, response, delta);
 
       const blinkAge = time - blinkAt;
       const blink = blinkAge >= 0 && blinkAge < .19
@@ -166,6 +171,19 @@ export default function RobotThree({ greetingCount }: { greetingCount: number })
       aimY = 0;
     }
 
+    const input = inputRef?.current;
+    const releaseCaret = input ? watchInputCaret(input, target => {
+      if (!target) {
+        caretAim = null;
+        return;
+      }
+      const bounds = holder.getBoundingClientRect();
+      caretAim = {
+        x: MathUtils.clamp((target.x - bounds.left - bounds.width / 2) / Math.max(1, target.width / 2), -1, 1),
+        y: MathUtils.clamp((bounds.top + bounds.height / 2 - target.y) / Math.max(1, bounds.height), -1.6, 1),
+      };
+    }) : undefined;
+
     function lose(event: Event) {
       event.preventDefault();
       contextLost = true;
@@ -233,6 +251,7 @@ export default function RobotThree({ greetingCount }: { greetingCount: number })
       intersection.disconnect();
       dimensions.disconnect();
       themeObserver.disconnect();
+      releaseCaret?.();
       model.dispose();
       reflection?.dispose();
       studio.dispose();
@@ -242,7 +261,7 @@ export default function RobotThree({ greetingCount }: { greetingCount: number })
       canvas.remove();
       delete holder.dataset.jun3d;
     };
-  }, []);
+  }, [inputRef]);
 
   useEffect(() => {
     if (greetingCount) greet.current?.();

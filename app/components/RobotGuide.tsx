@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
 import { GUIDE_EVENT, GUIDE_LINES, type GuideCue, type GuideMessage } from '../lib/guide';
 import JunFace from './JunFace';
 import styles from './RobotGuide.module.css';
@@ -21,7 +21,7 @@ const TALK_EVERY = 6000;
 const DOTTED = new Set<GuideCue>(['typing', 'thinking']);
 
 /** say()로 전달된 상황이 있으면 말풍선에 잠시 먼저 표시한다. */
-export default function RobotGuide({ cue }: { cue: GuideCue }) {
+export default function RobotGuide({ cue, inputRef }: { cue: GuideCue; inputRef: RefObject<HTMLInputElement> }) {
   const [override, setOverride] = useState<GuideCue | null>(null);
   const [dots, setDots] = useState(1);
   const current = override ?? cue;
@@ -84,7 +84,7 @@ export default function RobotGuide({ cue }: { cue: GuideCue }) {
           onClick={onPoke}
           className="relative block aspect-[7/5] w-full cursor-pointer touch-manipulation rounded-2xl"
         >
-          <JunFace greetingCount={greetingCount} />
+          <JunFace greetingCount={greetingCount} inputRef={inputRef} />
         </button>
       </div>
       <p
