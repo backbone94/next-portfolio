@@ -20,15 +20,8 @@ const TALK_EVERY = 6000;
 /** 뒤에 점이 하나씩 늘어나는(. .. ...) 상황. 듣거나 찾는 중이라 기다리는 느낌을 준다. */
 const DOTTED = new Set<GuideCue>(['typing', 'thinking']);
 
-/** 말풍선 꼬리. 로봇 쪽(왼쪽)을 가리킨다. 테두리 두 변만 그려 말풍선 테두리와 이어지게 한다. */
-const TAIL = 'left-0 top-4 -translate-x-1/2 rotate-45 border-b border-l';
-
-/**
- * cue: 지금 상황. say()로 온 상황이 있으면 그쪽이 잠시 앞선다.
- * 말풍선은 로봇 오른쪽에 여백을 두고, 휴대폰처럼 옆 자리가 좁으면 줄을 바꾼다.
- * className: 자리와 폭(w-…)을 정한다. 그림과 움직임은 모두 이 폭에 대한 비율이라 폭만 바꾸면 된다.
- */
-export default function RobotGuide({ cue, className = '' }: { cue: GuideCue; className?: string }) {
+/** say()로 전달된 상황이 있으면 말풍선에 잠시 먼저 표시한다. */
+export default function RobotGuide({ cue }: { cue: GuideCue }) {
   const [override, setOverride] = useState<GuideCue | null>(null);
   const [dots, setDots] = useState(1);
   const current = override ?? cue;
@@ -82,9 +75,9 @@ export default function RobotGuide({ cue, className = '' }: { cue: GuideCue; cla
   }, [current]);
 
   return (
-    <div className={`select-none ${styles.artwork} ${className}`}>
-      <div className="relative pb-[7%]">
-        <span aria-hidden className={`pointer-events-none absolute bottom-[3%] left-[25%] h-[13%] w-[50%] motion-safe:animate-[guide-shadow_3.22s_ease-in-out_infinite] rounded-[50%] ${styles.shadow}`} />
+    <div className={`flex min-w-0 select-none flex-col items-center gap-2 ${styles.artwork}`}>
+      <div className="relative w-[150px] pb-2 sm:w-[200px]">
+        <span aria-hidden className={`pointer-events-none absolute inset-x-1/4 bottom-0 h-[13%] rounded-[50%] motion-safe:animate-[guide-shadow_3.22s_ease-in-out_infinite] ${styles.shadow}`} />
         <button
           type="button"
           aria-label="Jun에게 인사하기"
@@ -93,17 +86,17 @@ export default function RobotGuide({ cue, className = '' }: { cue: GuideCue; cla
         >
           <JunFace greetingCount={greetingCount} />
         </button>
-        <p
-          aria-hidden="true"
-          className="absolute left-full top-[35%] ml-5 w-max max-w-[calc(100vw-13rem)] rounded-xl border border-border bg-surface px-3.5 py-2 text-sm font-medium leading-snug text-text sm:max-w-none sm:whitespace-nowrap"
-        >
-          <span aria-hidden className={`absolute h-2.5 w-2.5 border-border bg-surface ${TAIL}`} />
-          <span key={poke ? `poke-${poke.id}` : idle ? `talk-${turn}` : current} className="relative block animate-[guide-in_0.25s_ease-out]">
-            {poke ? poke.line : idle ? TALK_LINES[turn % TALK_LINES.length] : GUIDE_LINES[current]}
-            {!poke && DOTTED.has(current) && <span className="inline-block w-[1.2em] text-left">{'.'.repeat(dots)}</span>}
-          </span>
-        </p>
       </div>
+      <p
+        aria-hidden="true"
+        className="relative max-w-full rounded-xl border border-border bg-surface px-3.5 py-2 text-center text-sm font-medium leading-snug text-text"
+      >
+        <span aria-hidden className="absolute left-1/2 top-0 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rotate-45 border-l border-t border-border bg-surface" />
+        <span key={poke ? `poke-${poke.id}` : idle ? `talk-${turn}` : current} className="relative block animate-[guide-in_0.25s_ease-out]">
+          {poke ? poke.line : idle ? TALK_LINES[turn % TALK_LINES.length] : GUIDE_LINES[current]}
+          {!poke && DOTTED.has(current) && <span className="inline-block w-[1.2em] text-left">{'.'.repeat(dots)}</span>}
+        </span>
+      </p>
     </div>
   );
 }

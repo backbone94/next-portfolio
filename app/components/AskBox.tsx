@@ -833,36 +833,27 @@ export default function AskBox({ initial, askOnLoad }: Props) {
   const guideHover = { onPointerOver: onGuideTarget, onFocus: onGuideTarget, onPointerLeave: leaveGuideTarget, onBlur: leaveGuideTarget };
 
   if (!started) {
-    // 정가운데에 두면 눈이 가는 입력창이 화면 중심보다 아래에 놓여 처져 보인다. 아래 여백으로 묶음을 화면 높이의 12%만큼 올려
-    // 입력창이 위에서 44% 안팎에 오게 한다.
-    // 휴대폰(sm 미만)은 질문 버튼이 세 줄로 늘고 안내 로봇까지 위에 서서 묶음이 화면 높이에 가깝다.
-    // 아래 여백으로 바닥의 바로가기 줄 자리를 비워 둔다. 세로가 짧은 화면에서는 묶음이 그 줄과 겹치지 않고 페이지가 조금 길어진다.
     return (
-      <section className="relative mx-auto flex min-h-[100svh] max-w-intro flex-col justify-center px-5 pb-24 pt-6 sm:pb-[24svh] sm:pt-0 lg:px-0">
-        <ThemeToggle className="absolute right-5 top-4 z-10 lg:right-0" />
-        <div className="animate-rise">
-          {/* 휴대폰에서는 줄인다. 질문 버튼이 여러 줄로 늘어나 세로 자리가 모자라다. */}
-          {/* 왼쪽 끝(흔드는 손과 그림자)을 인사말 첫 글자에 맞춘다 */}
-          <RobotGuide cue={guide} className="w-[150px] sm:w-[200px]" />
-          <h1 className="text-[clamp(2rem,5vw,3rem)] font-black leading-[1.2] tracking-[-0.03em]">
-            안녕하세요, 이정준입니다.
-            <br />
-            <span className="text-accent">무엇이든 물어보세요.</span>
-          </h1>
-          <div className="mt-8">{composer}</div>
-          <ul className="mt-4 flex flex-wrap gap-2" aria-label="질문 예시">
-            {STARTERS.map((q) => (
-              <li key={q}>
-                <button type="button" onClick={() => ask(q)} className={chip}>
-                  {q}
-                </button>
-              </li>
-            ))}
-          </ul>
-          <p className="mt-5 text-xs text-muted">{RECORD_NOTICE}</p>
+      <section aria-label="Jun에게 묻기" className="mx-auto flex min-h-[100svh] max-w-intro flex-col px-5 pb-7 pt-4 lg:px-0">
+        <ThemeToggle className="self-end" />
+        <div className="flex flex-1 items-center justify-center py-8 sm:pb-16">
+          <div className="w-full max-w-[38rem] animate-rise">
+            <RobotGuide cue={guide} />
+            <div className="mt-6">{composer}</div>
+            <ul className="mx-auto mt-4 grid max-w-[30rem] grid-cols-2 gap-2" aria-label="질문 예시">
+              {STARTERS.map((q) => (
+                <li key={q} className="min-w-0">
+                  <button type="button" onClick={() => ask(q)} className={`${chip} h-full w-full !text-center`}>
+                    {q}
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-4 text-center text-xs text-muted">{RECORD_NOTICE}</p>
+          </div>
         </div>
         {/* 대표 프로젝트부터 둘러볼 수 있게 홈으로 연결한다. */}
-        <nav aria-label="질문 없이 둘러보기" className="absolute inset-x-5 bottom-8 flex flex-wrap gap-x-5 gap-y-2 text-sm lg:inset-x-0" {...guideHover}>
+        <nav aria-label="질문 없이 둘러보기" className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm" {...guideHover}>
           <Link href="/" className={textLink}>프로젝트 둘러보기 →</Link>
           {quickLinks}
         </nav>
