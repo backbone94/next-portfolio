@@ -7,7 +7,7 @@ import ProjectFacts from '../../components/ProjectFacts';
 import ProjectMedia from '../../components/ProjectMedia';
 import { getProject, projects } from '../../content/projects';
 
-type Props = { params: { slug: string } };
+type Props = { params: Promise<{ slug: string }> };
 
 export function generateStaticParams() {
   return projects.map((project) => ({ slug: project.slug }));
@@ -21,8 +21,8 @@ export function generateStaticParams() {
  */
 export const dynamicParams = false;
 
-export function generateMetadata({ params }: Props): Metadata {
-  const project = getProject(params.slug);
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const project = getProject((await params).slug);
   if (!project) return {};
 
   const thumbnail = project.media.find((item) => item.type === 'image');
@@ -40,8 +40,8 @@ export function generateMetadata({ params }: Props): Metadata {
   };
 }
 
-export default function ProjectDetailPage({ params }: Props) {
-  const project = getProject(params.slug);
+export default async function ProjectDetailPage({ params }: Props) {
+  const project = getProject((await params).slug);
   if (!project) notFound();
 
   const [type] = project.tags;

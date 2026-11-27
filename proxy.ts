@@ -27,7 +27,7 @@ function authorized(request: NextRequest, password: string) {
   return diff === 0;
 }
 
-export function middleware(request: NextRequest, event: NextFetchEvent) {
+export function proxy(request: NextRequest, event: NextFetchEvent) {
   if (request.nextUrl.pathname.startsWith('/admin')) {
     const password = process.env.ADMIN_PASSWORD;
     if (!password) return NextResponse.rewrite(new URL('/404', request.url), { status: 404 });
@@ -53,6 +53,6 @@ export function middleware(request: NextRequest, event: NextFetchEvent) {
 }
 
 export const config = {
-  // '/projects/:slug'로 적으면 상세 페이지에서 middleware가 돌지 않아 방문이 하나도 남지 않았다. :path*로 적어야 걸린다
+  // '/projects/:slug'로 적으면 상세 페이지에서 proxy가 돌지 않아 방문이 하나도 남지 않았다. :path*로 적어야 걸린다
   matcher: ['/', '/ask', '/projects/:path*', '/admin', '/admin/:path*'],
 };

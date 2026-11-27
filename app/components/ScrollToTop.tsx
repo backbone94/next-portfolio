@@ -27,6 +27,7 @@ export default function ScrollToTop() {
   */
   useEffect(() => {
     // 레이아웃에 붙은 버튼이라 페이지를 옮겨도 남는다. 주소가 바뀔 때마다 새 페이지의 대화창을 다시 찾는다.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Clear the previous route’s overlap state before observing the new page.
     setCovering(false);
     const target = document.querySelector('[data-hides-scroll-top]');
     if (!target) return;

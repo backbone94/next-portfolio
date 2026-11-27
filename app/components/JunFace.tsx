@@ -8,7 +8,7 @@ const RobotThree = dynamic(() => import('./RobotThree'), { ssr: false });
 
 export default function JunFace({
   greetingCount = 0, inputRef,
-}: { greetingCount?: number; inputRef?: RefObject<HTMLInputElement> }) {
+}: { greetingCount?: number; inputRef?: RefObject<HTMLInputElement | null> }) {
   return (
     <>
       <RobotThree greetingCount={greetingCount} inputRef={inputRef} />

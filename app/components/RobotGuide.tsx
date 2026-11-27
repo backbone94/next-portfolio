@@ -21,7 +21,7 @@ const TALK_EVERY = 6000;
 const DOTTED = new Set<GuideCue>(['typing', 'thinking']);
 
 /** say()로 전달된 상황이 있으면 말풍선에 잠시 먼저 표시한다. */
-export default function RobotGuide({ cue, inputRef }: { cue: GuideCue; inputRef: RefObject<HTMLInputElement> }) {
+export default function RobotGuide({ cue, inputRef }: { cue: GuideCue; inputRef: RefObject<HTMLInputElement | null> }) {
   const [override, setOverride] = useState<GuideCue | null>(null);
   const [dots, setDots] = useState(1);
   const current = override ?? cue;

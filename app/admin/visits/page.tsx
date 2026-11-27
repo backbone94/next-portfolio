@@ -6,7 +6,7 @@ import { Block, QuestionTable, VisitTable, adminHref, number } from '../ui';
 
 /**
  * 방문 기록 전체. 대시보드(app/admin/page.tsx)는 최근 몇 건만 보여 주고, 여기서 최신순으로 쪽을 나눠 본다.
- * 비밀번호는 middleware.ts가 /admin 아래를 모두 묻는다.
+ * 비밀번호는 proxy.ts가 /admin 아래를 모두 묻는다.
  *
  * ?visitor=3fefab처럼 방문자 값을 주면 그 방문자의 방문과 질문만 본다. 같은 날 한 사람이 어떻게 옮겨 다니며 무엇을 물었는지 따라갈 때 쓴다.
  * 대시보드와 같이 확실히 사람인 방문만 보여 준다.
@@ -18,15 +18,16 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-type Props = { searchParams: { visitor?: string; page?: string } };
+type Props = { searchParams: Promise<{ visitor?: string; page?: string }> };
 
 
 export default async function VisitsPage({ searchParams }: Props) {
   if (!process.env.ADMIN_PASSWORD) notFound();
 
   // 화면에 보이는 앞 6자리만 받는다(app/admin/stats.ts의 Visit)
-  const visitor = /^[0-9a-f]{6}$/.test(searchParams.visitor ?? '') ? searchParams.visitor! : null;
-  const page = Math.max(1, Math.floor(Number(searchParams.page)) || 1);
+  const query = await searchParams;
+  const visitor = /^[0-9a-f]{6}$/.test(query.visitor ?? '') ? query.visitor! : null;
+  const page = Math.max(1, Math.floor(Number(query.page)) || 1);
 
   const [result, questions] = await Promise.all([
     loadVisits({ page, visitor }),

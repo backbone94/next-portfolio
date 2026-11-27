@@ -3,7 +3,8 @@ import { NONE, ROUTES } from '@/app/lib/ask/prepared';
 import { routeWithKeywords } from '@/app/lib/ask/router';
 import type { Metadata } from 'next';
 
-type Props = { searchParams: { q?: string | string[] } };
+type SearchParams = { q?: string | string[] };
+type Props = { searchParams: Promise<SearchParams> };
 
 // 기존 공유 주소와 여러 번 인코딩된 예전 프로젝트 목록 주소를 처리한다.
 function decodeOnceMore(text: string) {
@@ -15,7 +16,7 @@ function decodeOnceMore(text: string) {
   }
 }
 
-function resolve(searchParams: Props['searchParams']) {
+function resolve(searchParams: SearchParams) {
   const raw = Array.isArray(searchParams.q) ? searchParams.q[0] : searchParams.q;
   const question = raw && decodeOnceMore(raw).trim().slice(0, 200);
   if (!question) return null;
@@ -24,8 +25,8 @@ function resolve(searchParams: Props['searchParams']) {
   return { question, answer: answer ?? null };
 }
 
-export function generateMetadata({ searchParams }: Props): Metadata {
-  const found = resolve(searchParams);
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const found = resolve(await searchParams);
   if (!found?.answer) return { alternates: { canonical: '/ask' } };
   const description = found.answer.segments.map((s) => s.text).join('').replace(/\n+(- )?/g, ' ').slice(0, 150);
   return {
@@ -35,8 +36,8 @@ export function generateMetadata({ searchParams }: Props): Metadata {
   };
 }
 
-export default function AskPage({ searchParams }: Props) {
-  const found = resolve(searchParams);
+export default async function AskPage({ searchParams }: Props) {
+  const found = resolve(await searchParams);
   return (
     <AskBox
       // 질문이 바뀌면 대화를 새로 시작한다 (헤더 메뉴에서 다른 질문 주소로 들어온 경우)

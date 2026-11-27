@@ -156,6 +156,7 @@ function useReveal(total: number, instant = false) {
 
   useEffect(() => {
     if (instant || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Synchronize the reveal with the browser’s motion preference.
       setShown(total);
       return;
     }
@@ -587,7 +588,7 @@ function Composer({
   onSubmit: (e: FormEvent) => void;
   placeholder: string;
   pending: boolean;
-  inputRef: RefObject<HTMLInputElement>;
+  inputRef: RefObject<HTMLInputElement | null>;
 }) {
   const inputId = useId();
   // 마우스가 있는 화면에서만 입력창에 바로 포커스를 준다. 터치 화면은 포커스가 가면 키보드가 저절로 올라와

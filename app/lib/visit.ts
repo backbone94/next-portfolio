@@ -3,9 +3,9 @@ import type { NextFetchEvent, NextRequest } from 'next/server';
 
 /**
  * 방문 기록. 첫 화면과 프로젝트 상세를 열 때마다 Neon Postgres의 visit_log 표에 한 줄씩 남긴다(표는 db/visit_log.sql).
- * middleware.ts에서 부른다. 상세 페이지는 빌드할 때 미리 만든 정적 페이지라 페이지 안에서는 방문을 알 수 없다.
+ * proxy.ts에서 부른다. 상세 페이지는 빌드할 때 미리 만든 정적 페이지라 페이지 안에서는 방문을 알 수 없다.
  *
- * - 응답을 먼저 보내고 기록은 그 뒤에 한다. middleware의 event.waitUntil로 기록이 끝날 때까지 붙잡아 둔다.
+ * - 응답을 먼저 보내고 기록은 그 뒤에 한다. proxy의 event.waitUntil로 기록이 끝날 때까지 붙잡아 둔다.
  *   기록이 느리거나 실패해도 방문자는 기다리지 않는다(app/lib/ask/store.ts와 같다).
  * - IP·쿠키·User-Agent 원문은 남기지 않는다. 같은 날 같은 사람을 묶는 데만 IP와 User-Agent를 해시해 쓰고 버린다.
  *   해시에 그날 날짜를 섞어서 날이 바뀌면 같은 사람도 다른 값이 된다. 며칠에 걸쳐 한 사람을 따라갈 수 없다.
@@ -19,7 +19,7 @@ import type { NextFetchEvent, NextRequest } from 'next/server';
 
 const sql = process.env.DATABASE_URL ? neon(process.env.DATABASE_URL) : null;
 
-/** 관리자 화면에 로그인하면 middleware가 심는 쿠키. 이 쿠키가 있는 브라우저는 방문으로 세지 않는다 */
+/** 관리자 화면에 로그인하면 proxy가 심는 쿠키. 이 쿠키가 있는 브라우저는 방문으로 세지 않는다 */
 export const ADMIN_COOKIE = 'leejj_admin';
 
 /** 기록하지 않을 IP. 쉼표로 여러 개를 적는다. IP는 저장소에 올리지 않으려고 환경 변수로 받는다 */
@@ -207,7 +207,7 @@ export function recordVisit(request: NextRequest, event: NextFetchEvent) {
  * 같은 방문자 값과 경로로 방금 남긴 방문 한 건에 js = true와 webdriver 값을 채운다. 쿠키 없이 묶으려고 방문자 값을 다시 계산한다.
  * 맞는 방문이 없으면(주인의 방문, 봇으로 걸러진 요청, 10분이 지난 화면) 아무것도 하지 않는다.
  *
- * navigated는 사이트 안에서 링크를 눌러 옮겨 온 화면이라는 뜻이다. 이 이동은 middleware가 방문으로 세지 않으므로
+ * navigated는 사이트 안에서 링크를 눌러 옮겨 온 화면이라는 뜻이다. 이 이동은 proxy가 방문으로 세지 않으므로
  * (recordVisit) 여기서 방문 한 줄을 새로 남긴다. 화면이 실행된 뒤에 온 신호라 js는 처음부터 true다.
  */
 export async function confirmVisit(request: NextRequest, path: string, webdriver: boolean, navigated: boolean) {

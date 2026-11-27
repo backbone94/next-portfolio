@@ -21,7 +21,7 @@ const NOD_DURATION = .95;
 
 export default function RobotThree({
   greetingCount, inputRef,
-}: { greetingCount: number; inputRef?: RefObject<HTMLInputElement> }) {
+}: { greetingCount: number; inputRef?: RefObject<HTMLInputElement | null> }) {
   const host = useRef<HTMLSpanElement>(null);
   const greet = useRef<(() => void) | null>(null);
 

@@ -31,6 +31,7 @@ export default function ProjectMedia({ media, priority = false }: Props) {
 
   useEffect(() => {
     const query = window.matchMedia('(prefers-reduced-motion: reduce)');
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Read the browser-only motion preference after hydration.
     setPrefersReducedMotion(query.matches);
 
     const onChange = (event: MediaQueryListEvent) => setPrefersReducedMotion(event.matches);
@@ -97,7 +98,6 @@ export default function ProjectMedia({ media, priority = false }: Props) {
                   재생 버튼을 두지 않는다. 동작 축소를 요청한 사용자에게는
                   자동 재생 대신 컨트롤을 줘서 직접 켜게 한다.
                 */
-                /* eslint-disable-next-line jsx-a11y/media-has-caption */
                 <video
                   src={item.src}
                   aria-label={item.alt}
@@ -110,7 +110,6 @@ export default function ProjectMedia({ media, priority = false }: Props) {
                   className="swiper-no-swiping h-full w-full object-contain"
                 />
               ) : playing.includes(index) ? (
-                /* eslint-disable-next-line jsx-a11y/media-has-caption */
                 <video
                   src={item.src}
                   controls

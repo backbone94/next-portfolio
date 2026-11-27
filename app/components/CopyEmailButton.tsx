@@ -26,6 +26,7 @@ export default function CopyEmailButton({ className, children = '메일' }: { cl
   // 안드로이드 13 이상은 시스템이 "복사했어요"를 띄운다. 그때는 성공 토스트를 생략한다(lib/clipboard.ts).
   const [systemNotice, setSystemNotice] = useState(false);
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- This mount flag keeps the server and first client render in sync.
     setMounted(true);
     systemShowsCopyNotice().then(setSystemNotice);
   }, []);
