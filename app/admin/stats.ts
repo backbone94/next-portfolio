@@ -17,10 +17,18 @@ export const RECENT = 10;
 export const PAGE_SIZE = 50;
 
 const kst = (column: string) => `(${column} at time zone 'Asia/Seoul')`;
+const visitorFilter = (visitor: string) => (visitor.length === 6 ? 'left(visitor, 6) = $2' : 'visitor = $2');
 
 /** Visit 한 건을 읽는 칼럼 */
 const VISIT_COLUMNS = `to_char(${kst('created_at')}, 'YYYY-MM-DD HH24:MI:SS') as at, path, referrer, country, city, device,
-  left(visitor, 6) as visitor, browser, lang, fetch_meta as "fetchMeta", js, webdriver, duration, asn, network`;
+  visitor, browser, lang, fetch_meta as "fetchMeta", js, webdriver, duration, asn, network,
+  case when left(visitor, 2) = 'b_' then
+    case
+      when lag(created_at) over browser_visits is null then 'first'
+      when created_at - lag(created_at) over browser_visits >= interval '30 minutes' then 'return'
+    end
+  end as "visitKind"`;
+const BY_BROWSER = 'window browser_visits as (partition by visitor order by created_at, id)';
 
 /**
  * 데이터센터·클라우드 네트워크 이름에 들어가는 말. 사람은 집·회사·휴대폰 망에서 들어오므로, 이런 망에서 온 방문은 거의 봇이다.
@@ -40,9 +48,9 @@ const SUSPECT = `browser is not null and (webdriver is true or (js is not true a
  * 확실히 사람인 방문. 봇 의심 이유가 하나도 없고, 화면이 브라우저에서 실제로 실행된 것(js)까지 확인된 방문만 넣는다.
  * 방금 들어와 실행 신호를 기다리는 방문은 신호가 올 때까지 빠진다. 판별 정보(browser)가 없는 예전 방문도 빠진다
  */
-const HUMAN = `browser is not null and js is true and not (${SUSPECT})`;
+const HUMAN = `not is_bot and browser is not null and js is true and not (${SUSPECT})`;
 
-/** 방문 한 건. 시각은 한국 시간으로 초까지, 방문자 값은 같은 날 같은 사람인지 알아볼 만큼 앞 6자리만 낸다 */
+/** 방문 한 건. 시각은 한국 시간으로 초까지 보여 준다. */
 export type Visit = {
   at: string;
   path: string;
@@ -51,6 +59,7 @@ export type Visit = {
   city: string | null;
   device: string | null;
   visitor: string;
+  visitKind: 'first' | 'return' | null;
   /** 아래는 봇을 가늠하는 정보. 이 칸들을 더하기 전에 남은 방문은 모두 null이다(db/visit_log.sql) */
   browser: string | null;
   lang: string | null;
@@ -67,7 +76,7 @@ export type Visit = {
   network: string | null;
 };
 
-/** 질문 한 건. 방문자 값은 Visit과 같이 앞 6자리만 낸다. 질문 기록에 방문자를 남기기 전의 질문은 null이다 */
+/** 질문 한 건. 방문자 값을 저장하기 전에 남은 질문은 null이다. */
 export type Question = {
   at: string;
   /** 상세 페이지 옆 대화창이면 그 프로젝트 slug, 첫 화면이면 null */
@@ -80,7 +89,7 @@ export type Question = {
 
 /** Question 한 건을 읽는 칼럼 */
 const QUESTION_COLUMNS = `to_char(${kst('created_at')}, 'YYYY-MM-DD HH24:MI:SS') as at, page, question,
-  answered_by as "answeredBy", left(visitor, 6) as visitor`;
+  answered_by as "answeredBy", visitor`;
 
 export type Stats = {
   /** 사람의 방문 수 전체. 방문 기록 화면으로 가는 링크에 쓴다 */
@@ -102,7 +111,10 @@ export async function loadStats(): Promise<Stats | null> {
 
   const [totals, recent, recentQuestions, claudeAnswers, claudeDaily] = await Promise.all([
     sql.query(`select count(*)::int as visits from visit_log where ${visits}`, params),
-    sql.query(`select ${VISIT_COLUMNS} from visit_log where ${visits} order by created_at desc limit ${RECENT}`, params),
+    sql.query(
+      `select ${VISIT_COLUMNS} from visit_log where ${visits} ${BY_BROWSER} order by created_at desc, id desc limit ${RECENT}`,
+      params,
+    ),
     sql.query(`select ${QUESTION_COLUMNS} from ask_log where env = $1 order by created_at desc limit ${RECENT}`, params),
     sql.query(
       `select to_char(${kst('created_at')}, 'MM-DD HH24:MI') as at, page, question, route, confidence
@@ -132,7 +144,7 @@ export async function loadStats(): Promise<Stats | null> {
 
 /**
  * 방문 기록 화면(app/admin/visits/page.tsx)의 한 쪽. 최신순으로 PAGE_SIZE건씩 끊는다.
- * visitor는 화면에 보이는 앞 6자리다. 주면 그 방문자의 방문만 고른다. 사람의 방문만 낸다.
+ * 방문자 값으로 고를 수 있다. 기존 6자리 링크도 지원한다.
  */
 export async function loadVisits({ page, visitor }: { page: number; visitor: string | null }): Promise<{ visits: Visit[]; total: number } | null> {
   if (!process.env.DATABASE_URL) return null;
@@ -141,13 +153,13 @@ export async function loadVisits({ page, visitor }: { page: number; visitor: str
   let where = `env = $1 and ${HUMAN}`;
   if (visitor) {
     params.push(visitor);
-    where += ` and left(visitor, 6) = $${params.length}`;
+    where += ` and ${visitorFilter(visitor)}`;
   }
 
   const [visits, totals] = await Promise.all([
     sql.query(
-      `select ${VISIT_COLUMNS} from visit_log where ${where}
-       order by created_at desc limit ${PAGE_SIZE} offset ${(page - 1) * PAGE_SIZE}`,
+      `select ${VISIT_COLUMNS} from visit_log where ${where} ${BY_BROWSER}
+       order by created_at desc, id desc limit ${PAGE_SIZE} offset ${(page - 1) * PAGE_SIZE}`,
       params,
     ),
     sql.query(`select count(*)::int as total from visit_log where ${where}`, params),
@@ -161,7 +173,7 @@ export async function loadVisitorQuestions(visitor: string): Promise<Question[]>
   const sql = neon(process.env.DATABASE_URL);
   const rows = await sql.query(
     `select ${QUESTION_COLUMNS} from ask_log
-     where env = $1 and left(visitor, 6) = $2 order by created_at`,
+     where env = $1 and ${visitorFilter(visitor)} order by created_at`,
     [ENV, visitor],
   );
   return rows as Question[];

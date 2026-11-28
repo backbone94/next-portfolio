@@ -7,6 +7,7 @@ import type { Question, Visit } from './stats';
  */
 
 export const number = (n: number) => n.toLocaleString('ko-KR');
+export const visitorLabel = (visitor: string) => (visitor.startsWith('b_') ? visitor.slice(2, 12) : visitor.slice(0, 6));
 const regions = new Intl.DisplayNames(['ko'], { type: 'region' });
 const titles = new Map(projects.map((p) => [`/projects/${p.slug}`, p.title]));
 
@@ -98,6 +99,9 @@ export function VisitTable({ visits }: { visits: Visit[] }) {
           <td className="whitespace-nowrap py-2 pr-4 text-muted">{v.lang ?? (v.browser ? '없음' : '')}</td>
           <td className="whitespace-nowrap py-2 font-mono text-xs">
             <VisitorLink visitor={v.visitor} />
+            {v.visitKind && (
+              <span className="mt-1 block font-sans text-muted">{v.visitKind === 'first' ? '첫 방문' : '재방문'}</span>
+            )}
           </td>
         </tr>
       ))}
@@ -113,7 +117,7 @@ function VisitorLink({ visitor }: { visitor: string }) {
       title="이 방문자의 방문과 질문 보기"
       className="text-muted underline-offset-4 transition-colors hover:text-accent hover:underline"
     >
-      {visitor}
+      {visitorLabel(visitor)}
     </Link>
   );
 }

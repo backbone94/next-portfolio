@@ -1,26 +1,25 @@
 import { neon } from '@neondatabase/serverless';
 import type { NextFetchEvent, NextRequest } from 'next/server';
+import { clientIp, isOwnerNetwork } from './owner-network';
 
 /**
  * 방문 기록. 첫 화면과 프로젝트 상세를 열 때마다 Neon Postgres의 visit_log 표에 한 줄씩 남긴다(표는 db/visit_log.sql).
- * proxy.ts에서 부른다. 상세 페이지는 빌드할 때 미리 만든 정적 페이지라 페이지 안에서는 방문을 알 수 없다.
+ * proxy.ts에서 부른다. 상세 페이지는 정적 페이지이므로 페이지 안에서 방문을 알 수 없다.
  *
- * - 응답을 먼저 보내고 기록은 그 뒤에 한다. proxy의 event.waitUntil로 기록이 끝날 때까지 붙잡아 둔다.
+ * - 응답을 먼저 보낸다. proxy의 event.waitUntil로 기록이 끝날 때까지 유지한다.
  *   기록이 느리거나 실패해도 방문자는 기다리지 않는다(app/lib/ask/store.ts와 같다).
- * - IP·쿠키·User-Agent 원문은 남기지 않는다. 같은 날 같은 사람을 묶는 데만 IP와 User-Agent를 해시해 쓰고 버린다.
- *   해시에 그날 날짜를 섞어서 날이 바뀌면 같은 사람도 다른 값이 된다. 며칠에 걸쳐 한 사람을 따라갈 수 없다.
- *   IP로는 그 IP가 속한 네트워크 이름(AMAZON-02, KIXS-AS-KR Korea Telecom)만 찾아 남긴다(db/ip_asn.sql).
- * - 봇·크롤러, 링크 미리 불러오기(prefetch), 접속 주소가 없을 때는 남기지 않는다.
- * - 이름을 밝히지 않는 봇도 많아서 봇인지 가늠할 정보를 같이 남긴다. 브라우저 종류, 언어, 브라우저가 붙이는 헤더가
- *   있었는지, 그리고 화면이 실제로 실행됐는지(confirmVisit)를 기록한다. 판단은 관리자 화면이 한다.
- * - 사이트 주인의 방문도 남기지 않는다. 관리자 화면에 로그인한 브라우저(ADMIN_COOKIE)와
- *   EXCLUDED_IPS에 적은 IP(집 와이파이 등)에서 온 요청은 건너뛴다(isOwner). 질문 기록도 같은 기준을 쓴다.
+ * - IP, 쿠키, User-Agent 원문은 남기지 않는다. 같은 브라우저는 무작위 쿠키의 해시로 묶는다.
+ *   쿠키가 없을 때는 IP와 User-Agent의 일별 해시를 쓴다.
+ * - 알려진 봇과 자동화 브라우저도 기록한다. 링크 미리 불러오기는 건너뛴다.
+ * - 관리자 브라우저와 제외한 네트워크에서 온 방문과 질문은 건너뛴다.
  */
 
 const sql = process.env.DATABASE_URL ? neon(process.env.DATABASE_URL) : null;
 
-/** 관리자 화면에 로그인하면 proxy가 심는 쿠키. 이 쿠키가 있는 브라우저는 방문으로 세지 않는다 */
+/** 관리자 화면에 로그인한 브라우저를 통계에서 제외하는 쿠키 */
 export const ADMIN_COOKIE = 'leejj_admin';
+export const VISITOR_COOKIE = 'leejj_visitor';
+export const VISITOR_COOKIE_AGE = 90 * 24 * 60 * 60;
 
 /** 기록하지 않을 IP. 쉼표로 여러 개를 적는다. IP는 저장소에 올리지 않으려고 환경 변수로 받는다 */
 const EXCLUDED_IPS = new Set(
@@ -30,13 +29,9 @@ const EXCLUDED_IPS = new Set(
     .filter(Boolean),
 );
 
-function clientIp(request: NextRequest) {
-  return request.headers.get('x-real-ip') ?? request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? '';
-}
-
 /** 사이트 주인이 보낸 요청인지. 방문 기록과 질문 기록(app/api/ask)이 같은 기준으로 주인을 뺀다 */
-export function isOwner(request: NextRequest) {
-  return request.cookies.has(ADMIN_COOKIE) || EXCLUDED_IPS.has(clientIp(request));
+export async function isOwner(request: NextRequest) {
+  return request.cookies.has(ADMIN_COOKIE) || EXCLUDED_IPS.has(clientIp(request)) || (await isOwnerNetwork(request));
 }
 
 /**
@@ -45,7 +40,7 @@ export function isOwner(request: NextRequest) {
  */
 const SECRET = process.env.VISIT_SALT || process.env.DATABASE_URL || '';
 
-/** 검색엔진·미리보기·모니터링·자동화 도구. 이 단어가 User-Agent에 들어 있으면 사람이 아니다 */
+/** 이름을 알리는 검색엔진, 미리보기, 모니터링, 자동화 도구 */
 const BOT =
   /bot|crawl|spider|slurp|scrap|preview|fetch|monitor|lighthouse|headless|phantom|puppeteer|playwright|selenium|facebookexternalhit|embedly|vercel|curl|wget|python|httpx|axios|node|go-http|java\/|okhttp|postman|insomnia|\bdaum(oa)?\b|yeti/i;
 
@@ -129,15 +124,30 @@ function today() {
   return new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
 }
 
-async function visitorId(ip: string, ua: string) {
-  const data = new TextEncoder().encode(`${SECRET}|${today()}|${ip}|${ua}`);
-  const digest = await crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(digest).slice(0, 8), (b) => b.toString(16).padStart(2, '0')).join('');
+async function hash(value: string, bytes: number) {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value));
+  return Array.from(new Uint8Array(digest).slice(0, bytes), (b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+function allowsVisitorCookie(request: NextRequest) {
+  return request.headers.get('sec-gpc') !== '1' && request.headers.get('dnt') !== '1';
+}
+
+function visitorCookie(request: NextRequest) {
+  const token = request.cookies.get(VISITOR_COOKIE)?.value;
+  return allowsVisitorCookie(request) && token && /^[0-9a-f]{32}$/.test(token) ? token : undefined;
+}
+
+async function browserVisitor(token: string) {
+  return `b_${await hash(token, 16)}`;
 }
 
 /** 이 요청을 보낸 방문자 값. 질문 기록(app/api/ask)이 방문 기록과 이어지도록 같은 값을 남긴다 */
 export function requestVisitor(request: NextRequest) {
-  return visitorId(clientIp(request), request.headers.get('user-agent') ?? '');
+  const token = visitorCookie(request);
+  return token
+    ? browserVisitor(token)
+    : hash(`${SECRET}|${today()}|${clientIp(request)}|${request.headers.get('user-agent') ?? ''}`, 8);
 }
 
 /** 방문 한 줄. 화면 실행 신호로 남기는 방문(confirmVisit)은 js와 webdriver를 처음부터 채운다 */
@@ -147,6 +157,7 @@ function insertVisit(
   referrer: string | null,
   visitor: string,
   ua: string,
+  bot: boolean,
   ran?: { webdriver: boolean },
 ) {
   // 네트워크는 같은 쿼리 안에서 ip_asn 표로 찾는다. 시작 주소가 IP 이하인 대역 중 가장 뒤의 것을 고르고, 그 대역이 IP까지 닿을 때만 쓴다.
@@ -158,11 +169,11 @@ function insertVisit(
         select asn, name, range_end from ip_asn where range_start <= ${ip}::inet order by range_start desc limit 1
       ) nearest where range_end >= ${ip}::inet
     )
-    insert into visit_log (env, path, referrer, country, city, device, visitor, browser, lang, fetch_meta, js, webdriver, asn, network)
+    insert into visit_log (env, path, referrer, country, city, device, visitor, browser, lang, fetch_meta, js, webdriver, asn, network, is_bot)
     values (${process.env.VERCEL_ENV ?? 'development'}, ${path}, ${referrer},
       ${header(request, 'x-vercel-ip-country')}, ${header(request, 'x-vercel-ip-city')}, ${device(ua)}, ${visitor},
       ${browserLabel(ua)}, ${firstLanguage(request)}, ${request.headers.has('sec-fetch-mode')},
-      ${ran ? true : null}, ${ran ? ran.webdriver : null}, (select asn from net), (select name from net))
+      ${ran ? true : null}, ${ran ? ran.webdriver : null}, (select asn from net), (select name from net), ${bot})
   `;
 }
 
@@ -181,7 +192,7 @@ export function recordVisit(request: NextRequest, event: NextFetchEvent) {
   if (!sql || request.method !== 'GET') return;
   const h = request.headers;
   // 문서를 통째로 여는 요청만 방문으로 센다. 링크가 화면에 보일 때 Next가 미리 불러오는 요청(prefetch)과
-  // 사이트 안에서 옮겨 다니는 요청은 fetch로 가서 Sec-Fetch-Dest가 empty다. Next는 middleware를 부르기 전에
+  // 사이트 안에서 옮겨 다니는 요청은 fetch로 가서 Sec-Fetch-Dest가 empty다. Next는 proxy를 부르기 전에
   // RSC·Next-Router-Prefetch 헤더와 _rsc 쿼리를 지우므로 그 값으로는 가릴 수 없다.
   // 이 헤더를 보내지 않는 오래된 브라우저와 수집 프로그램은 그대로 남긴다. 봇인지는 관리자 화면이 가늠한다.
   // 사이트 안에서 옮겨 다닌 방문은 화면 실행 신호가 대신 남긴다(confirmVisit)
@@ -189,45 +200,47 @@ export function recordVisit(request: NextRequest, event: NextFetchEvent) {
   if (dest && dest !== 'document') return;
   // 브라우저가 다음에 열 페이지를 미리 받아 두는 요청. 실제로 연 페이지가 아니다
   if (h.get('purpose') === 'prefetch' || h.get('sec-purpose')?.includes('prefetch')) return;
-  if (isOwner(request)) return;
   const ua = h.get('user-agent') ?? '';
-  if (!ua || BOT.test(ua)) return;
+  const bot = !ua || BOT.test(ua);
 
-  const write = visitorId(clientIp(request), ua)
-    .then((visitor) => insertVisit(request, request.nextUrl.pathname, source(request), visitor, ua))
-    .then(
-      () => undefined,
-      (error) => console.warn('[visit] 방문 기록 실패', error instanceof Error ? error.message : error),
-    );
+  const write = (async () => {
+    if (await isOwner(request)) return;
+    const visitor = await requestVisitor(request);
+    await insertVisit(request, request.nextUrl.pathname, source(request), visitor, ua, bot);
+  })().catch((error) => console.warn('[visit] 방문 기록 실패', error instanceof Error ? error.message : error));
   event.waitUntil(write);
 }
 
 /**
  * 화면이 브라우저에서 실제로 실행됐다는 신호(app/components/VisitBeacon.tsx → /api/visit).
- * 같은 방문자 값과 경로로 방금 남긴 방문 한 건에 js = true와 webdriver 값을 채운다. 쿠키 없이 묶으려고 방문자 값을 다시 계산한다.
- * 맞는 방문이 없으면(주인의 방문, 봇으로 걸러진 요청, 10분이 지난 화면) 아무것도 하지 않는다.
- *
- * navigated는 사이트 안에서 링크를 눌러 옮겨 온 화면이라는 뜻이다. 이 이동은 proxy가 방문으로 세지 않으므로
- * (recordVisit) 여기서 방문 한 줄을 새로 남긴다. 화면이 실행된 뒤에 온 신호라 js는 처음부터 true다.
+ * 처음 확인한 브라우저에는 무작위 값을 발급한다. 이미 기록된 첫 페이지도 같은 브라우저 값으로 바꾼다.
+ * 사이트 안에서 이동한 화면은 여기서 새 방문으로 기록한다.
  */
 export async function confirmVisit(request: NextRequest, path: string, webdriver: boolean, navigated: boolean) {
-  if (!sql || isOwner(request)) return;
+  if (!sql || (await isOwner(request))) return;
   const ua = request.headers.get('user-agent') ?? '';
-  const visitor = await visitorId(clientIp(request), ua);
+  const bot = !ua || BOT.test(ua) || webdriver;
+  const previous = await requestVisitor(request);
+  const token = !bot && allowsVisitorCookie(request) && !visitorCookie(request)
+    ? crypto.randomUUID().replaceAll('-', '')
+    : undefined;
+  const visitor = token ? await browserVisitor(token) : previous;
   if (navigated) {
-    if (!ua || BOT.test(ua)) return;
-    await insertVisit(request, path, null, visitor, ua, { webdriver });
-    return;
+    await insertVisit(request, path, null, visitor, ua, bot, { webdriver });
+    return token;
   }
-  await sql`
-    update visit_log set js = true, webdriver = ${webdriver}
+  const confirmed = await sql`
+    update visit_log set js = true, webdriver = ${webdriver}, is_bot = is_bot or ${bot}, visitor = ${visitor}
     where id = (
       select id from visit_log
-      where env = ${process.env.VERCEL_ENV ?? 'development'} and visitor = ${visitor} and path = ${path}
+      where env = ${process.env.VERCEL_ENV ?? 'development'} and visitor = ${previous} and path = ${path}
         and js is null and created_at > now() - interval '10 minutes'
-      order by created_at desc limit 1
+      order by created_at desc, id desc limit 1
+      for update skip locked
     )
+    returning id
   `;
+  return confirmed.length ? token : undefined;
 }
 
 /** 머문 시간의 상한(초). 탭을 열어 두고 잊어버린 화면이 평균을 끌어올리지 않게 자른다 */
@@ -239,15 +252,15 @@ const MAX_DURATION = 6 * 60 * 60;
  * 가장 최근 방문 한 건을 더 큰 값으로만 늘린다. 신호가 순서를 바꿔 도착해도 줄어들지 않는다.
  */
 export async function recordDuration(request: NextRequest, path: string, seconds: number) {
-  if (!sql || isOwner(request)) return;
-  const visitor = await visitorId(clientIp(request), request.headers.get('user-agent') ?? '');
+  if (!sql || (await isOwner(request))) return;
+  const visitor = await requestVisitor(request);
   const value = Math.min(Math.round(seconds), MAX_DURATION);
   await sql`
     update visit_log set duration = greatest(coalesce(duration, 0), ${value})
     where id = (
       select id from visit_log
       where env = ${process.env.VERCEL_ENV ?? 'development'} and visitor = ${visitor} and path = ${path}
-        and js and created_at > now() - interval '6 hours 10 minutes'
+        and js and not is_bot and created_at > now() - interval '6 hours 10 minutes'
       order by created_at desc limit 1
     )
   `;

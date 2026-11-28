@@ -6,7 +6,7 @@ import { Block, Empty, QuestionTable, Table, VisitTable, adminHref, number, page
 
 /**
  * 관리자 화면. 최근 방문과 질문, Claude가 답한 질문과 그 비용(토큰)을 본다.
- * 비밀번호는 middleware.ts가 묻는다. 여기서도 ADMIN_PASSWORD가 없으면 한 번 더 막는다.
+ * 비밀번호는 proxy.ts에서 확인한다.
  *
  * 실제 사이트(production)의 기록만 본다.
  * 방문은 확실히 사람인 것만 보여 준다(app/admin/stats.ts의 HUMAN). 봇과 봇 의심 방문은 보여 주지 않는다.
@@ -19,22 +19,48 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function AdminPage() {
+export default async function AdminPage({ searchParams }: { searchParams: Promise<{ network?: string }> }) {
   if (!process.env.ADMIN_PASSWORD) notFound();
 
-  const stats = await loadStats();
+  const [stats, { network }] = await Promise.all([loadStats(), searchParams]);
 
   return (
     <div className="mx-auto max-w-shell px-5 pb-24 pt-14 md:px-8">
       <p className="font-medium text-accent">관리자</p>
       <h1 className="mt-3 text-[clamp(2rem,5vw,3rem)] font-black leading-[1.05] tracking-[-0.03em]">방문과 질문</h1>
       <p className="mt-4 max-w-prose text-muted">
-        IP와 쿠키는 남기지 않습니다. 이 화면에 로그인한 브라우저와 EXCLUDED_IPS에 적은 IP의 방문은 기록하지 않습니다.
-        방문은 화면이 브라우저에서 실제로 실행된 사람의 방문만 보여 줍니다.
+        이 화면에는 사람의 방문으로 판단한 기록만 표시됩니다. 봇 방문은 데이터베이스에서 확인할 수 있습니다.
       </p>
 
+      <VisitExclusions state={network} />
       {stats ? <Dashboard stats={stats} /> : <p className="mt-12 text-muted">DATABASE_URL이 없어 기록을 읽을 수 없습니다.</p>}
     </div>
+  );
+}
+
+function VisitExclusions({ state }: { state?: string }) {
+  const message = state === 'excluded'
+    ? '현재 네트워크를 방문 기록에서 제외했습니다.'
+    : state === 'included'
+      ? '현재 네트워크의 제외 설정을 해제했습니다.'
+      : state === 'failed'
+        ? '네트워크 설정을 저장하지 못했습니다.'
+        : null;
+  const button = 'rounded-md bg-surface-2 px-3 py-2 text-sm font-medium transition-colors hover:text-accent';
+
+  return (
+    <Block title="내 방문 제외">
+      <p className="max-w-prose text-sm text-muted">
+        로그인한 이 브라우저의 방문은 자동으로 제외됩니다. 휴대폰에서 평소 쓰는 브라우저로 이 화면에 로그인하면
+        모바일 데이터로 접속할 때도 제외됩니다. 집에서는 홈 네트워크를 등록하세요.
+      </p>
+      <form action="/admin/networks" method="post" className="mt-3 flex flex-wrap gap-2">
+        <button type="submit" name="action" value="exclude" className={button}>현재 네트워크 제외</button>
+        <button type="submit" name="action" value="include" className={button}>현재 네트워크 제외 해제</button>
+      </form>
+      <p className="mt-2 text-xs text-muted">인터넷 회선 주소가 바뀌면 현재 네트워크를 다시 등록하세요.</p>
+      {message && <p className="mt-2 text-sm" role="status">{message}</p>}
+    </Block>
   );
 }
 
@@ -43,7 +69,7 @@ function Dashboard({ stats }: { stats: Stats }) {
     <>
       <Block
         title="최근 방문"
-        note={`한국 시간 기준, 최근 ${RECENT}건. 방문자 값이 같으면 같은 날 같은 기기다`}
+        note={`한국 시간 기준, 최근 ${RECENT}건. 방문자 값을 누르면 그 브라우저의 방문 기록이 열립니다`}
         action={
           <Link href={adminHref('/admin/visits')} className="text-sm font-medium text-accent underline-offset-4 hover:underline">
             전체 {number(stats.visits)}건 보기 →
