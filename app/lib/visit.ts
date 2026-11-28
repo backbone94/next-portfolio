@@ -1,7 +1,7 @@
 import { neon } from '@neondatabase/serverless';
 import type { NextFetchEvent, NextRequest } from 'next/server';
 import { clientIp, isOwnerNetwork } from './owner-network';
-import type { SeoulDistrict } from './seoul-location';
+import { estimateSeoulDistrict } from './seoul-ip-location';
 
 /**
  * 방문 기록. 첫 화면과 프로젝트 상세를 열 때마다 Neon Postgres의 visit_log 표에 한 줄씩 남긴다(표는 db/visit_log.sql).
@@ -164,15 +164,23 @@ function insertVisit(
   // 네트워크는 같은 쿼리 안에서 ip_asn 표로 찾는다. 시작 주소가 IP 이하인 대역 중 가장 뒤의 것을 고르고, 그 대역이 IP까지 닿을 때만 쓴다.
   // IP는 찾는 데만 쓰고 저장하지 않는다. 주소가 없거나 이상하면 null이라 아무것도 찾지 않는다
   const ip = lookupIp(clientIp(request));
+  const country = header(request, 'x-vercel-ip-country');
+  const city = header(request, 'x-vercel-ip-city');
+  const district = estimateSeoulDistrict({
+    country,
+    city,
+    region: header(request, 'x-vercel-ip-country-region'),
+    postalCode: header(request, 'x-vercel-ip-postal-code'),
+  });
   return sql!`
     with net as (
       select asn, name from (
         select asn, name, range_end from ip_asn where range_start <= ${ip}::inet order by range_start desc limit 1
       ) nearest where range_end >= ${ip}::inet
     )
-    insert into visit_log (env, path, referrer, country, city, device, visitor, browser, lang, fetch_meta, js, webdriver, asn, network, is_bot)
+    insert into visit_log (env, path, referrer, country, city, ip_district, device, visitor, browser, lang, fetch_meta, js, webdriver, asn, network, is_bot)
     values (${process.env.VERCEL_ENV ?? 'development'}, ${path}, ${referrer},
-      ${header(request, 'x-vercel-ip-country')}, ${header(request, 'x-vercel-ip-city')}, ${device(ua)}, ${visitor},
+      ${country}, ${city}, ${district}, ${device(ua)}, ${visitor},
       ${browserLabel(ua)}, ${firstLanguage(request)}, ${request.headers.has('sec-fetch-mode')},
       ${ran ? true : null}, ${ran ? ran.webdriver : null}, (select asn from net), (select name from net), ${bot})
   `;
@@ -265,23 +273,4 @@ export async function recordDuration(request: NextRequest, path: string, seconds
       order by created_at desc limit 1
     )
   `;
-}
-
-/** 자발적으로 공유한 구 이름만 최근의 확인된 브라우저 방문에 붙인다. */
-export async function saveVisitDistrict(request: NextRequest, district: SeoulDistrict) {
-  const token = visitorCookie(request);
-  if (!sql || !token || (await isOwner(request))) return false;
-
-  const visitor = await browserVisitor(token);
-  const rows = await sql`
-    update visit_log set shared_district = ${district}
-    where id = (
-      select id from visit_log
-      where env = ${process.env.VERCEL_ENV ?? 'development'} and visitor = ${visitor}
-        and js is true and not is_bot and created_at >= now() - interval '30 minutes'
-      order by created_at desc, id desc limit 1
-    )
-    returning id
-  `;
-  return rows.length > 0;
 }
