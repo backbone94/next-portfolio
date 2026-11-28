@@ -1,6 +1,6 @@
-import type { NextRequest } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import { getProject } from '@/app/content/projects';
-import { confirmVisit, recordDuration } from '@/app/lib/visit';
+import { confirmVisit, recordDuration, VISITOR_COOKIE, VISITOR_COOKIE_AGE } from '@/app/lib/visit';
 
 /** 방문으로 기록하는 경로만 받는다. 사이트 안 이동은 여기서 방문 한 줄을 새로 쓰므로 아무 경로나 받지 않는다 */
 function recorded(path: string) {
@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
     | null;
   const path = typeof body?.path === 'string' ? body.path.slice(0, 200) : '';
   if (!path || !recorded(path)) return new Response(null, { status: 204 });
+  const response = new NextResponse(null, { status: 204 });
 
   // 머문 시간. 화면을 떠나거나 탭을 옮길 때 온다
   if (typeof body?.seconds === 'number') {
@@ -28,9 +29,19 @@ export async function POST(request: NextRequest) {
       );
     }
   } else {
-    await confirmVisit(request, path, body?.webdriver === true, body?.navigated === true).catch((error) =>
-      console.warn('[visit] 실행 확인 기록 실패', error instanceof Error ? error.message : error),
-    );
+    const token = await confirmVisit(request, path, body?.webdriver === true, body?.navigated === true).catch((error) => {
+      console.warn('[visit] 실행 확인 기록 실패', error instanceof Error ? error.message : error);
+      return undefined;
+    });
+    if (token) {
+      response.cookies.set(VISITOR_COOKIE, token, {
+        httpOnly: true,
+        secure: request.nextUrl.protocol === 'https:',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: VISITOR_COOKIE_AGE,
+      });
+    }
   }
-  return new Response(null, { status: 204 });
+  return response;
 }

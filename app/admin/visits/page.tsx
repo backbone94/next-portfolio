@@ -2,13 +2,13 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { PAGE_SIZE, loadVisitorQuestions, loadVisits } from '../stats';
-import { Block, QuestionTable, VisitTable, adminHref, number } from '../ui';
+import { Block, QuestionTable, VisitTable, adminHref, number, visitorLabel } from '../ui';
 
 /**
  * 방문 기록 전체. 대시보드(app/admin/page.tsx)는 최근 몇 건만 보여 주고, 여기서 최신순으로 쪽을 나눠 본다.
- * 비밀번호는 proxy.ts가 /admin 아래를 모두 묻는다.
+ * 비밀번호는 proxy.ts에서 확인한다.
  *
- * ?visitor=3fefab처럼 방문자 값을 주면 그 방문자의 방문과 질문만 본다. 같은 날 한 사람이 어떻게 옮겨 다니며 무엇을 물었는지 따라갈 때 쓴다.
+ * 방문자 값으로 같은 브라우저의 방문과 질문을 모아 본다.
  * 대시보드와 같이 확실히 사람인 방문만 보여 준다.
  */
 
@@ -24,10 +24,11 @@ type Props = { searchParams: Promise<{ visitor?: string; page?: string }> };
 export default async function VisitsPage({ searchParams }: Props) {
   if (!process.env.ADMIN_PASSWORD) notFound();
 
-  // 화면에 보이는 앞 6자리만 받는다(app/admin/stats.ts의 Visit)
   const query = await searchParams;
-  const visitor = /^[0-9a-f]{6}$/.test(query.visitor ?? '') ? query.visitor! : null;
-  const page = Math.max(1, Math.floor(Number(query.page)) || 1);
+  const key = query.visitor ?? '';
+  const visitor = /^(?:[0-9a-f]{6}|[0-9a-f]{16}|b_[0-9a-f]{32})$/.test(key) ? key : null;
+  const requestedPage = Number(query.page);
+  const page = Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
 
   const [result, questions] = await Promise.all([
     loadVisits({ page, visitor }),
@@ -46,12 +47,13 @@ export default async function VisitsPage({ searchParams }: Props) {
       </Link>
       <h1 className="mt-3 text-[clamp(2rem,5vw,3rem)] font-black leading-[1.05] tracking-[-0.03em]">방문 기록</h1>
       <p className="mt-4 max-w-prose text-muted">
-        한국 시간 기준 최신순입니다. 방문자 값이 같으면 같은 날 같은 기기입니다. 방문자 값을 누르면 그 방문자의 방문만 모아 봅니다.
+        한국 시간 기준 최신순입니다. 같은 브라우저에서 마지막 페이지를 연 뒤 30분이 지나 다시 열면 재방문으로 표시합니다.
+        쿠키가 없는 기록과 이전 방식의 기록은 같은 날의 접속만 모아 볼 수 있습니다.
       </p>
 
       {visitor && (
         <p className="mt-6 text-sm">
-          방문자 <span className="font-mono">{visitor}</span>의 방문과 질문만 보고 있습니다.{' '}
+          방문자 <span className="font-mono">{visitorLabel(visitor)}</span>의 방문과 질문을 보고 있습니다.{' '}
           <Link href={href({ visitor: null })} className="font-medium text-accent underline-offset-4 hover:underline">
             모든 방문 보기
           </Link>

@@ -16,6 +16,15 @@
 
 **[https://leejj.dev](https://leejj.dev)**
 
+## 방문 통계 배포
+
+기존 운영 DB에서는 이 기능을 배포하기 전에 Neon SQL Editor에서 [db/visit_tracking.sql](db/visit_tracking.sql)을 실행합니다.
+새 DB를 만들 때는 `node --env-file=.env.local db/init.mjs`를 실행합니다.
+
+운영 관리자 화면에 휴대폰 브라우저로 로그인하면 그 브라우저의 방문과 질문을 이후부터 제외합니다.
+집 와이파이에서는 **현재 네트워크 제외**를 눌러 접속 중인 외부 회선 주소를 등록합니다.
+주소가 다른 브라우저에서는 그 브라우저로 로그인하거나 해당 주소를 따로 등록합니다.
+
 ## 📚 기술 스택
 
 ![Next.js](https://img.shields.io/badge/Next.js-FFFFFF?style=for-the-badge&logo=next.js&logoColor=000000)
