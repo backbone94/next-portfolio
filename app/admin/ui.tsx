@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { projects } from '@/app/content/projects';
+import { isSeoulDistrict } from '@/app/lib/seoul-location';
 import type { Question, Visit } from './stats';
 
 /**
@@ -85,7 +86,7 @@ export function VisitTable({ visits }: { visits: Visit[] }) {
           </td>
           <td className="py-2 pr-4 text-muted">{sourceName(v.referrer)}</td>
           <td className="py-2 pr-4 text-muted">
-            {v.city ? `${v.city}, ${countryName(v.country)}` : countryName(v.country)}
+            <VisitLocation visit={v} />
             {v.network && (
               <span className="block text-xs" title={`AS${v.asn} ${v.network}`}>
                 {networkName(v.network)}
@@ -106,6 +107,24 @@ export function VisitTable({ visits }: { visits: Visit[] }) {
         </tr>
       ))}
     </Table>
+  );
+}
+
+function VisitLocation({ visit }: { visit: Visit }) {
+  if (isSeoulDistrict(visit.sharedDistrict)) {
+    return (
+      <>
+        서울 {visit.sharedDistrict}
+        <span className="block text-xs">방문자 공유</span>
+      </>
+    );
+  }
+  const city = visit.country === 'KR' && visit.city === 'Seoul' ? '서울' : visit.city;
+  return (
+    <>
+      {city ? `${city}, ${countryName(visit.country)}` : countryName(visit.country)}
+      {(city || visit.country) && <span className="block text-xs">IP 추정</span>}
+    </>
   );
 }
 

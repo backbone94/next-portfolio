@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import ShareDistrict from './ShareDistrict';
 
 export const metadata: Metadata = { title: '방문 데이터 안내 | Jun의 포트폴리오' };
 
@@ -21,6 +22,7 @@ export default function VisitPrivacyPage() {
           그날에만 유효한 값으로 기록합니다.
         </p>
       </div>
+      <ShareDistrict />
     </article>
   );
 }
