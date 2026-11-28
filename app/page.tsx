@@ -35,7 +35,7 @@ export default function PortfolioHome() {
       </section>
 
       <section id="projects" className={styles.projects} aria-labelledby="projects-title">
-        <h2 id="projects-title">다른 프로젝트</h2>
+        <h2 id="projects-title">프로젝트 더 보기</h2>
         <ul className={styles.projectGrid}>
           {projects.filter(project => project.slug !== leadProject.slug).map(project => {
             const thumbnail = project.media.find(({ type }) => type === 'image');
@@ -69,8 +69,8 @@ export default function PortfolioHome() {
 
       <section className={styles.ask} aria-labelledby="ask-title">
         <div>
-          <h2 id="ask-title">궁금한 점이 있나요?</h2>
-          <p>Jun 에게 물어봐 주세요.</p>
+          <h2 id="ask-title">Jun에게 물어보기</h2>
+          <p>프로젝트에서 맡은 일이나 기술을 선택한 이유를 물어보세요.</p>
         </div>
         {/* 커서를 따라 고개를 돌리는 Jun의 머리. 누르면 전체 대화로 간다. */}
         <Link href={ASK_PATH} aria-label="Jun에게 묻기" title="Jun에게 묻기" className={`${styles.askJun} ${robotStyles.artwork}`}>

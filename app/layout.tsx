@@ -11,7 +11,7 @@ import { THEME_SCRIPT } from './lib/theme';
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: "Jun's Portfolio",
-  description: '이정준의 프로젝트와 맡은 역할을 둘러보고, 작업 중 궁금한 점은 Jun에게 물어보세요.',
+  description: '개발자 이정준이 맡은 프로젝트와 운영 개선 사례를 소개합니다. 맡은 일과 기술을 선택한 이유는 Jun에게 물어볼 수 있습니다.',
   /*
     루트를 canonical로 못박는다. 같은 내용이 www·vercel.app 주소로도 열려
     있어 중복 문서로 잡힐 여지가 있다. 하위 페이지는 각자 alternates로 덮는다.

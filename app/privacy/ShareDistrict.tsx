@@ -30,7 +30,7 @@ export default function ShareDistrict() {
       const boundaries: DistrictBoundaries = await response.json();
       const found = locateSeoulDistrict(boundaries, coords);
       setDistrict(found);
-      setMessage(found ? `서울 ${found}입니다. 이 지역을 공유할 수 있습니다.` : '현재 위치에서 서울 자치구 하나를 확인할 수 없습니다.');
+      setMessage(found ? `서울 ${found}입니다. 이 지역을 공유할 수 있습니다.` : '현재 위치가 어느 서울 자치구인지 확인할 수 없습니다.');
     } catch (error) {
       const denied = error && typeof error === 'object' && 'code' in error && error.code === 1;
       setMessage(denied ? '브라우저에서 위치 권한이 허용되지 않았습니다.' : '현재 지역을 확인할 수 없습니다.');
@@ -51,7 +51,7 @@ export default function ShareDistrict() {
         body: JSON.stringify({ district }),
       });
       if (response.status === 404) {
-        setMessage('이 지역과 연결할 현재 방문 기록이 없습니다.');
+        setMessage('이번 방문 기록을 찾지 못해 지역을 공유할 수 없습니다.');
       } else if (response.ok) {
         setMessage(`서울 ${district}를 공유했습니다.`);
       } else {
@@ -69,7 +69,7 @@ export default function ShareDistrict() {
     <section id="share-district" className="mt-9 border-t border-border pt-7">
       <h2 className="text-xl font-bold">방문 지역 공유</h2>
       <p className="mt-2 leading-relaxed text-muted">
-        서울에 있다면 현재 자치구를 확인하고 공유할 수 있습니다. 위치 좌표는 브라우저 안에서만 사용되며,
+        서울에 있다면 현재 위치의 자치구를 확인해 공유할 수 있습니다. 좌표는 브라우저에서만 사용합니다.
         공유를 선택하면 구 이름만 이번 방문 기록에 추가됩니다.
       </p>
       <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -97,7 +97,7 @@ export default function ShareDistrict() {
       <p className="mt-4 text-xs leading-relaxed text-muted">
         서울 자치구 경계는 <a className="underline" href="https://sgis.mods.go.kr/view/pss/openDataIntrcn">국가데이터처 SGIS</a>의
         행정동 경계(공공누리 제1유형)를 바탕으로 한 <a className="underline" href="https://github.com/vuski/admdongkor">vuski/admdongkor</a> 자료를
-        자치구 단위로 병합해 사용합니다. <a className="underline" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+        자치구 단위로 합쳐 사용합니다. <a className="underline" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
       </p>
     </section>
   );

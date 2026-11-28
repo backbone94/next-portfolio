@@ -12,7 +12,7 @@ export const GUIDE_NAME = 'Jun';
  * 질문을 기다리는 동안 차례로 돌아가며 하는 말. 가만히 두면 TALK_EVERY마다, 로봇을 누르면 바로 다음 말로 넘어간다.
  * 첫 말은 기다리는 상황의 기본 문구(GUIDE_LINES.ask)다.
  */
-const TALK_LINES = [GUIDE_LINES.ask, '반가워요! 👋', `저는 이 사이트를 안내하는 ${GUIDE_NAME} 이에요`, '궁금한 게 있으면 아래에 적어 주세요'];
+const TALK_LINES = [GUIDE_LINES.ask, '반가워요! 👋', `저는 이 사이트를 안내하는 ${GUIDE_NAME}이에요`, '궁금한 점을 아래에 적어 주세요'];
 
 /** 말이 저절로 바뀌는 간격. 입력창의 예시 질문(2.6초)보다 훨씬 느리게 두어 둘이 같이 깜빡거리지 않게 한다. */
 const TALK_EVERY = 6000;

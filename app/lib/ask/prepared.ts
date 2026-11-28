@@ -238,10 +238,10 @@ export const ROUTES: Record<string, Route> = {
     criteria: '성과, 수치로 남은 개선, 문제 해결 사례, 가장 큰 기여를 묻는다',
     answer: () =>
       prepared(
-        doc(`숫자나 결과로 남은 개선은 ${measured.length}건입니다.`, list(measured.map(({ company, task }) => `${task} (${company})`))),
+        doc(`실무에서 수치로 확인했거나 장애를 해결한 사례 ${measured.length}건을 정리했습니다.`, list(measured.map(({ company, task }) => `${company}에서 ${task}`))),
         {
           kind: '측정된 개선',
-          follow: ['빌드 시간은 어떻게 줄였나요?', '메일 발송 Timeout은 왜 생겼나요?'],
+          follow: ['빌드 시간은 어떻게 줄였나요?', '대량 메일을 보낼 때 왜 시간 초과가 났나요?'],
         },
       ),
   },
@@ -253,21 +253,20 @@ export const ROUTES: Record<string, Route> = {
       return prepared(
         doc(
           `가장 자신 있는 프로젝트는 ${p.title}입니다.`,
-          '지금 운영 중인 병원 사이트를 리뉴얼하면서 맡은 범위가 가장 넓었습니다.',
+          '운영 중인 병원 사이트를 개편하면서 회원 기능부터 서버 이전까지 맡았습니다.',
           list([
-            '백엔드 API를 프론트엔드와 연동',
-            '회원 인증 전체와 소셜 로그인',
-            '로그인 시도 제한과 접근 제어 같은 보안 보완',
-            '캡차 음성 듣기로 웹 접근성 향상',
-            '새 서버로 데이터와 파일을 옮기고 도메인 전환',
+            '사용자 화면과 관리자 화면을 백엔드 API에 연결했습니다.',
+            '회원가입, 로그인, 계정 찾기와 소셜 로그인을 구현했습니다.',
+            '반복 로그인 시도를 제한하고 관리자 접근 권한을 보완했습니다.',
+            '화면의 문자를 읽기 어려운 사용자도 계정을 찾을 수 있도록 음성 캡차를 추가했습니다.',
+            'DB와 업로드 파일을 새 서버로 옮기고 도메인을 전환했습니다.',
           ]),
-          '코드를 새로 쓰는 데서 끝나지 않고, 실제 방문자가 들어오는 사이트를 새 서버로 끝까지 옮겨 놓았습니다.',
         ),
         {
           kind: '가장 자신 있는 프로젝트',
           projects: { view: 'card', items: [toAnswerProject(p, 'full')] },
           links: [
-            { label: '전체 이야기 읽기', href: `/projects/${p.slug}` },
+            { label: '프로젝트 상세 보기', href: `/projects/${p.slug}` },
             ...(p.reference ? [{ label: '운영 중인 사이트', href: p.reference }] : []),
           ],
           follow: [`${p.title}에서 가장 어려웠던 점은?`, MORE_FEATURED],
@@ -306,7 +305,7 @@ export const ROUTES: Record<string, Route> = {
     answer: () =>
       prepared(
         doc(
-          `주로 쓰는 기술은 ${skillCategories.length}갈래로 나뉩니다.`,
+          `프로젝트에서 사용한 기술을 분야별로 정리했습니다.`,
           list(skillCategories.map((c) => `${c.label}: ${c.skills.map((s) => s.label).join(', ')}`)),
         ),
         { kind: '기술 스택', follow: ['React 써 보셨어요?', 'Kotlin 할 줄 아세요?', ASK.projects] },
@@ -322,7 +321,7 @@ export const ROUTES: Record<string, Route> = {
       prepared(
         doc(
           `${education.institution}를 졸업했습니다 (${education.duration}).`,
-          `자격증은 ${certifications.length}개가 있습니다.`,
+          `취득한 자격증은 ${certifications.length}개입니다.`,
           list(certifications.map((c) => `${c.title} (${c.issueDate})`)),
         ),
         { kind: '학력과 자격증', follow: [ASK.career, ASK.projects] },
@@ -358,7 +357,7 @@ export const ROUTES: Record<string, Route> = {
   laugh: {
     criteria: '웃음이나 감탄만 남긴다 (ㅋㅋ, ㅎㅎ, lol, 오)',
     answer: () =>
-      prepared('웃어 주셔서 감사합니다. 이제 진지한 질문도 하나 해 주실래요?', {
+      prepared('편하게 둘러보세요. 궁금한 점이 있으면 물어봐 주세요.', {
         kind: '대화',
         follow: ['측정해서 개선한 사례가 있나요?', '협업할 때 어떤 편인가요?'],
       }),
@@ -368,13 +367,13 @@ export const ROUTES: Record<string, Route> = {
     answer: () =>
       prepared(
         doc(
-          '반은 맞습니다.',
+          '질문에 따라 미리 써 둔 답변이나 AI가 작성한 답변을 보여 드립니다.',
           list([
             '자주 나올 질문은 제가 직접 써 둔 답변으로 바로 답합니다.',
             '그 밖의 질문은 AI가 실제 경력과 프로젝트 기록만 근거로 답하고, 출처를 함께 보여 드립니다.',
           ]),
         ),
-        { kind: '이 검색창에 대해', follow: ['이 사이트는 어떻게 만들었어요?', '더원서울안과 리뉴얼에서 가장 어려웠던 점은?'] },
+        { kind: 'Jun의 답변 방식', follow: ['이 사이트는 어떻게 만들었어요?', '더원서울안과 리뉴얼에서 가장 어려웠던 점은?'] },
       ),
   },
   about_site: {
@@ -382,13 +381,13 @@ export const ROUTES: Record<string, Route> = {
     answer: () =>
       prepared(
         doc(
-          '이 사이트는 검색창 하나로 포트폴리오를 둘러보게 만든 Next.js 사이트입니다.',
-          '질문이 들어오면 분류용 AI가 먼저 어떤 질문인지 가립니다.',
+          'Next.js로 만들었습니다. 홈에서는 프로젝트를 둘러보고, Jun에게는 경력이나 프로젝트에 대해 질문할 수 있습니다.',
+          'Jun에게 질문을 보내면 질문의 종류에 맞는 답변을 찾습니다.',
           list([
-            '자기소개나 경력처럼 자주 나오는 질문은 제가 미리 써 둔 답으로 바로 답합니다. 기다릴 필요도, 비용도 없습니다.',
+            '자기소개나 경력처럼 자주 나오는 질문은 제가 써 둔 답변을 바로 보여 드립니다.',
             '그 밖의 질문은 AI가 사이트에 적힌 경력과 프로젝트 기록만 근거로 답하고, 근거가 된 출처를 함께 보여 줍니다.',
           ]),
-          '근거를 찾지 못하면 지어내지 않고 메일로 안내합니다.',
+          '사이트의 기록에서 답을 찾기 어려우면 메일로 문의할 수 있습니다.',
         ),
         { kind: '이 사이트에 대해', follow: ['이거 AI가 답하는 거예요?', ASK.projects] },
       ),
@@ -396,14 +395,14 @@ export const ROUTES: Record<string, Route> = {
   recommend: {
     criteria: '무엇을 물어볼지 모르겠다거나 아무거나 추천해 달라고 한다',
     answer: () =>
-      prepared('면접관분들이 가장 궁금해하실 만한 질문을 골라 드릴게요.', {
+      prepared('맡은 역할이나 결과가 궁금하다면 아래 질문부터 시작해 보세요.', {
         kind: '추천 질문',
         follow: ['측정해서 개선한 사례가 있나요?', '팀에서 주로 맡는 역할은?', '실패하거나 아쉬웠던 경험은?'],
       }),
   },
   insult: {
     criteria: '비난, 욕설, 조롱을 한다',
-    answer: () => prepared('앗, 따끔하네요. 아쉬운 점을 알려 주시면 고쳐 보겠습니다.', { kind: '피드백', copy: CONTACT.email }),
+    answer: () => prepared('어떤 점이 불편하셨는지 메일로 알려 주시면 살펴보겠습니다.', { kind: '피드백', copy: CONTACT.email }),
   },
   // 프로젝트 하나를 지목해 개괄만 묻는 경우. 세부 질문은 Claude가 상세 서술로 답한다.
   ...Object.fromEntries(
@@ -412,11 +411,11 @@ export const ROUTES: Record<string, Route> = {
       {
         criteria: `"${p.title}" 프로젝트가 무엇인지 개괄만 묻는다 (어려웠던 점·이유·구체적 구현은 제외)`,
         answer: () =>
-          prepared(doc(`${p.title} 프로젝트는 ${summaryPhrase(p)}입니다.`, p.highlight), {
+          prepared(doc(`${summaryPhrase(p)}입니다.`, p.highlight), {
             kind: '프로젝트',
             projects: { view: 'card', items: [toAnswerProject(p, 'full')] },
             links: [
-              { label: '전체 이야기 읽기', href: `/projects/${p.slug}` },
+              { label: '프로젝트 상세 보기', href: `/projects/${p.slug}` },
               ...(p.reference ? [{ label: '운영 중인 사이트', href: p.reference }] : []),
               ...(p.github ? [{ label: 'GitHub', href: p.github }] : []),
             ],

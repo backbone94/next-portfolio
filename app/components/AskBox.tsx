@@ -472,7 +472,7 @@ export function Answer({
                 onClick={() => copy(`${location.origin}${askHref(question)}`)}
                 className="rounded-md px-2 py-1 transition-colors hover:bg-surface-2 hover:text-text"
               >
-                {copied?.endsWith(askHref(question)) ? '링크를 복사했습니다' : '이 답 링크 복사'}
+                {copied?.endsWith(askHref(question)) ? '링크를 복사했습니다' : '답변 링크 복사'}
               </button>
             )}
           </div>
@@ -627,7 +627,7 @@ function Composer({
       {/* 입력창에 포커스가 있고 키보드가 있는 화면에서만 알려 준다. 휴대폰에는 Tab 키가 없다. */}
       <kbd
         id={`${inputId}-hint`}
-        aria-label="Tab 키를 누르면 예시 질문이 입력됩니다"
+        aria-label="Tab 키를 누르면 예시 질문을 입력할 수 있습니다"
         className={`shrink-0 rounded border border-border px-1.5 py-0.5 font-sans text-[0.6875rem] text-muted ${value ? 'hidden' : 'hidden sm:peer-focus:block'}`}
       >
         Tab
@@ -906,7 +906,7 @@ export default function AskBox({ initial, askOnLoad }: Props) {
           <ScrollToBottom />
           {composer}
           <p className="mt-2.5 text-center text-xs text-muted">
-            모든 답은 실제 경력과 프로젝트 기록을 근거로 합니다. {RECORD_NOTICE}
+            Jun은 사이트에 공개된 경력과 프로젝트 기록을 바탕으로 답합니다. {RECORD_NOTICE}
           </p>
         </div>
       </div>

@@ -6,7 +6,7 @@
  * 결과물은 public/resume.pdf 이고 사이트의 "이력서 PDF" 버튼이 이 경로를 가리킨다.
  * 한글 글리프가 필요해 Windows 기본 폰트(맑은 고딕)를 임베드한다.
  *
- * 내용은 여기에 직접 적는다. app/content/projects.ts 와 Experience.tsx 를
+ * 내용은 여기에 직접 적는다. app/content/projects.ts와 app/content/career.ts를
  * 고치면 이 파일도 같이 손봐야 한다 — 사실이 어긋나면 이력서가 틀린 말을 한다.
  */
 import fs from 'node:fs';
@@ -27,8 +27,8 @@ const profile = {
   title: 'AI Native Developer',
   contacts: ['backbone94@naver.com', '010-9287-1684', 'github.com/backbone94'],
   summary:
-    '프론트엔드에서 시작해 백엔드와 인프라까지 맡아 왔습니다. Angular · Vue · React · Next.js 프론트엔드 프레임워크 모두를 실무에서 사용한 경험이 있고 ' +
-    'Spring Boot/Nest.js와 AWS로 서버 및 클라우드도 직접 운영했습니다. Claude Code, Cursor 등 AI 도구를 개발 전 과정에 적극 활용하며, OpenAI·Perplexity API로 서비스 기능도 직접 구현했습니다.',
+    'Angular, Vue, React, Next.js로 사용자 화면을 개발했고, Spring Boot와 NestJS로 백엔드도 맡았습니다. ' +
+    'AWS에 운영 환경을 구성하고 기존 사이트의 데이터와 파일을 옮겼습니다. 개발에는 Claude Code와 Cursor를 활용하고, OpenAI와 Perplexity API로 음악 추천과 셔틀 시간표 조회 기능을 구현했습니다.',
 };
 
 const experiences = [
@@ -36,107 +36,113 @@ const experiences = [
     company: '와커스 (WACUS)',
     duration: '2026.07 — 재직 중',
     tasks: [
-      '더원서울안과 홈페이지 리뉴얼 — 사용자 · 관리자 화면 · 백엔드 API 연동 전반 참여',
-      '회원가입 · 로그인 · 계정 찾기 인증 흐름 구축 및 네이버 · 카카오 소셜 로그인 연동',
-      '인증 · 권한 취약점 보완 — 아이디 열거 방지, 로그인 시도 제한, 관리자 화면 접근 제어',
-      '의료진 소개 · 학술발표 · 유튜브 · 메인 팝업을 관리자 화면에서 직접 운영하도록 연동',
-      '웹 접근성 향상 — 시각장애 사용자를 위한 캡차에 음성 듣기 추가',
-      '신규 서버 이관 — DB · 업로드 파일 옮기고 SSL 인증서 발급 · 자동 갱신 구성 후 도메인 전환',
-      'SEO 강화 — 검색 결과 노출을 위한 구조화 데이터(JSON-LD) 적용 및 SEO 관리자 설정 화면 정리',
+      '밝은눈안과 잠실점 홈페이지의 회원, 상담, 게시글과 첨부 파일을 옮기고 이관 결과를 대조했습니다.',
+      '해외 예약을 홈페이지에서 접수하도록 구현하고 AWS 운영 환경에서 배포를 네 차례 검증했습니다.',
+      '더원서울안과 홈페이지에서 사용자 화면과 관리자 화면을 API에 연결했습니다.',
+      '회원가입, 로그인, 계정 찾기와 네이버, 카카오 로그인을 구현했습니다. 로그인 시도 제한과 관리자 접근 권한을 보완했습니다.',
+      '관리자가 의료진 소개와 학술발표, 유튜브, 팝업을 수정하도록 연결하고, 계정 찾기에 음성 캡차를 추가했습니다.',
+      'DB와 업로드 파일을 새 서버로 옮기고, 인증서 자동 갱신을 구성한 뒤 도메인을 전환했습니다.',
+      '병원 정보에 구조화 데이터(JSON-LD)를 추가하고 관리자 SEO 설정 화면을 정리했습니다.',
     ],
   },
   {
     company: '아이티센엔텍',
     duration: '2025.06 — 2026.05',
     tasks: [
-      '삼성전자 DS 임직원 대상 OA 장비 관리 시스템 운영 및 기능 개선',
-      'Vue CLI(Webpack) → Vite 마이그레이션으로 빌드 시간 20초 → 5초 단축',
-      '약 8,000명 대상 대량 메일 발송 Timeout 이슈 원인 분석 및 해결',
-      '모바일 SSO 인증 실패 이슈 분석 및 AD 연동 로그인 안정성 확보',
-      'synchronized 기반 동시성 제어 로직 구현으로 데이터 정합성 보장',
-      'Samsung Knox API 기반 Q&A 등록 시 관리자 자동 메일 발송 기능 개발',
+      '삼성전자 DS 임직원이 쓰는 OA 장비 관리 시스템을 운영하고 기능을 개선했습니다.',
+      'Vue CLI(Webpack)를 Vite로 바꿔 빌드 시간을 20초에서 5초로 줄였습니다.',
+      '약 8,000명에게 메일을 보낼 때 요청 시간이 초과되는 원인을 찾아 해결했습니다.',
+      '모바일 SSO 인증이 실패하는 원인을 분석해 AD 연동 로그인을 안정화했습니다.',
+      '같은 날짜가 동시에 선택되는 문제를 synchronized로 제어해 중복 처리를 막았습니다.',
+      '질문이 등록되면 Samsung Knox API로 관리자에게 메일을 보내도록 구현했습니다.',
     ],
   },
   {
     company: '베스텔라랩 (인턴)',
     duration: '2024.07 — 2024.08',
     tasks: [
-      'Figma Plugin API 기반 지도 연동 플러그인 단독 개발',
-      'EPSG:3857 ↔ EPSG:4326 좌표계 변환 및 위경도 좌표 추출 구현',
-      'OpenLayers로 폴리곤 드래그 / 리사이즈 / 회전 커스텀 인터랙션 구현',
-      'Nominatim API 연동으로 지도 내 장소 검색 기능 추가',
+      'Figma 레이어를 지도에 올리고 위도와 경도를 내보내는 플러그인을 혼자 개발했습니다.',
+      '지도 좌표를 EPSG:3857에서 EPSG:4326으로 변환해 위도와 경도를 구했습니다.',
+      'OpenLayers로 도형을 옮기고 돌리거나 크기를 조절하도록 구현했습니다. Nominatim API로 장소 검색을 추가했습니다.',
     ],
   },
   {
     company: '이파피루스',
     duration: '2022.04 — 2023.12',
     tasks: [
-      '상용 웹 PDF 뷰어 솔루션 프론트엔드 기능 개발 및 유지보수',
-      '인쇄된 PDF에도 남는 비가시 워터마크(추적코드) 삽입 기능 구현',
-      'Android TalkBack / iOS VoiceOver 지원으로 PDF 내용 TTS 대응',
-      '다크모드 / 라이트모드 테마 전환, 우클릭 커스텀 컨텍스트 메뉴 개발',
-      'i18n 라이브러리로 다국어(영어, 일본어) 처리',
+      '상용 웹 PDF 뷰어의 프론트엔드 기능을 개발하고 유지보수했습니다.',
+      '종이에 인쇄해도 남는 비가시 추적코드를 구현했습니다.',
+      'Android TalkBack과 iOS VoiceOver로 PDF 내용을 읽을 수 있게 했습니다.',
+      '다크 모드와 라이트 모드 전환, 관리자가 설정할 수 있는 우클릭 메뉴를 구현했습니다.',
+      'i18n 라이브러리로 영어와 일본어를 지원했습니다.',
     ],
   },
 ];
 
 const projects = [
   {
+    title: '밝은눈안과 잠실점 홈페이지 리뉴얼',
+    meta: '2026.09–2026.11 | 백엔드, 데이터 이관, AWS 운영 | Next.js, NestJS, PostgreSQL',
+    lines: [
+      '기존 데이터를 옮기는 스크립트를 작성하고, 양쪽 DB의 건수와 첨부 파일을 검증했습니다.',
+      'AWS Lightsail 운영 서버 두 대에 배포를 구성했습니다. 이관과 배포를 네 차례 검증한 뒤 11월 18일 새 홈페이지를 열었습니다.',
+    ],
+  },
+  {
     title: '더원서울안과 홈페이지 리뉴얼',
     // 팀 규모는 적지 않는다. 저장소 커밋 계정으로는 실제 인원을 확정할 수 없다.
-    meta: '2026.07—2026.08 · 사용자 사이트 · 백엔드 · 인프라 참여 · Next.js, NestJS, Prisma, PostgreSQL, AWS',
+    meta: '2026.07–2026.08 | 사용자 화면, 백엔드, 인프라 | Next.js, NestJS, Prisma, PostgreSQL, AWS',
     lines: [
-      '안과 병원 홈페이지 전면 리뉴얼. 사용자 사이트와 관리자 페이지, 백엔드 API를 오가며 작업했습니다. (the1seoul.com 운영 중)',
-      '회원가입부터 네이버 · 카카오 소셜 로그인까지 인증 전반을 맡았고 아이디 열거와 무차별 로그인 시도를 막는 처리를 함께 넣었습니다.',
-      '게시판과 의료진 · 유튜브 · 팝업 등 메인 콘텐츠를 병원 담당자가 관리자 페이지에서 직접 고칠 수 있도록 실데이터로 전환했습니다.',
-      '운영 중인 사이트를 신규 서버로 이관했습니다. DB와 업로드 파일을 옮기고 SSL 인증서 발급 · 자동 갱신을 구성한 뒤 도메인을 전환했습니다.',
-      '검색 결과 노출을 위해 구조화 데이터(JSON-LD)를 적용하고 SEO 관리자 설정 화면을 정비했습니다.',
+      '사용자 화면과 관리자 화면을 API에 연결해 병원 담당자가 주요 콘텐츠를 직접 수정할 수 있게 했습니다.',
+      '회원 인증과 네이버, 카카오 로그인을 구현했습니다. 등록된 아이디가 응답에 드러나지 않도록 고치고 로그인 시도를 제한했습니다.',
+      '새 서버에 DB와 업로드 파일을 옮기고 HTTPS 인증서를 준비한 뒤 도메인을 전환했습니다.',
+      '구조화 데이터(JSON-LD)를 추가하고 관리자 SEO 설정을 정리했습니다. 개편한 사이트는 the1seoul.com에서 운영 중입니다.',
     ],
   },
   {
     title: '슬기로운 아이티센 생활 | 셔틀 서비스',
-    meta: '2025.05—2025.06 · 프론트엔드 단독 (5인 팀) · React, Spring Boot, WebSocket',
+    meta: '2025.05–2025.06 | 프론트엔드 단독 (5인 팀) | React, Spring Boot, WebSocket',
     lines: [
-      '셔틀이 지금 어디쯤인지 확인하고 QR로 탑승하는 사내 모바일 서비스. 프론트엔드를 혼자 맡아 전체 화면을 구현했습니다.',
-      'Perplexity API로 시간표를 자연어로 조회하는 챗봇을 붙이고 PWA 도입을 제안해 적용했습니다.',
-      '신입 교육 11개 팀 가운데 유일하게 본사 상용화 검토까지 갔습니다.',
+      '셔틀의 실시간 위치를 확인하고 QR로 탑승하는 사내 서비스의 프론트엔드를 혼자 맡았습니다.',
+      'Perplexity API로 시간표를 묻는 챗봇을 만들고, 휴대폰 홈 화면에서 열 수 있도록 PWA를 적용했습니다.',
+      '신입 교육 11개 팀 중 유일하게 본사가 상용화를 검토했습니다.',
     ],
   },
   {
     title: '웹 PDF 뷰어 솔루션',
-    meta: '2022.04—2023.12 · 기능 개발 전담 (2인 팀) · Angular, SCSS',
+    meta: '2022.04–2023.12 | 기능 개발 전담 (2인 팀) | Angular, SCSS',
     lines: [
-      '이파피루스의 상용 웹 PDF 뷰어. 인쇄물에도 남는 비가시 추적코드를 구현하며 DPI·해상도를 실무로 익혔습니다.',
-      '다크모드와 모바일 스크린리더 대응으로 웹 접근성을 개선했습니다.',
+      '이파피루스의 상용 PDF 뷰어에서 비가시 추적코드를 구현하고, 문서를 인쇄해 코드가 읽히는지 확인했습니다.',
+      '다크 모드를 추가하고 모바일 스크린 리더가 PDF 내용을 읽을 수 있게 했습니다.',
     ],
   },
   {
     title: 'Figma to Map Plugin',
-    meta: '2024.07—2024.08 · 단독 개발 (인턴) · TypeScript, React, OpenLayers',
+    meta: '2024.07–2024.08 | 단독 개발 (인턴) | TypeScript, React, OpenLayers',
     lines: [
-      'Figma에서 그린 도형을 지도 위에 올려놓고 위경도를 뽑아내는 플러그인.',
-      '좌표 변환이 어긋나는 문제를 만나 EPSG:3857과 4326의 차이를 공부해 직접 해결했습니다.',
+      'Figma 도형을 지도에 배치하고 위도와 경도를 내보내는 플러그인을 만들었습니다.',
+      'EPSG:3857과 EPSG:4326의 차이를 확인해 좌표가 어긋나던 문제를 해결했습니다.',
     ],
   },
   {
     title: '살롱 | SSALON',
-    meta: '2024.03—2024.06 · 백엔드 주도 (5인 팀) · Angular, Spring Boot, AWS',
+    meta: '2024.03–2024.06 | 백엔드 주도 (5인 팀) | Angular, Spring Boot, AWS',
     lines: [
-      '아주대학교 졸업작품. 프론트엔드만 하던 상태에서 백엔드를 맡아 JWT와 Redis Refresh Token으로 인증을 설계했습니다.',
-      'GitHub Actions CI/CD와 EC2·RDS·ElastiCache 클라우드 환경을 직접 운영했습니다.',
+      '아주대학교 졸업작품에서 백엔드를 맡았습니다. JWT로 인증하고 리프레시 토큰은 Redis에 저장했습니다.',
+      'GitHub Actions로 배포를 자동화하고 AWS EC2, RDS, ElastiCache를 운영했습니다.',
     ],
   },
 ];
 
 const skills = [
   ['프론트엔드', 'TypeScript, React, Vue.js, Angular, Next.js, Tailwind CSS'],
-  ['백엔드 · DB', 'Java, Spring Boot, Node.js, NestJS, Prisma, Oracle, MySQL, PostgreSQL'],
+  ['백엔드와 DB', 'Java, Spring Boot, Node.js, NestJS, Prisma, Oracle, MySQL, PostgreSQL'],
   ['인프라', 'AWS (EC2, S3, RDS, ElastiCache), Docker, nginx, GitHub Actions, Vercel'],
   ['AI 활용', 'OpenAI, Perplexity, Naver CLOVA, Cursor'],
 ];
 
 const education = { school: '아주대학교 소프트웨어학과', duration: '2020.03 — 2025.02' };
-const certifications = 'SQLD (2025.12) · AWS SAA (2025.09) · OPIc IM2 (2024.11) · 정보처리기사 (2021.11)';
+const certifications = 'SQLD (2025.12), AWS SAA (2025.09), OPIc IM2 (2024.11), 정보처리기사 (2021.11)';
 
 // ---------------------------------------------------------------------------
 
@@ -218,7 +224,7 @@ function bullets(items) {
     ensure(bulletHeight(item));
     doc.font('kr').fontSize(9.8).fillColor(INK);
     const y = doc.y;
-    doc.fillColor(MUTED).text('·', L + 2, y, { width: 8 });
+    doc.fillColor(MUTED).text('-', L + 2, y, { width: 8 });
     doc.fillColor(INK).text(item, L + 12, y, { width: W - 12, lineGap: 2.2 });
     doc.moveDown(0.12);
   }
@@ -229,7 +235,7 @@ doc.font('kr-bold').fontSize(25).fillColor(INK).text(profile.name, L, doc.y);
 doc.moveDown(0.18);
 doc.font('kr-bold').fontSize(11.5).fillColor(ACCENT).text(profile.title);
 doc.moveDown(0.35);
-doc.font('kr').fontSize(9.5).fillColor(MUTED).text(profile.contacts.join('   ·   '));
+doc.font('kr').fontSize(9.5).fillColor(MUTED).text(profile.contacts.join('     '));
 doc.moveDown(0.7);
 doc.font('kr').fontSize(10).fillColor(INK).text(profile.summary, { width: W, lineGap: 3 });
 
@@ -248,6 +254,12 @@ experiences.forEach((job, index) => {
     bullets(job.tasks);
   }
 });
+
+// 학력과 자격증
+sectionTitle('학력과 자격증');
+rowHeading(education.school, education.duration);
+doc.moveDown(0.4);
+doc.font('kr').fontSize(9.8).fillColor(INK).text(certifications, L, doc.y, { width: W, lineGap: 2 });
 
 // 프로젝트
 sectionTitle('주요 프로젝트', projectHeight(projects[0]));
@@ -275,12 +287,6 @@ for (const [label, value] of skills) {
   doc.font('kr').fillColor(INK).text(value, L + 90, y, { width: W - 90, lineGap: 2 });
   doc.moveDown(0.25);
 }
-
-// 학력 · 자격증
-sectionTitle('학력 · 자격증');
-rowHeading(education.school, education.duration);
-doc.moveDown(0.4);
-doc.font('kr').fontSize(9.8).fillColor(INK).text(certifications, L, doc.y, { width: W, lineGap: 2 });
 
 doc.end();
 console.log(`생성 완료: ${OUT}`);

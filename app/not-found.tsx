@@ -18,7 +18,7 @@ export default function NotFound() {
       </h1>
 
       <p className="mt-4 max-w-prose text-muted">
-        주소가 바뀌었거나 없는 페이지입니다. 아래에서 이어서 보실 수 있습니다.
+        주소를 다시 확인하거나 홈에서 프로젝트를 찾아보세요.
       </p>
 
       <div className="mt-9 flex flex-wrap gap-3">

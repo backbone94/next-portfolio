@@ -119,7 +119,7 @@ export default function ProjectAsk({ slug, title, topics }: { slug: string; titl
       className="flex max-h-[min(37.5rem,calc(100svh-8rem))] flex-col rounded-xl border border-border bg-surface"
     >
       <h2 id={`${inputId}-title`} className="px-5 pt-5 text-[0.9375rem] font-bold">
-        Jun에게 이 프로젝트 묻기
+        Jun에게 프로젝트 질문하기
       </h2>
 
       <p aria-live="polite" className="sr-only">
@@ -130,9 +130,9 @@ export default function ProjectAsk({ slug, title, topics }: { slug: string; titl
         <div className="px-5 pt-2">
           {/* 이 칸이 답하는 범위를 처음부터 알린다. 다른 질문은 전체 대화(/ask)에서 받는다. */}
           <p className="text-sm leading-relaxed text-muted">
-            더 궁금한 작업이 있으면 아래 질문을 골라보세요. 경력이나 다른 작업은{' '}
+            아래에서 질문을 고르거나 직접 입력할 수 있어요. 경력과 다른 프로젝트는{' '}
             <a href={ASK_PATH} className="underline underline-offset-4 transition-colors hover:text-accent">전체 대화</a>
-            에서 물어볼 수 있어요.
+            에서 물어보세요.
           </p>
           <ul className="mt-4 flex flex-wrap gap-2" aria-label="질문 예시">
             {starters.map((q) => (
@@ -185,7 +185,7 @@ export default function ProjectAsk({ slug, title, topics }: { slug: string; titl
           id={inputId}
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder="이 프로젝트에 대해 물어보세요"
+          placeholder="이 프로젝트에서 궁금한 점을 적어 주세요"
           maxLength={200}
           autoComplete="off"
           className="min-w-0 flex-1 bg-transparent py-1.5 text-[0.9375rem] placeholder:text-muted/80 focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
