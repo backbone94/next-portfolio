@@ -12,7 +12,7 @@ const regions = new Intl.DisplayNames(['ko'], { type: 'region' });
 const titles = new Map(projects.map((p) => [`/projects/${p.slug}`, p.title]));
 
 /** 관리자 화면 주소. 방문자와 쪽 번호만 붙인다 */
-export function adminHref(base: '/admin' | '/admin/visits', query: { visitor?: string | null; page?: number } = {}) {
+export function adminHref(base: '/admin' | '/admin/visits' | '/admin/questions', query: { visitor?: string | null; page?: number } = {}) {
   const params = new URLSearchParams();
   if (query.visitor) params.set('visitor', query.visitor);
   if (query.page && query.page > 1) params.set('page', String(query.page));

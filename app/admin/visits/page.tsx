@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { PAGE_SIZE, loadVisitorQuestions, loadVisits } from '../stats';
+import { Pager, pageRange, parsePage } from '../pagination';
+import { loadVisitorQuestions, loadVisits } from '../stats';
 import { Block, QuestionTable, VisitTable, adminHref, number, visitorLabel } from '../ui';
 
 /**
@@ -27,8 +28,7 @@ export default async function VisitsPage({ searchParams }: Props) {
   const query = await searchParams;
   const key = query.visitor ?? '';
   const visitor = /^(?:[0-9a-f]{6}|[0-9a-f]{16}|b_[0-9a-f]{32})$/.test(key) ? key : null;
-  const requestedPage = Number(query.page);
-  const page = Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
+  const page = parsePage(query.page);
 
   const [result, questions] = await Promise.all([
     loadVisits({ page, visitor }),
@@ -67,7 +67,7 @@ export default async function VisitsPage({ searchParams }: Props) {
       )}
 
       {result ? (
-        <Block title={`${number(result.total)}건`} note={range(page, result.total)}>
+        <Block title={`${number(result.total)}건`} note={pageRange(page, result.total)}>
           <VisitTable visits={result.visits} />
           <Pager page={page} total={result.total} href={(p) => href({ page: p })} />
         </Block>
@@ -75,40 +75,5 @@ export default async function VisitsPage({ searchParams }: Props) {
         <p className="mt-12 text-muted">DATABASE_URL이 없어 기록을 읽을 수 없습니다.</p>
       )}
     </div>
-  );
-}
-
-/** 지금 쪽이 몇 번째부터 몇 번째까지인지 (51–100번째) */
-function range(page: number, total: number) {
-  if (total === 0) return undefined;
-  const first = (page - 1) * PAGE_SIZE + 1;
-  if (first > total) return '이 쪽에는 방문이 없습니다.';
-  return `${number(first)}–${number(Math.min(page * PAGE_SIZE, total))}번째`;
-}
-
-function Pager({ page, total, href }: { page: number; total: number; href: (page: number) => string }) {
-  const last = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  if (last === 1) return null;
-  const step = 'rounded-md bg-surface-2 px-3 py-1.5 font-medium transition-colors hover:text-accent';
-  return (
-    <nav aria-label="쪽 옮기기" className="mt-6 flex items-center gap-3 text-sm">
-      {page > 1 ? (
-        <Link href={href(page - 1)} className={step}>
-          ← 최신
-        </Link>
-      ) : (
-        <span className="px-3 py-1.5 text-muted">← 최신</span>
-      )}
-      <span className="text-muted" data-numeric>
-        {number(Math.min(page, last))} / {number(last)}쪽
-      </span>
-      {page < last ? (
-        <Link href={href(page + 1)} className={step}>
-          이전 →
-        </Link>
-      ) : (
-        <span className="px-3 py-1.5 text-muted">이전 →</span>
-      )}
-    </nav>
   );
 }

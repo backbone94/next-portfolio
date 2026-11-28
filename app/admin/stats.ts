@@ -11,9 +11,9 @@ const ENV = 'production';
 /** 날짜별 Claude 호출과 토큰 표에 보여 주는 날수 */
 const CLAUDE_DAYS = 30;
 
-/** 대시보드에 보여 주는 최근 방문 수 */
+/** 대시보드 방문과 질문 표에 보여 주는 최근 기록 수 */
 export const RECENT = 10;
-/** 방문 기록 화면 한 쪽에 보여 주는 방문 수 */
+/** 전체 기록 화면 한 쪽에 보여 주는 기록 수 */
 export const PAGE_SIZE = 50;
 
 const kst = (column: string) => `(${column} at time zone 'Asia/Seoul')`;
@@ -90,6 +90,7 @@ export type Question = {
 /** Question 한 건을 읽는 칼럼 */
 const QUESTION_COLUMNS = `to_char(${kst('created_at')}, 'YYYY-MM-DD HH24:MI:SS') as at, page, question,
   answered_by as "answeredBy", visitor`;
+const NEWEST_QUESTIONS = 'order by created_at desc, id desc';
 
 export type Stats = {
   /** 사람의 방문 수 전체. 방문 기록 화면으로 가는 링크에 쓴다 */
@@ -115,7 +116,7 @@ export async function loadStats(): Promise<Stats | null> {
       `select ${VISIT_COLUMNS} from visit_log where ${visits} ${BY_BROWSER} order by created_at desc, id desc limit ${RECENT}`,
       params,
     ),
-    sql.query(`select ${QUESTION_COLUMNS} from ask_log where env = $1 order by created_at desc limit ${RECENT}`, params),
+    sql.query(`select ${QUESTION_COLUMNS} from ask_log where env = $1 ${NEWEST_QUESTIONS} limit ${RECENT}`, params),
     sql.query(
       `select to_char(${kst('created_at')}, 'MM-DD HH24:MI') as at, page, question, route, confidence
        from ask_log where env = $1 and answered_by = 'claude'
@@ -140,6 +141,22 @@ export async function loadStats(): Promise<Stats | null> {
     claudeAnswers: claudeAnswers as Stats['claudeAnswers'],
     claudeDaily: claudeDaily as Stats['claudeDaily'],
   };
+}
+
+export async function loadQuestions(page: number): Promise<{ questions: Question[]; total: number } | null> {
+  if (!process.env.DATABASE_URL) return null;
+  const sql = neon(process.env.DATABASE_URL);
+  const [questions, totals] = await sql.transaction(
+    [
+      sql.query(
+        `select ${QUESTION_COLUMNS} from ask_log where env = $1 ${NEWEST_QUESTIONS} limit $2 offset $3`,
+        [ENV, PAGE_SIZE, (page - 1) * PAGE_SIZE],
+      ),
+      sql.query('select count(*)::int as total from ask_log where env = $1', [ENV]),
+    ],
+    { isolationLevel: 'RepeatableRead', readOnly: true },
+  );
+  return { questions: questions as Question[], total: totals[0]?.total ?? 0 };
 }
 
 /**

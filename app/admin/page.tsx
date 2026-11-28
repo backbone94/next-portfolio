@@ -82,6 +82,11 @@ function Dashboard({ stats }: { stats: Stats }) {
       <Block
         title="최근 질문"
         note={`한국 시간 기준, 최근 ${RECENT}건. 방문자 값을 누르면 그 방문자가 어떤 페이지를 보고 물었는지 함께 봅니다. 방문자를 남기기 전의 질문은 없음으로 나옵니다`}
+        action={
+          <Link href={adminHref('/admin/questions')} className="text-sm font-medium text-accent underline-offset-4 hover:underline">
+            전체 질문 보기 →
+          </Link>
+        }
       >
         <QuestionTable questions={stats.recentQuestions} />
       </Block>
