@@ -10,7 +10,7 @@ if (!url) {
 }
 
 const sql = neon(url);
-for (const file of ['ask_log.sql', 'visit_log.sql', 'ip_asn.sql', 'visit_tracking.sql', 'visit_location.sql']) {
+for (const file of ['ask_log.sql', 'visit_log.sql', 'ip_asn.sql', 'visit_tracking.sql', 'visit_location.sql', 'visit_behavior.sql']) {
   const statements = readFileSync(new URL(`./${file}`, import.meta.url), 'utf8')
     .replace(/--.*$/gm, '')
     .split(';')
