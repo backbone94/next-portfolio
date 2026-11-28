@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { projects } from '@/app/content/projects';
-import { isSeoulDistrict } from '@/app/lib/seoul-location';
+import { isSeoulDistrict } from '@/app/lib/seoul-ip-location';
 import type { Question, Visit } from './stats';
 
 /**
@@ -111,11 +111,11 @@ export function VisitTable({ visits }: { visits: Visit[] }) {
 }
 
 function VisitLocation({ visit }: { visit: Visit }) {
-  if (isSeoulDistrict(visit.sharedDistrict)) {
+  if (isSeoulDistrict(visit.ipDistrict)) {
     return (
       <>
-        서울 {visit.sharedDistrict}
-        <span className="block text-xs">방문자 공유</span>
+        서울 {visit.ipDistrict}
+        <span className="block text-xs">IP 구 추정</span>
       </>
     );
   }
