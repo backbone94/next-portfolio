@@ -4,7 +4,7 @@ import { ImageResponse } from 'next/og';
 export const dynamic = 'force-dynamic';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
-export const alt = "Jun's Portfolio: 이정준에게 무엇이든 물어보세요";
+export const alt = "Jun's Portfolio | 이정준의 프로젝트와 경력";
 
 /*
   공유 카드는 첫 화면을 줄여 놓은 모습이다. 인사, 질문 상자, 주소.
@@ -12,7 +12,7 @@ export const alt = "Jun's Portfolio: 이정준에게 무엇이든 물어보세�
 */
 const LABEL = "Jun's Portfolio";
 const TITLE = '안녕하세요, 이정준입니다.';
-const SUBTITLE = '무엇이든 물어보세요.';
+const SUBTITLE = '프로젝트와 경력이 궁금하다면 Jun에게 물어보세요.';
 const PLACEHOLDER = '가장 자신 있는 프로젝트는?';
 const DOMAIN = 'leejj.dev';
 const ALL_TEXT = [LABEL, TITLE, SUBTITLE, PLACEHOLDER, DOMAIN].join(' ');

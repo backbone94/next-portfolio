@@ -65,7 +65,7 @@ function streamAnswer(write: (emit: (event: AskStreamEvent) => void) => Promise<
         answer = await write(emit);
       } catch (error) {
         console.error('[ask] Claude 호출 실패', error instanceof Anthropic.APIError ? `${error.status} ${error.message}` : error);
-        answer = notice('지금은 답을 가져오지 못했습니다. 잠시 뒤에 다시 시도해 주세요.');
+        answer = notice('답변을 불러오지 못했습니다. 잠시 뒤 다시 물어봐 주세요.');
       }
       done(answer);
       emit({ type: 'done', answer });
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
 
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'local';
   if (!allow(ip, 'all')) {
-    return Response.json(notice('질문이 조금 많았습니다. 잠시 뒤에 다시 물어봐 주세요.'), { status: 429 });
+    return Response.json(notice('짧은 시간에 질문을 여러 번 보내셨습니다. 잠시 뒤 다시 물어봐 주세요.'), { status: 429 });
   }
 
   // 관리자 브라우저와 제외한 네트워크에서 한 질문은 별도 방문 통계에 저장하지 않는다.
@@ -138,7 +138,7 @@ export async function POST(request: NextRequest) {
     return Response.json(prepared);
   }
   if (decision.offTopic >= OFF_TOPIC_THRESHOLD) {
-    const answer = notice('이 검색창은 정준 님의 경력과 프로젝트에 대해서만 답합니다.', ['자기소개 부탁드려요', '가장 자신 있는 프로젝트는?']);
+    const answer = notice('이곳에서는 이정준의 경력과 프로젝트를 물어볼 수 있습니다.', ['자기소개 부탁드려요', '가장 자신 있는 프로젝트는?']);
     log(answer);
     return Response.json(answer);
   }
@@ -155,9 +155,9 @@ function askClaude(question: string, ip: string, signal: AbortSignal, log: Log, 
     // 화면 확인용. Jev도 Claude도 부르지 않는다 (.env.local에 ASK_DRY_RUN=1)
     return streamAnswer((emit) => fakeClaude(question, emit), log);
   } else if (!claudeAvailable()) {
-    answer = notice('아직 이 질문에 대한 답을 준비하지 못했습니다. 메일로 물어봐 주시면 직접 답해 드리겠습니다.');
+    answer = notice('이 질문에 답할 자료를 찾지 못했습니다. 메일로 물어보시면 정준 님이 직접 답변해 드립니다.');
   } else if (!allow(ip, 'claude')) {
-    answer = notice('직접 써 둔 답변이 없는 질문이 많아 잠시 쉬어 갑니다. 10분 뒤에 다시 물어봐 주세요.');
+    answer = notice('새 답변을 만들 수 있는 횟수를 잠시 넘었습니다. 10분 뒤에 다시 물어봐 주세요.');
   } else {
     // 토큰 수는 답이 끝나야 나온다. 받아 두었다가 기록할 때 함께 넘긴다.
     let usage: Usage | undefined;

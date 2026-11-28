@@ -14,14 +14,14 @@ export type GuideCue = 'hi' | 'ask' | 'typing' | 'thinking' | 'done' | 'pick' | 
 /** 말풍선 문구. typing과 thinking은 뒤에 점이 하나씩 늘어난다(RobotGuide의 DOTTED). */
 export const GUIDE_LINES: Record<GuideCue, string> = {
   hi: '안녕하세요!',
-  ask: '궁금한 걸 물어보세요',
-  typing: '듣고 있어요',
+  ask: '프로젝트나 경력을 물어보세요',
+  typing: '질문을 읽고 있어요',
   thinking: '답을 찾는 중',
   done: '답을 찾았어요!',
   pick: '궁금한 프로젝트를 골라 보세요',
-  oops: '앗, 연결이 잠시 끊겼어요',
+  oops: '연결이 잠시 끊겼어요',
   copied: '복사했어요!',
-  pdf: '이력서 PDF를 새 탭으로 열어요',
+  pdf: '이력서 PDF가 새 탭에서 열려요',
   mail: '누르면 메일 주소를 복사해요',
   code: 'GitHub로 이동해요',
 };

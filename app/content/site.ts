@@ -44,7 +44,7 @@ export const STARTERS = [
  * 질문을 기록한다는 안내(app/lib/ask/store.ts). 첫 질문을 하기 전에 보여야 하므로 첫 화면,
  * 대화 화면, 상세 페이지 대화창의 입력창 가까이에 모두 둔다.
  */
-export const RECORD_NOTICE = '질문은 답변을 개선하는 데 쓰입니다.';
+export const RECORD_NOTICE = '보내신 질문은 답변을 개선하는 데 사용합니다.';
 
 /** 질문 하나를 주소로. 이 주소로 들어오면 그 질문과 답이 펼쳐진 채로 열린다. */
 export const ASK_PATH = '/ask';

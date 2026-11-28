@@ -92,7 +92,7 @@ export default async function ProjectDetailPage({ params }: Props) {
       */}
           <section aria-labelledby="how">
             <h2 id="how" className="text-xl font-bold tracking-[-0.01em]">
-              개요
+              맡은 일과 결과
             </h2>
             <div
               className="mt-5 max-w-prose leading-[1.75] text-text/90 [&_a]:text-accent [&_a]:underline [&_a]:underline-offset-4 [&_h3]:mb-2 [&_h3]:mt-9 [&_h3]:text-[1.0625rem] [&_h3]:font-bold [&_h3]:leading-snug [&_h3]:text-text [&_p+p]:mt-4 [&_strong]:font-semibold [&_strong]:text-text"
