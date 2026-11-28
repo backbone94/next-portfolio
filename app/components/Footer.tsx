@@ -1,10 +1,9 @@
-import Link from 'next/link';
 import { CONTACT, PROFILE, RESUME_URL } from '../content/site';
 import CopyEmailButton from './CopyEmailButton';
 
 const link = 'transition-colors hover:text-accent';
 
-/** 연락처와 방문 데이터 안내를 제공한다. */
+/** 연락처와 이력서 링크를 제공한다. */
 export default function Footer() {
   return (
     <footer className="border-t border-border">
@@ -17,7 +16,6 @@ export default function Footer() {
           <a href={RESUME_URL} target="_blank" rel="noreferrer" className={link}>
             이력서 PDF
           </a>
-          <Link href="/privacy" className={link}>방문 데이터 안내</Link>
         </span>
         <span>
           © {new Date().getFullYear()} {PROFILE.name}

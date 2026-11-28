@@ -21,7 +21,7 @@ const visitorFilter = (visitor: string) => (visitor.length === 6 ? 'left(visitor
 
 /** Visit 한 건을 읽는 칼럼 */
 const VISIT_COLUMNS = `to_char(${kst('created_at')}, 'YYYY-MM-DD HH24:MI:SS') as at, path, referrer, country, city, device,
-  visitor, browser, lang, fetch_meta as "fetchMeta", js, webdriver, duration, asn, network, shared_district as "sharedDistrict",
+  visitor, browser, lang, fetch_meta as "fetchMeta", js, webdriver, duration, asn, network, ip_district as "ipDistrict",
   case when left(visitor, 2) = 'b_' then
     case
       when lag(created_at) over browser_visits is null then 'first'
@@ -57,7 +57,7 @@ export type Visit = {
   referrer: string | null;
   country: string | null;
   city: string | null;
-  sharedDistrict: string | null;
+  ipDistrict: string | null;
   device: string | null;
   visitor: string;
   visitKind: 'first' | 'return' | null;

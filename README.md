@@ -19,7 +19,8 @@
 ## 방문 통계 배포
 
 기존 운영 DB에서는 이 기능을 배포하기 전에 Neon SQL Editor에서 [db/visit_tracking.sql](db/visit_tracking.sql)을 실행합니다.
-자치구 공유 기능을 배포하기 전에는 [db/visit_location.sql](db/visit_location.sql)을 적용합니다.
+IP 위치로 서울 자치구를 추정하는 기능을 배포하기 전에는 [db/visit_location.sql](db/visit_location.sql)을 적용합니다.
+서울 우편번호와 자치구를 연결할 때 [우정사업본부의 우편번호 부여표](https://www.koreapost.go.kr/kpost/subIndex/208.do?pSiteIdx=125)를 사용합니다.
 새 DB를 만들 때는 `node --env-file=.env.local db/init.mjs`를 실행합니다.
 
 운영 관리자 화면에 휴대폰 브라우저로 로그인하면 그 브라우저의 방문과 질문을 이후부터 제외합니다.
