@@ -2,7 +2,7 @@ import { neon } from '@neondatabase/serverless';
 
 /**
  * 관리자 화면이 보여 주는 숫자. visit_log(db/visit_log.sql)와 ask_log(db/ask_log.sql)를 읽기만 한다.
- * 방문은 확실히 사람인 것(HUMAN)만 읽는다. 봇이거나 봇으로 의심되는 방문은 기록에는 남지만 관리자 화면에는 나오지 않는다.
+ * 봇과 의심 접속은 운영 기록에 저장되고 관리자 화면의 방문 목록과 집계에서는 제외된다.
  * 실제 사이트(production)의 기록만 읽는다. 미리보기 배포와 로컬 개발에서 남은 기록은 보지 않는다. 날짜는 한국 시간으로 자른다.
  */
 
@@ -30,25 +30,29 @@ const VISIT_COLUMNS = `to_char(${kst('created_at')}, 'YYYY-MM-DD HH24:MI:SS') as
   end as "visitKind"`;
 const BY_BROWSER = 'window browser_visits as (partition by visitor order by created_at, id)';
 
-/**
- * 데이터센터·클라우드 네트워크 이름에 들어가는 말. 사람은 집·회사·휴대폰 망에서 들어오므로, 이런 망에서 온 방문은 거의 봇이다.
- * 네트워크 이름은 ip_asn 표(db/ip_asn.sql)의 AS 이름이다 (AMAZON-02, GOOGLE-CLOUD-PLATFORM, DIGITALOCEAN-ASN).
- * SQL(~*)과 자바스크립트(RegExp) 양쪽에서 그대로 쓰므로 두 문법에 공통인 |와 ^·$만 쓴다
- */
-const HOSTING =
-  'amazon|google-cloud|^google$|microsoft|digitalocean|ovh|hetzner|linode|akamai|choopa|vultr|oracle|alibaba|tencent|huawei-cloud|contabo|leaseweb|m247|datacamp|scaleway|ionos|hostinger|naver cloud|nbp';
+/** ip_asn 표에 저장되는 클라우드, CDN, 호스팅망의 등록 이름. */
+const HOSTING = [
+  'amazon', 'google-cloud', '^google$', 'microsoft', 'digitalocean', 'ovh', 'hetzner', 'linode',
+  'akamai', 'choopa', 'vultr', 'oracle', 'alibaba', 'tencent', 'huawei[ -]cloud', 'contabo',
+  'leaseweb', 'm247', 'datacamp', '^cdnext$', 'scaleway', 'ionos', 'hostinger', 'naver cloud',
+  'nbp', 'clouvider', 'glesys',
+].join('|');
 
-/**
- * 봇 의심 조건. 자동화 브라우저, 화면 실행 안 됨, 언어 정보 없음, 브라우저 헤더 없음, 알 수 없는 브라우저, 데이터센터 접속 중
- * 하나라도 해당하면 봇으로 의심한다
- */
-const SUSPECT = `browser is not null and (webdriver is true or (js is not true and created_at <= now() - interval '1 minute')
-  or lang is null or fetch_meta is false or browser like '기타%' or coalesce(network, '') ~* '${HOSTING}')`;
-/**
- * 확실히 사람인 방문. 봇 의심 이유가 하나도 없고, 화면이 브라우저에서 실제로 실행된 것(js)까지 확인된 방문만 넣는다.
- * 방금 들어와 실행 신호를 기다리는 방문은 신호가 올 때까지 빠진다. 판별 정보(browser)가 없는 예전 방문도 빠진다
- */
-const HUMAN = `not is_bot and browser is not null and js is true and not (${SUSPECT})`;
+/** 운영 기록에 나타난 유입 도메인은 Matomo 공개 스팸 목록에서 확인했다. */
+const REFERRER_SPAM = '(^|[.])scriblihelp[.]com[.]?(:[0-9]+)?$';
+
+// GSL 회선은 통신용으로도 사용한다. 여러 국가에서 같은 브라우저로 홈만 연 기록과 같은 조건일 때 제외한다.
+const TRANSIT_SCAN = `(
+  asn is not distinct from 137409 and path = '/' and referrer is null and duration is null
+  and lang = 'en-US' and browser ~ '^Chrome 146[^[:alnum:]]+Windows$'
+)`;
+
+/** 화면 실행을 확인하고 기존 봇 신호, 알려진 스팸 유입과 의심 접속을 검사한다. */
+const HUMAN = `not is_bot and browser is not null and js is true and not (
+  webdriver is true or lang is null or fetch_meta is false or browser like '기타%'
+  or coalesce(network, '') ~* '${HOSTING}' or coalesce(referrer, '') ~* '${REFERRER_SPAM}'
+  or ${TRANSIT_SCAN}
+)`;
 
 /** 방문 한 건. 시각은 한국 시간으로 초까지 보여 준다. */
 export type Visit = {

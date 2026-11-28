@@ -10,7 +10,7 @@ import { Block, QuestionTable, VisitTable, adminHref, number, visitorLabel } fro
  * 비밀번호는 proxy.ts에서 확인한다.
  *
  * 방문자 값으로 같은 브라우저의 방문과 질문을 모아 본다.
- * 대시보드와 같이 확실히 사람인 방문만 보여 준다.
+ * 대시보드와 같은 봇 및 의심 접속 필터를 적용한다.
  */
 
 export const dynamic = 'force-dynamic';
