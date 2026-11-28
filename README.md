@@ -19,6 +19,7 @@
 ## 방문 통계 배포
 
 기존 운영 DB에서는 이 기능을 배포하기 전에 Neon SQL Editor에서 [db/visit_tracking.sql](db/visit_tracking.sql)을 실행합니다.
+자치구 공유 기능을 배포하기 전에는 [db/visit_location.sql](db/visit_location.sql)을 적용합니다.
 새 DB를 만들 때는 `node --env-file=.env.local db/init.mjs`를 실행합니다.
 
 운영 관리자 화면에 휴대폰 브라우저로 로그인하면 그 브라우저의 방문과 질문을 이후부터 제외합니다.

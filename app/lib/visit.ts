@@ -1,6 +1,7 @@
 import { neon } from '@neondatabase/serverless';
 import type { NextFetchEvent, NextRequest } from 'next/server';
 import { clientIp, isOwnerNetwork } from './owner-network';
+import type { SeoulDistrict } from './seoul-location';
 
 /**
  * 방문 기록. 첫 화면과 프로젝트 상세를 열 때마다 Neon Postgres의 visit_log 표에 한 줄씩 남긴다(표는 db/visit_log.sql).
@@ -264,4 +265,23 @@ export async function recordDuration(request: NextRequest, path: string, seconds
       order by created_at desc limit 1
     )
   `;
+}
+
+/** 자발적으로 공유한 구 이름만 최근의 확인된 브라우저 방문에 붙인다. */
+export async function saveVisitDistrict(request: NextRequest, district: SeoulDistrict) {
+  const token = visitorCookie(request);
+  if (!sql || !token || (await isOwner(request))) return false;
+
+  const visitor = await browserVisitor(token);
+  const rows = await sql`
+    update visit_log set shared_district = ${district}
+    where id = (
+      select id from visit_log
+      where env = ${process.env.VERCEL_ENV ?? 'development'} and visitor = ${visitor}
+        and js is true and not is_bot and created_at >= now() - interval '30 minutes'
+      order by created_at desc, id desc limit 1
+    )
+    returning id
+  `;
+  return rows.length > 0;
 }
