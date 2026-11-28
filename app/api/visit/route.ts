@@ -1,13 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { getProject } from '@/app/content/projects';
+import { isRecordedPage } from '@/app/lib/recorded-page';
 import { confirmVisit, recordDuration, VISITOR_COOKIE, VISITOR_COOKIE_AGE } from '@/app/lib/visit';
-
-/** 방문으로 기록하는 경로만 받는다. 사이트 안 이동은 여기서 방문 한 줄을 새로 쓰므로 아무 경로나 받지 않는다 */
-function recorded(path: string) {
-  if (path === '/' || path === '/ask') return true;
-  const slug = path.match(/^\/projects\/([^/]+)$/)?.[1];
-  return slug != null && getProject(slug) != null;
-}
 
 /**
  * 화면이 실제로 실행됐다는 신호와 머문 시간을 받는다(app/components/VisitBeacon.tsx).
@@ -18,7 +11,7 @@ export async function POST(request: NextRequest) {
     | { path?: unknown; webdriver?: unknown; navigated?: unknown; seconds?: unknown }
     | null;
   const path = typeof body?.path === 'string' ? body.path.slice(0, 200) : '';
-  if (!path || !recorded(path)) return new Response(null, { status: 204 });
+  if (!isRecordedPage(path)) return new Response(null, { status: 204 });
   const response = new NextResponse(null, { status: 204 });
 
   // 머문 시간. 화면을 떠나거나 탭을 옮길 때 온다

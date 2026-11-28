@@ -31,6 +31,9 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
       <p className="mt-4 max-w-prose text-muted">
         이 화면에는 사람의 방문으로 판단한 기록만 표시됩니다. 봇 방문은 데이터베이스에서 확인할 수 있습니다.
       </p>
+      <Link href="/admin/behavior" className="mt-4 inline-block text-sm font-medium text-accent underline-offset-4 hover:underline" prefetch={false}>
+        방문 행동과 히트맵 보기 →
+      </Link>
 
       <VisitExclusions state={network} />
       {stats ? <Dashboard stats={stats} /> : <p className="mt-12 text-muted">DATABASE_URL이 없어 기록을 읽을 수 없습니다.</p>}

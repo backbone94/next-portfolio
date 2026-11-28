@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
+import { collectBehavior } from './collectBehavior';
 
 /** 방문으로 기록하는 공개 경로 */
 const RECORDED = /^\/(?:ask|projects\/[^/]+)?$/;
@@ -36,6 +37,7 @@ export default function VisitBeacon() {
     const navigated = previous.current != null && previous.current !== pathname;
     previous.current = pathname;
     if (!RECORDED.test(pathname)) return;
+    const stopBehavior = collectBehavior(pathname);
 
     // 실행 표시를 보낸 뒤에만 머문 시간을 보낸다. 서버는 실행 표시가 된 방문에만 시간을 적는다
     let confirmation: Promise<boolean> | undefined;
@@ -70,6 +72,7 @@ export default function VisitBeacon() {
       window.removeEventListener('pagehide', report);
       // 사이트 안에서 다른 화면으로 옮겼다. 이 화면에 머문 시간을 마저 보낸다
       report();
+      stopBehavior?.();
     };
   }, [pathname]);
 

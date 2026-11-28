@@ -134,6 +134,11 @@ function allowsVisitorCookie(request: NextRequest) {
   return request.headers.get('sec-gpc') !== '1' && request.headers.get('dnt') !== '1';
 }
 
+export async function canRecordBehavior(request: NextRequest) {
+  const ua = request.headers.get('user-agent') ?? '';
+  return allowsVisitorCookie(request) && !!ua && !BOT.test(ua) && !(await isOwner(request));
+}
+
 function visitorCookie(request: NextRequest) {
   const token = request.cookies.get(VISITOR_COOKIE)?.value;
   return allowsVisitorCookie(request) && token && /^[0-9a-f]{32}$/.test(token) ? token : undefined;
